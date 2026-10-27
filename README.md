@@ -4,7 +4,7 @@
 
 [팀 코드 저장소](https://github.com/riverblue72/Errordetect) · [현재 시연 사이트](https://surface-trace-labeling-demo.ableolm2049.chatgpt.site) · [팀 작업 안내](CONTRIBUTING.md)
 
-현재 시연 사이트는 소유자에게만 공개되어 있습니다. 팀원이 접속하려면 사이트 소유자가 공유 설정을 변경해야 합니다. GitHub에 코드를 올리는 것만으로 이 사이트의 접근 권한이나 배포 내용이 바뀌지는 않습니다.
+현재 시연 사이트는 공개되어 있어 링크가 있는 누구나 접속할 수 있습니다. 팀원에게 위 시연 사이트 주소를 전달하면 됩니다. GitHub에 코드를 올리는 것만으로 이 사이트의 배포 내용이 바뀌지는 않습니다.
 
 ## 팀원 빠른 시작
 

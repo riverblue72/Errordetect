@@ -3,7 +3,7 @@
 ## 코드와 시연 사이트
 
 - `https://github.com/riverblue72/Errordetect`: 팀 코드의 기준 저장소입니다.
-- `https://surface-trace-labeling-demo.ableolm2049.chatgpt.site`: 현재 배포된 시연 화면입니다. 현재는 소유자 전용이며, 팀원에게 보여주려면 별도 공유 설정이 필요합니다.
+- `https://surface-trace-labeling-demo.ableolm2049.chatgpt.site`: 현재 배포된 공개 시연 화면입니다. 링크가 있는 누구나 접속할 수 있으므로 팀원에게 이 주소를 전달하면 됩니다.
 - GitHub 수정 사항이 ChatGPT Sites에 자동 배포되는 연결은 없습니다. 변경한 버전은 로컬에서 확인한 뒤 별도로 배포해야 합니다.
 
 공개 저장소이므로 누구나 코드를 받을 수 있지만, 직접 브랜치를 올리려면 저장소 관리자가 GitHub의 **Settings → Collaborators**에서 해당 팀원을 초대해야 합니다. 쓰기 권한이 없는 팀원은 fork 후 Pull Request를 보낼 수도 있습니다.
