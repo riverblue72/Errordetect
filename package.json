@@ -1,0 +1,17 @@
+{
+  "name": "surface-trace",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Browser-based industrial surface anomaly review demo",
+  "scripts": {
+    "smoke": "node scripts/smoke.js",
+    "smoke:workspace": "node scripts/workspace_smoke.js && node scripts/smoke.js",
+    "visual": "node scripts/visual.js",
+    "calibrate": "node scripts/calibrate.js",
+    "heatmaps": "node scripts/generate_demo_assets.js"
+  },
+  "devDependencies": {
+    "playwright": "1.54.2"
+  }
+}
+

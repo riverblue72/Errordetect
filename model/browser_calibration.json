@@ -1,0 +1,382 @@
+{
+  "normal_scores": [
+    1.3847239583730682,
+    1.4115653502941128,
+    1.4230563974380486,
+    1.4936356168985354,
+    1.514878906011579,
+    1.5372547769546498,
+    1.5698880320787416,
+    1.5803070217370978,
+    1.5916389030218119,
+    1.5945094084739677,
+    1.5961392158269863,
+    1.6803047567605938,
+    1.7177716529369351,
+    1.7226838749647124,
+    1.7296954953670498,
+    1.779946234822271,
+    1.821672840118408,
+    1.8740769308805443,
+    1.8915180939435914,
+    1.9037022739648806,
+    1.9214094674587234,
+    1.9240979874134052,
+    1.9530370491743085,
+    2.0002536755800238,
+    2.004479238986969,
+    2.028242106437682,
+    2.091991014480588,
+    2.1084500682353964,
+    2.1383606576919507,
+    2.1447946929931625,
+    2.1608199977874745,
+    2.179344357252118,
+    2.18870152592659,
+    2.192752277851103,
+    2.1979355120658832,
+    2.2225182068347893,
+    2.2228459763526898,
+    2.2472505176067337,
+    2.2506347155570956,
+    2.2743594217300407,
+    2.2868659853935203,
+    2.3619816374778706,
+    2.401429793834685,
+    2.432192140817642,
+    2.4635998213291157,
+    2.484422804117202,
+    2.516979966163633,
+    2.6296450662612894
+  ],
+  "threshold": 2.477134760141372,
+  "metrics": {
+    "image_auroc": 0.8794642857142857,
+    "defect_detected": 5,
+    "defect_total": 8,
+    "normal_false_alarms": 7,
+    "normal_total": 56
+  },
+  "test_scores": [
+    {
+      "image": "raw/kos02/Part0.jpg",
+      "is_anomaly": false,
+      "score": 2.041741720438003
+    },
+    {
+      "image": "raw/kos02/Part1.jpg",
+      "is_anomaly": false,
+      "score": 2.4172254121303536
+    },
+    {
+      "image": "raw/kos02/Part2.jpg",
+      "is_anomaly": false,
+      "score": 2.1073687684535956
+    },
+    {
+      "image": "raw/kos02/Part3.jpg",
+      "is_anomaly": false,
+      "score": 2.3345638144016188
+    },
+    {
+      "image": "raw/kos02/Part4.jpg",
+      "is_anomaly": false,
+      "score": 2.3827575492858872
+    },
+    {
+      "image": "raw/kos02/Part5.jpg",
+      "is_anomaly": false,
+      "score": 2.244257798194885
+    },
+    {
+      "image": "raw/kos02/Part6.jpg",
+      "is_anomaly": true,
+      "score": 2.2282074534893
+    },
+    {
+      "image": "raw/kos02/Part7.jpg",
+      "is_anomaly": false,
+      "score": 2.1145618379116007
+    },
+    {
+      "image": "raw/kos07/Part0.jpg",
+      "is_anomaly": false,
+      "score": 2.180414553880688
+    },
+    {
+      "image": "raw/kos07/Part1.jpg",
+      "is_anomaly": true,
+      "score": 3.4998693668842287
+    },
+    {
+      "image": "raw/kos07/Part2.jpg",
+      "is_anomaly": false,
+      "score": 2.411323468685146
+    },
+    {
+      "image": "raw/kos07/Part3.jpg",
+      "is_anomaly": false,
+      "score": 2.009902024269101
+    },
+    {
+      "image": "raw/kos07/Part4.jpg",
+      "is_anomaly": false,
+      "score": 2.2534980177879294
+    },
+    {
+      "image": "raw/kos07/Part5.jpg",
+      "is_anomaly": false,
+      "score": 2.0105864071845976
+    },
+    {
+      "image": "raw/kos07/Part6.jpg",
+      "is_anomaly": false,
+      "score": 2.598969578742981
+    },
+    {
+      "image": "raw/kos07/Part7.jpg",
+      "is_anomaly": false,
+      "score": 2.0666435539722428
+    },
+    {
+      "image": "raw/kos08/Part0.jpg",
+      "is_anomaly": false,
+      "score": 1.800332140922546
+    },
+    {
+      "image": "raw/kos08/Part1.jpg",
+      "is_anomaly": false,
+      "score": 2.3951114344596856
+    },
+    {
+      "image": "raw/kos08/Part2.jpg",
+      "is_anomaly": true,
+      "score": 2.1617621326446512
+    },
+    {
+      "image": "raw/kos08/Part3.jpg",
+      "is_anomaly": false,
+      "score": 1.8603872960805878
+    },
+    {
+      "image": "raw/kos08/Part4.jpg",
+      "is_anomaly": false,
+      "score": 1.780502848625183
+    },
+    {
+      "image": "raw/kos08/Part5.jpg",
+      "is_anomaly": false,
+      "score": 1.8593569928407614
+    },
+    {
+      "image": "raw/kos08/Part6.jpg",
+      "is_anomaly": false,
+      "score": 2.136513365507115
+    },
+    {
+      "image": "raw/kos08/Part7.jpg",
+      "is_anomaly": false,
+      "score": 1.8341788804531058
+    },
+    {
+      "image": "raw/kos09/Part0.jpg",
+      "is_anomaly": false,
+      "score": 2.681722571849822
+    },
+    {
+      "image": "raw/kos09/Part1.jpg",
+      "is_anomaly": false,
+      "score": 2.896907021999354
+    },
+    {
+      "image": "raw/kos09/Part2.jpg",
+      "is_anomaly": false,
+      "score": 2.595647500753401
+    },
+    {
+      "image": "raw/kos09/Part3.jpg",
+      "is_anomaly": false,
+      "score": 2.519863175153732
+    },
+    {
+      "image": "raw/kos09/Part4.jpg",
+      "is_anomaly": false,
+      "score": 2.5621000623702996
+    },
+    {
+      "image": "raw/kos09/Part5.jpg",
+      "is_anomaly": false,
+      "score": 2.266816726922988
+    },
+    {
+      "image": "raw/kos09/Part6.jpg",
+      "is_anomaly": true,
+      "score": 3.2001231431960893
+    },
+    {
+      "image": "raw/kos09/Part7.jpg",
+      "is_anomaly": false,
+      "score": 2.707599848508834
+    },
+    {
+      "image": "raw/kos15/Part0.jpg",
+      "is_anomaly": false,
+      "score": 1.7645249211788177
+    },
+    {
+      "image": "raw/kos15/Part1.jpg",
+      "is_anomaly": false,
+      "score": 1.9345302027463889
+    },
+    {
+      "image": "raw/kos15/Part2.jpg",
+      "is_anomaly": false,
+      "score": 1.7536012738943094
+    },
+    {
+      "image": "raw/kos15/Part3.jpg",
+      "is_anomaly": true,
+      "score": 3.419833301305763
+    },
+    {
+      "image": "raw/kos15/Part4.jpg",
+      "is_anomaly": false,
+      "score": 1.9482869231700886
+    },
+    {
+      "image": "raw/kos15/Part5.jpg",
+      "is_anomaly": false,
+      "score": 1.94888382911682
+    },
+    {
+      "image": "raw/kos15/Part6.jpg",
+      "is_anomaly": false,
+      "score": 1.6967846250534036
+    },
+    {
+      "image": "raw/kos15/Part7.jpg",
+      "is_anomaly": false,
+      "score": 1.7817069041728963
+    },
+    {
+      "image": "raw/kos16/Part0.jpg",
+      "is_anomaly": false,
+      "score": 1.9923116129636755
+    },
+    {
+      "image": "raw/kos16/Part1.jpg",
+      "is_anomaly": false,
+      "score": 2.1542550110816956
+    },
+    {
+      "image": "raw/kos16/Part2.jpg",
+      "is_anomaly": false,
+      "score": 1.9709504175186143
+    },
+    {
+      "image": "raw/kos16/Part3.jpg",
+      "is_anomaly": false,
+      "score": 1.9956752914190274
+    },
+    {
+      "image": "raw/kos16/Part4.jpg",
+      "is_anomaly": false,
+      "score": 2.2516187357902506
+    },
+    {
+      "image": "raw/kos16/Part5.jpg",
+      "is_anomaly": true,
+      "score": 2.701547036170959
+    },
+    {
+      "image": "raw/kos16/Part6.jpg",
+      "is_anomaly": false,
+      "score": 2.1071636509895284
+    },
+    {
+      "image": "raw/kos16/Part7.jpg",
+      "is_anomaly": false,
+      "score": 1.8610443621873836
+    },
+    {
+      "image": "raw/kos18/Part0.jpg",
+      "is_anomaly": false,
+      "score": 1.8389472818374628
+    },
+    {
+      "image": "raw/kos18/Part1.jpg",
+      "is_anomaly": false,
+      "score": 2.1050810730457306
+    },
+    {
+      "image": "raw/kos18/Part2.jpg",
+      "is_anomaly": false,
+      "score": 2.1513521826267215
+    },
+    {
+      "image": "raw/kos18/Part3.jpg",
+      "is_anomaly": true,
+      "score": 2.406310727596282
+    },
+    {
+      "image": "raw/kos18/Part4.jpg",
+      "is_anomaly": false,
+      "score": 2.3078105473518358
+    },
+    {
+      "image": "raw/kos18/Part5.jpg",
+      "is_anomaly": false,
+      "score": 2.1140114986896466
+    },
+    {
+      "image": "raw/kos18/Part6.jpg",
+      "is_anomaly": false,
+      "score": 2.0062437915801974
+    },
+    {
+      "image": "raw/kos18/Part7.jpg",
+      "is_anomaly": false,
+      "score": 1.9424564445018762
+    },
+    {
+      "image": "raw/kos41/Part0.jpg",
+      "is_anomaly": false,
+      "score": 2.0590609025955167
+    },
+    {
+      "image": "raw/kos41/Part1.jpg",
+      "is_anomaly": false,
+      "score": 1.8492921733856176
+    },
+    {
+      "image": "raw/kos41/Part2.jpg",
+      "is_anomaly": false,
+      "score": 1.8304572719335548
+    },
+    {
+      "image": "raw/kos41/Part3.jpg",
+      "is_anomaly": false,
+      "score": 1.9045383238792402
+    },
+    {
+      "image": "raw/kos41/Part4.jpg",
+      "is_anomaly": false,
+      "score": 2.052053129673003
+    },
+    {
+      "image": "raw/kos41/Part5.jpg",
+      "is_anomaly": false,
+      "score": 2.195235079526895
+    },
+    {
+      "image": "raw/kos41/Part6.jpg",
+      "is_anomaly": false,
+      "score": 1.8690779864788045
+    },
+    {
+      "image": "raw/kos41/Part7.jpg",
+      "is_anomaly": true,
+      "score": 2.4853074586391366
+    }
+  ]
+}

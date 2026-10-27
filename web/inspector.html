@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Explore held-out industrial surface photos and inspect the model's highlighted regions.">
+  <title>Explore samples | SurfaceTrace</title>
+  <link rel="icon" type="image/svg+xml" href="./favicon.svg">
+  <link rel="stylesheet" href="./site.css">
+  <script src="./anomaly-core.js" defer></script>
+  <script src="./app.js" defer></script>
+</head>
+<body class="inspector-page">
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header inspect-header">
+    <a class="logo" href="./index.html" aria-label="SurfaceTrace home"><span class="logo-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span>SurfaceTrace<small>VISUAL INSPECTION</small></span></a>
+    <nav class="main-nav" aria-label="Main navigation"><a href="./index.html">← Overview</a><span class="nav-current" aria-current="page">Samples</span><a class="nav-cta" href="./workspace.html">Labeling studio ↗</a><span class="header-team">ISM × RIKU</span></nav>
+  </header>
+  <main id="main" class="inspect-main">
+    <div class="inspect-intro">
+      <div><p class="section-kicker">HELD-OUT TEST PHOTOS</p><h1>Inspect the surface.</h1></div>
+      <p class="inspect-prompt">Select a photo to view its anomaly map.</p>
+    </div>
+
+    <div class="inspect-grid">
+      <section class="inspect-card image-card" aria-labelledby="image-heading">
+        <div class="inspect-card-head">
+          <h2 id="image-heading">Photo</h2>
+          <div class="sample-switcher">
+            <button id="prevSample" type="button" aria-label="Previous sample">←</button>
+            <span id="samplePosition" aria-live="polite">—</span>
+            <button id="nextSample" type="button" aria-label="Next sample">→</button>
+          </div>
+        </div>
+        <div class="viewer" id="viewer">
+          <div class="image-wrap" id="imageWrap" hidden>
+            <img id="sourceImage" alt="Selected industrial surface photo">
+            <img id="heatmap" alt="Anomaly heatmap aligned with the photo">
+          </div>
+        </div>
+        <div class="viewer-foot">
+          <label class="range">Highlight <input id="opacity" type="range" min="0" max="100" value="72" aria-label="Heatmap opacity"></label>
+          <span class="legend"><i></i> Unusual area</span>
+        </div>
+      </section>
+
+      <div class="result-column">
+        <section class="inspect-card result-card" aria-labelledby="result-heading">
+          <div class="inspect-card-head"><h2 id="result-heading">Result</h2><span class="file-name" id="sampleName">—</span></div>
+          <div class="result-body">
+            <span class="status" id="status" role="status">Loading</span>
+            <span class="dataset-label" id="datasetLabel"></span>
+            <div class="scoreline"><span class="score" id="score">—</span><span class="scorecaption">Anomaly score<br>Not a probability</span></div>
+            <div class="score-meter" id="scoreMeter" role="img" aria-label="Anomaly score and review threshold">
+              <div class="meter"><span id="meterFill"></span></div>
+              <div class="threshold-marker" id="thresholdMarker" aria-hidden="true" hidden><span id="threshold"></span></div>
+            </div>
+            <p class="assessment" id="assessment"></p>
+          </div>
+        </section>
+        <section class="inspect-card action-card" aria-labelledby="action-heading">
+          <div class="inspect-card-head"><h2 id="action-heading">Next steps</h2></div>
+          <div class="actions"><ol id="actions"></ol></div>
+        </section>
+      </div>
+    </div>
+
+    <section class="inspect-card samples-section" aria-labelledby="samples-heading">
+      <div class="inspect-card-head">
+        <h2 id="samples-heading">Test photos</h2>
+        <div class="sample-filters" role="group" aria-label="Filter dataset labels">
+          <button type="button" data-filter="all" aria-pressed="true">All</button>
+          <button type="button" data-filter="defect" aria-pressed="false">Defect</button>
+          <button type="button" data-filter="normal" aria-pressed="false">Normal</button>
+        </div>
+      </div>
+      <div class="sample-grid" id="samples"></div>
+    </section>
+  </main>
+  <footer class="site-footer"><div class="footer-top"><a class="footer-brand" href="./index.html">SurfaceTrace</a><span>ISM × RIKU</span></div><div class="footer-bottom"><p>© 2026 Hyunsu Go</p><p>Images: <a href="https://www.vicos.si/resources/kolektorsdd/" target="_blank" rel="noopener noreferrer">KolektorSDD · ViCoS Lab</a> · <a href="https://doi.org/10.1007/s10845-019-01476-x" target="_blank" rel="noopener noreferrer">Tabernik et al. (2019)</a> · <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener noreferrer">CC BY-NC-SA 4.0</a></p></div></footer>
+</body>
+</html>

@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="SurfaceTrace 일일 품질 보고서. 검수 결과와 결함 유형을 한눈에 확인하세요.">
+  <title>Daily report | SurfaceTrace</title><link rel="icon" href="./favicon.svg"><link rel="stylesheet" href="./site.css"><link rel="stylesheet" href="./workspace.css">
+  <script src="./workspace-store.js" defer></script><script src="./report.js" defer></script>
+</head>
+<body class="workspace-page report-page">
+  <a class="skip-link" href="#main">본문으로 이동</a>
+  <header class="site-header inspect-header"><a class="logo" href="./index.html" aria-label="SurfaceTrace home"><span class="logo-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span>SurfaceTrace<small>VISUAL INSPECTION</small></span></a><nav class="main-nav" aria-label="Main navigation"><a href="./index.html">Overview</a><a href="./inspect.html">Samples</a><a href="./workspace.html">Labeling studio</a><a class="nav-current" href="./report.html" aria-current="page">Daily report</a></nav></header>
+  <main id="main" class="workspace-main">
+    <div class="workspace-title"><div><p class="section-kicker">YOUR DAY, IN FOCUS</p><h1>오늘의 품질을 한눈에.</h1><p>검수 결과가 보고서로 이어집니다. 반복 알림 대신, 하루의 흐름을 확인하세요.</p></div><div class="workspace-actions"><button class="btn secondary" id="printReport">인쇄 / PDF</button><button class="btn primary" id="exportReport">보고서 내보내기 ↓</button></div></div>
+    <div class="workflow-nav"><a href="./workspace.html"><span>01</span> 라벨링 작업대</a><a class="active" href="./report.html" aria-current="page"><span>02</span> 일일 품질 보고서</a><span class="local-state"><i></i> 검수 결과 연동</span></div>
+    <div class="report-filters"><div><label for="reportDate">등록일</label><input id="reportDate" type="date"><label class="sr-only" for="sourceFilter">데이터 출처</label><select id="sourceFilter"><option value="all">전체 데이터</option><option value="demo">시연 샘플</option><option value="upload">업로드 이미지</option></select><label class="sr-only" for="lotFilter">LOT 필터</label><select id="lotFilter"><option value="all">전체 LOT</option></select></div><span id="reportScope">검수 결과를 불러오는 중</span></div>
+    <div class="report-empty" id="reportEmpty" hidden><span>↗</span><h2>첫 검수부터 시작해 보세요.</h2><p>선택한 조건에 등록된 이미지가 없습니다.</p><a class="btn primary" href="./workspace.html">라벨링 작업대 열기 ↗</a></div>
+    <div id="reportContent">
+      <section class="workspace-stats report-stats" aria-label="일일 품질 지표"><div><span>등록 이미지</span><strong id="reportTotal">0</strong><small>생산량이 아닌 이미지 수</small></div><div><span>검수 완료</span><strong id="reportReviewed">0</strong><small id="reportPending">0건 대기</small></div><div class="stat-accent"><span>확정 결함 이미지</span><strong id="reportDefects">0</strong><small>작업자 판정 기준</small></div><div><span>검수 완료 중 결함 비율</span><strong id="reportRate">—</strong><small>결함 이미지 ÷ 검수 완료 이미지</small></div></section>
+      <div class="report-grid">
+        <section class="work-panel summary-panel"><div class="panel-heading"><div><span class="micro-label">DAILY BRIEF</span><h2>오늘의 검수 요약</h2></div><span class="tag">LIVE SUMMARY</span></div><div class="brief-content"><div class="progress-ring" id="progressRing"><div><strong id="progressPercent">0%</strong><span>검수 완료</span></div></div><div class="brief-copy"><h3 id="briefHeadline">검수할 이미지가 준비되었습니다.</h3><p id="briefDescription"></p><a class="inline-link" href="./workspace.html?filter=pending">남은 이미지 검수하기 →</a></div></div><div class="summary-bottom"><span><i class="dot green"></i> 정상 <strong id="normalTotal">0</strong></span><span><i class="dot coral"></i> 결함 <strong id="defectTotal">0</strong></span><span><i class="dot gray"></i> 미확정 <strong id="waitingTotal">0</strong></span></div></section>
+        <section class="work-panel"><div class="panel-heading"><div><span class="micro-label">DEFECT BREAKDOWN</span><h2>어떤 결함이 있었나요?</h2></div><span class="subtle">확정 라벨 기준</span></div><div class="defect-bars" id="defectBars"></div></section>
+        <section class="work-panel distribution-panel"><div class="panel-heading"><div><span class="micro-label">MODEL SIGNALS</span><h2>AI가 검토를 요청한 이미지</h2></div><span class="subtle">이상 점수 분포</span></div><div class="distribution-chart" id="scoreDistribution"></div><div class="chart-legend"><span><i class="dot lavender"></i> 기준 미만</span><span><i class="dot coral"></i> 검토 요청</span><span>점수는 불량 확률이 아닙니다.</span></div></section>
+        <section class="work-panel attention-panel"><div class="panel-heading"><div><span class="micro-label">NEXT TO REVIEW</span><h2>다음 검수 포인트</h2></div><span class="attention-symbol">↗</span></div><div id="attentionList" class="attention-list"></div></section>
+      </div>
+      <section class="work-panel history-panel"><div class="panel-heading"><div><span class="micro-label">TRACEABLE DECISIONS</span><h2>검수 기록</h2></div><span class="subtle">최근 확정 순 · 수정 시 최신 판정 반영</span></div><div class="table-wrap"><table><thead><tr><th>이미지</th><th>데이터 / LOT</th><th>확정 라벨</th><th>영역 수</th><th>검수 시각</th><th></th></tr></thead><tbody id="reviewHistory"></tbody></table></div><p class="table-empty" id="historyEmpty">아직 확정된 라벨이 없습니다. 작업대에서 첫 라벨을 확정해 보세요.</p></section>
+    </div>
+    <p class="workspace-footnote">선택한 날짜에 등록된 이미지의 최신 검수 상태를 집계합니다. 시연 샘플과 업로드 데이터를 필터로 구분할 수 있습니다.</p>
+  </main>
+  <footer class="site-footer compact-footer"><div class="footer-top"><a class="footer-brand" href="./index.html">SurfaceTrace</a><span>ISM × RIKU</span></div><div class="footer-bottom"><p>© 2026 Hyunsu Go</p><p>Images: <a href="https://www.vicos.si/resources/kolektorsdd/">KolektorSDD · ViCoS Lab</a> · <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a></p></div></footer><div class="toast" id="toast" role="status" hidden></div>
+</body>
+</html>

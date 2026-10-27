@@ -1,0 +1,88 @@
+"use strict";
+const assert=require("node:assert/strict");
+const fs=require("node:fs/promises");
+const path=require("node:path");
+const {chromium}=require("playwright");
+
+(async()=>{
+  const base=process.env.SITE_URL||"http://127.0.0.1:8766/";
+  const output=process.env.QA_OUTPUT||"/private/tmp/surface-trace-qa";
+  await fs.mkdir(output,{recursive:true});
+  const browser=await chromium.launch({headless:true,executablePath:process.env.CHROME_PATH||undefined});
+  const context=await browser.newContext({viewport:{width:1512,height:1100},acceptDownloads:true});
+  const page=await context.newPage(),errors=[];
+  page.on("pageerror",error=>errors.push(error.message));
+  const all=()=>page.evaluate(async()=>(await SurfaceStore.all()).map(({blob,...item})=>({...item,blob:!!blob})));
+  const waitForItems=async(predicate)=>{
+    const deadline=Date.now()+90000;
+    while(Date.now()<deadline){const data=await all();if(predicate(data))return data;await new Promise(resolve=>setTimeout(resolve,100));}
+    throw new Error("Timed out waiting for persisted workspace state");
+  };
+  const count=async id=>(await all()).find(item=>item.id===id).boxes.length;
+  const clickItem=id=>page.locator(`.queue-item[data-id="${id}"]`).click();
+  try{
+    await page.goto(new URL("workspace.html",base).href);
+    await page.waitForFunction(()=>!!window.SurfaceStore);
+    await waitForItems(items=>items.length===12&&items.every(item=>item.analysis));
+    await page.waitForFunction(()=>!document.querySelector("#analyzeBatch").disabled);
+    const initial=await all();assert.equal(initial.length,12);assert(initial.every(i=>i.status==="draft"));
+    const first=initial.find(i=>i.id==="demo-1");assert(first.analysis.score>2.5&&first.analysis.score<4.5);
+    assert(first.boxes.length>0,"The defect sample must have a visible model proposal");
+    await clickItem(first.id);
+    await page.screenshot({path:path.join(output,"studio-initial.png"),fullPage:true});
+    const before=await count(first.id);
+    await page.locator("#drawTool").click();
+    const canvas=await page.locator("#annotationCanvas").boundingBox();
+    await page.mouse.move(canvas.x+canvas.width*.13,canvas.y+canvas.height*.15);
+    await page.mouse.down();await page.mouse.move(canvas.x+canvas.width*.35,canvas.y+canvas.height*.5,{steps:10});await page.mouse.up();
+    await waitForItems(items=>items.find(i=>i.id===first.id).boxes.length===before+1);
+    await page.locator("#selectTool").click();
+    const newBox=page.locator("rect.region-box").last(),bounds=await newBox.boundingBox();
+    await page.mouse.move(bounds.x+bounds.width*.5,bounds.y+bounds.height*.5);await page.mouse.down();await page.mouse.move(bounds.x+bounds.width*.5+20,bounds.y+bounds.height*.5+10,{steps:6});await page.mouse.up();
+    await waitForItems(items=>items.find(i=>i.id===first.id).boxes.at(-1).origin==="edited");
+    const handle=page.locator('rect.box-handle[data-corner="se"]');const handleBounds=await handle.boundingBox();
+    await page.mouse.move(handleBounds.x+handleBounds.width/2,handleBounds.y+handleBounds.height/2);await page.mouse.down();await page.mouse.move(handleBounds.x+handleBounds.width/2+12,handleBounds.y+handleBounds.height/2+8,{steps:5});await page.mouse.up();
+    const resized=(await all()).find(i=>i.id===first.id).boxes.at(-1);assert(resized.w>.22);assert(resized.h>.35);
+    await page.locator("#deleteBox").click();assert.equal(await count(first.id),before);
+    await page.locator("#undoEdit").click();assert.equal(await count(first.id),before+1);
+    await page.locator("#defectLabel").selectOption("scratch");await page.locator("#severity").selectOption("medium");await page.locator("#reviewNote").fill("검수 시연: 영역을 보완하고 스크래치로 확정");
+    await page.locator("#confirmLabel").click();await page.waitForFunction(()=>document.querySelector("#reviewedCount").textContent==="1");
+    const originalDraft=(await all()).find(i=>i.id===first.id).analysis.boxes;
+    await page.reload();await page.waitForFunction(()=>document.querySelector("#reviewedCount").textContent==="1");await clickItem(first.id);
+    assert.equal(await page.locator("#defectLabel").inputValue(),"scratch");assert.equal(await count(first.id),before+1);
+    assert.deepEqual((await all()).find(i=>i.id===first.id).analysis.boxes,originalDraft,"Editing must preserve the model proposal");
+    const second=initial.find(i=>i.id!==first.id);await clickItem(second.id);await page.locator("#markNormal").click();await page.waitForFunction(()=>document.querySelector("#reviewedCount").textContent==="2");
+    const normal=(await all()).find(i=>i.id===second.id);assert.equal(normal.boxes.length,0);assert.equal(normal.label,"normal");
+    const third=initial.find(i=>i.id!==first.id&&i.id!==second.id&&i.boxes.length>0);await clickItem(third.id);await page.locator("#defectLabel").selectOption("new");await page.locator("#confirmLabel").click();await page.waitForFunction(()=>document.querySelector("#reviewedCount").textContent==="3");
+    const downloadPromise=page.waitForEvent("download");await page.locator("#exportDataset").click();const download=await downloadPromise;
+    const exported=JSON.parse(await fs.readFile(await download.path(),"utf8"));assert.equal(exported.items.length,3);assert(exported.items.every(i=>i.status==="confirmed"));assert.equal(exported.items.find(i=>i.id===first.id).annotation.boxes.length,before+1);
+    await clickItem(first.id);await page.screenshot({path:path.join(output,"studio.png"),fullPage:true});
+    await page.goto(new URL("report.html",base).href);await page.waitForFunction(()=>document.querySelector("#reportReviewed").textContent==="3");
+    assert.equal(await page.locator("#reportTotal").textContent(),"12");assert.equal(await page.locator("#reportDefects").textContent(),"2");assert.equal(await page.locator("#reportRate").textContent(),"66.7%");assert.equal(await page.locator("#reviewHistory tr").count(),3);
+    await page.screenshot({path:path.join(output,"report.png"),fullPage:true});
+    const reportDownloadPromise=page.waitForEvent("download");await page.locator("#exportReport").click();const reportDownload=await reportDownloadPromise;const report=JSON.parse(await fs.readFile(await reportDownload.path(),"utf8"));assert.equal(report.metrics.reviewedImages,3);assert.equal(report.metrics.confirmedDefectImages,2);
+    await page.locator("#sourceFilter").selectOption("upload");assert(await page.locator("#reportEmpty").isVisible());
+    await page.locator("#sourceFilter").selectOption("all");
+    await page.goto(new URL(`workspace.html?item=${first.id}`,base).href);await page.waitForFunction(()=>document.querySelector("#reviewState").textContent==="검수 완료");
+    await page.locator("#reviewNote").fill("수정된 라벨은 재검수 필요");await page.waitForFunction(()=>document.querySelector("#reviewedCount").textContent==="2");
+    await page.locator("#confirmLabel").click();await page.waitForFunction(()=>document.querySelector("#reviewedCount").textContent==="3");
+    await page.locator("#uploadFiles").setInputFiles(path.join(__dirname,"../web/samples/sample-04.jpg"));
+    await waitForItems(items=>items.find(i=>i.source==="upload")?.analysis);
+    const upload=(await all()).find(i=>i.source==="upload");assert.equal(upload.rotate,false);assert(upload.blob);assert.equal(await page.locator("#totalCount").textContent(),"13");
+    await clickItem(upload.id);await page.locator("#markNormal").click();
+    await page.locator("#resetDemo").click();await page.locator('#resetDialog button[value="reset"]').click();
+    await waitForItems(data=>data.length===13&&data.filter(i=>i.source==="demo").every(i=>i.status!=="confirmed"));
+    assert.equal((await all()).find(i=>i.id===upload.id).status,"confirmed");
+    await page.waitForFunction(()=>!document.querySelector("#analyzeBatch").disabled,null,{timeout:60000});
+    await page.reload();await page.waitForFunction(()=>document.querySelector("#totalCount").textContent==="13");assert((await all()).find(i=>i.id===upload.id).analysis);
+    await page.setViewportSize({width:390,height:844});await page.screenshot({path:path.join(output,"studio-mobile.png"),fullPage:true});
+    assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),"Workspace must not overflow on mobile");
+    await page.goto(new URL("report.html",base).href);await page.waitForFunction(()=>document.querySelector("#reportTotal").textContent==="13");await page.screenshot({path:path.join(output,"report-mobile.png"),fullPage:true});
+    assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),"Report must not overflow on mobile");
+    await page.setViewportSize({width:1512,height:1000});await page.goto(base);await page.screenshot({path:path.join(output,"landing.png"),fullPage:true});
+    assert.equal(await page.locator(".method-card").count(),9);assert(await page.getByRole("link",{name:/라벨링 시연 시작/}).isVisible());
+    assert.deepEqual(errors,[]);
+    console.log(JSON.stringify({status:"passed",initialImages:12,confirmedBeforeReset:3,exportedLabels:exported.items.length,uploadPreservedAfterReset:true,editing:"draw/move/resize/delete/undo",reloadPersistence:true,mobileOverflow:false,consoleErrors:errors,screenshots:output}));
+  }catch(error){await page.screenshot({path:path.join(output,"failure.png"),fullPage:true}).catch(()=>{});throw error;}
+  finally{await browser.close();}
+})().catch(error=>{console.error(error);process.exitCode=1;});

@@ -1,0 +1,12 @@
+__pycache__/
+*.py[cod]
+.venv/
+node_modules/
+out/
+data/ksdd/raw/
+.DS_Store
+.env
+.env.*
+!.env.example
+.openai/
+
