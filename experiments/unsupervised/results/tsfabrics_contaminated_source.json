@@ -1,0 +1,442 @@
+{
+  "protocol": {
+    "source": "T1_S148_I108_2",
+    "targets": [
+      "T1_S174_I111_1",
+      "T1_S164_I36_1",
+      "T1_S478_I118_2"
+    ],
+    "source_limit": 4096,
+    "startup": 512,
+    "calibration": [
+      512,
+      2048
+    ],
+    "source_test": [
+      2112,
+      4096
+    ],
+    "target_adapt": 512,
+    "target_calibration_end": 768,
+    "target_evaluation_start": 832,
+    "label_use": "Labels select oracle reference and compute evaluation only; operational banks and thresholds use none."
+  },
+  "startup": {
+    "frames": 512,
+    "actual_defects": 21,
+    "selected_frames": 308,
+    "selected_actual_defects": 1,
+    "reference_vectors": 7392
+  },
+  "drift": {
+    "window": 128,
+    "step": 32,
+    "threshold": 0.04925403356552125,
+    "source_heldout_first_alarm": null
+  },
+  "methods": {
+    "mutual": {
+      "threshold": 0.4821273803710938,
+      "source_heldout": {
+        "threshold": 0.4821273803710938,
+        "tp": 6,
+        "fp": 1,
+        "fn": 64,
+        "tn": 1913,
+        "recall": 0.08571428571428572,
+        "precision": 0.8571428571428571,
+        "false_alarms_per_10000_normals": 5.2246603970741905,
+        "count": 1984,
+        "anomalies": 70,
+        "auroc": 0.9878563964770861,
+        "average_precision": 0.7416100526036199,
+        "excluded_csv_mask_conflicts": 0,
+        "defect_top_1pct_region_hit": 1.0,
+        "normal_cutline_count": 85,
+        "normal_cutline_alert_rate": 0.011764705882352941
+      },
+      "targets": {
+        "T1_S174_I111_1": {
+          "frozen": {
+            "threshold": 0.4821273803710938,
+            "tp": 0,
+            "fp": 1,
+            "fn": 0,
+            "tn": 3263,
+            "recall": NaN,
+            "precision": 0.0,
+            "false_alarms_per_10000_normals": 3.0637254901960786,
+            "count": 3264,
+            "anomalies": 0,
+            "auroc": NaN,
+            "average_precision": NaN,
+            "excluded_csv_mask_conflicts": 0,
+            "normal_cutline_count": 140,
+            "normal_cutline_alert_rate": 0.007142857142857143
+          },
+          "scoring_seconds": 3.5601434860145673,
+          "drift_first_alarm_frame": 2784,
+          "candidate_adaptation": {
+            "threshold": 0.4593083530664444,
+            "tp": 0,
+            "fp": 43,
+            "fn": 0,
+            "tn": 3221,
+            "recall": NaN,
+            "precision": 0.0,
+            "false_alarms_per_10000_normals": 131.74019607843138,
+            "count": 3264,
+            "anomalies": 0,
+            "auroc": NaN,
+            "average_precision": NaN,
+            "excluded_csv_mask_conflicts": 0,
+            "normal_cutline_count": 140,
+            "normal_cutline_alert_rate": 0.30714285714285716,
+            "selected_frames": 308,
+            "selected_actual_defects": 0
+          }
+        },
+        "T1_S164_I36_1": {
+          "frozen": {
+            "threshold": 0.4821273803710938,
+            "tp": 0,
+            "fp": 2,
+            "fn": 0,
+            "tn": 973,
+            "recall": NaN,
+            "precision": 0.0,
+            "false_alarms_per_10000_normals": 20.512820512820515,
+            "count": 975,
+            "anomalies": 0,
+            "auroc": NaN,
+            "average_precision": NaN,
+            "excluded_csv_mask_conflicts": 0,
+            "normal_cutline_count": 45,
+            "normal_cutline_alert_rate": 0.044444444444444446
+          },
+          "scoring_seconds": 1.5692770240129903,
+          "drift_first_alarm_frame": 192,
+          "candidate_adaptation": {
+            "threshold": 0.40644949302077293,
+            "tp": 0,
+            "fp": 3,
+            "fn": 0,
+            "tn": 972,
+            "recall": NaN,
+            "precision": 0.0,
+            "false_alarms_per_10000_normals": 30.76923076923077,
+            "count": 975,
+            "anomalies": 0,
+            "auroc": NaN,
+            "average_precision": NaN,
+            "excluded_csv_mask_conflicts": 0,
+            "normal_cutline_count": 45,
+            "normal_cutline_alert_rate": 0.06666666666666667,
+            "selected_frames": 308,
+            "selected_actual_defects": 0
+          }
+        },
+        "T1_S478_I118_2": {
+          "frozen": {
+            "threshold": 0.4821273803710938,
+            "tp": 13,
+            "fp": 0,
+            "fn": 69,
+            "tn": 2290,
+            "recall": 0.15853658536585366,
+            "precision": 1.0,
+            "false_alarms_per_10000_normals": 0.0,
+            "count": 2372,
+            "anomalies": 82,
+            "auroc": 0.9925710938332091,
+            "average_precision": 0.888874266331514,
+            "excluded_csv_mask_conflicts": 0,
+            "defect_top_1pct_region_hit": 1.0,
+            "normal_cutline_count": 106,
+            "normal_cutline_alert_rate": 0.0
+          },
+          "scoring_seconds": 2.804222952981945,
+          "drift_first_alarm_frame": 192,
+          "candidate_adaptation": {
+            "threshold": 0.47652674242854115,
+            "tp": 5,
+            "fp": 0,
+            "fn": 77,
+            "tn": 2290,
+            "recall": 0.06097560975609756,
+            "precision": 1.0,
+            "false_alarms_per_10000_normals": 0.0,
+            "count": 2372,
+            "anomalies": 82,
+            "auroc": 0.9943497710086271,
+            "average_precision": 0.906987646366481,
+            "excluded_csv_mask_conflicts": 0,
+            "defect_top_1pct_region_hit": 1.0,
+            "normal_cutline_count": 106,
+            "normal_cutline_alert_rate": 0.0,
+            "selected_frames": 308,
+            "selected_actual_defects": 0
+          }
+        }
+      }
+    },
+    "all_unlabeled": {
+      "threshold": 0.2102183233946563,
+      "source_heldout": {
+        "threshold": 0.2102183233946563,
+        "tp": 2,
+        "fp": 9,
+        "fn": 68,
+        "tn": 1905,
+        "recall": 0.02857142857142857,
+        "precision": 0.18181818181818182,
+        "false_alarms_per_10000_normals": 47.02194357366771,
+        "count": 1984,
+        "anomalies": 70,
+        "auroc": 0.9008658008658008,
+        "average_precision": 0.1628999193848236,
+        "excluded_csv_mask_conflicts": 0,
+        "defect_top_1pct_region_hit": 0.6142857142857143,
+        "normal_cutline_count": 85,
+        "normal_cutline_alert_rate": 0.047058823529411764
+      },
+      "targets": {
+        "T1_S174_I111_1": {
+          "frozen": {
+            "threshold": 0.2102183233946563,
+            "tp": 0,
+            "fp": 21,
+            "fn": 0,
+            "tn": 3243,
+            "recall": NaN,
+            "precision": 0.0,
+            "false_alarms_per_10000_normals": 64.33823529411765,
+            "count": 3264,
+            "anomalies": 0,
+            "auroc": NaN,
+            "average_precision": NaN,
+            "excluded_csv_mask_conflicts": 0,
+            "normal_cutline_count": 140,
+            "normal_cutline_alert_rate": 0.03571428571428571
+          },
+          "scoring_seconds": 3.586633922008332,
+          "drift_first_alarm_frame": 2784
+        },
+        "T1_S164_I36_1": {
+          "frozen": {
+            "threshold": 0.2102183233946563,
+            "tp": 0,
+            "fp": 957,
+            "fn": 0,
+            "tn": 18,
+            "recall": NaN,
+            "precision": 0.0,
+            "false_alarms_per_10000_normals": 9815.384615384615,
+            "count": 975,
+            "anomalies": 0,
+            "auroc": NaN,
+            "average_precision": NaN,
+            "excluded_csv_mask_conflicts": 0,
+            "normal_cutline_count": 45,
+            "normal_cutline_alert_rate": 1.0
+          },
+          "scoring_seconds": 1.5931070829974487,
+          "drift_first_alarm_frame": 192
+        },
+        "T1_S478_I118_2": {
+          "frozen": {
+            "threshold": 0.2102183233946563,
+            "tp": 73,
+            "fp": 1518,
+            "fn": 9,
+            "tn": 772,
+            "recall": 0.8902439024390244,
+            "precision": 0.0458830923947203,
+            "false_alarms_per_10000_normals": 6628.82096069869,
+            "count": 2372,
+            "anomalies": 82,
+            "auroc": 0.6304398764511663,
+            "average_precision": 0.055709699030374336,
+            "excluded_csv_mask_conflicts": 0,
+            "defect_top_1pct_region_hit": 0.8170731707317073,
+            "normal_cutline_count": 106,
+            "normal_cutline_alert_rate": 0.9716981132075472
+          },
+          "scoring_seconds": 2.782069591979962,
+          "drift_first_alarm_frame": 192
+        }
+      }
+    },
+    "oracle_normal": {
+      "threshold": 0.21027159541845325,
+      "source_heldout": {
+        "threshold": 0.21027159541845325,
+        "tp": 5,
+        "fp": 12,
+        "fn": 65,
+        "tn": 1902,
+        "recall": 0.07142857142857142,
+        "precision": 0.29411764705882354,
+        "false_alarms_per_10000_normals": 62.69592476489028,
+        "count": 1984,
+        "anomalies": 70,
+        "auroc": 0.9779967159277504,
+        "average_precision": 0.47663594559208183,
+        "excluded_csv_mask_conflicts": 0,
+        "defect_top_1pct_region_hit": 0.6857142857142857,
+        "normal_cutline_count": 85,
+        "normal_cutline_alert_rate": 0.047058823529411764
+      },
+      "targets": {
+        "T1_S174_I111_1": {
+          "frozen": {
+            "threshold": 0.21027159541845325,
+            "tp": 0,
+            "fp": 11,
+            "fn": 0,
+            "tn": 3253,
+            "recall": NaN,
+            "precision": 0.0,
+            "false_alarms_per_10000_normals": 33.700980392156865,
+            "count": 3264,
+            "anomalies": 0,
+            "auroc": NaN,
+            "average_precision": NaN,
+            "excluded_csv_mask_conflicts": 0,
+            "normal_cutline_count": 140,
+            "normal_cutline_alert_rate": 0.014285714285714285
+          },
+          "scoring_seconds": 3.557272767997347,
+          "drift_first_alarm_frame": 2784
+        },
+        "T1_S164_I36_1": {
+          "frozen": {
+            "threshold": 0.21027159541845325,
+            "tp": 0,
+            "fp": 955,
+            "fn": 0,
+            "tn": 20,
+            "recall": NaN,
+            "precision": 0.0,
+            "false_alarms_per_10000_normals": 9794.871794871795,
+            "count": 975,
+            "anomalies": 0,
+            "auroc": NaN,
+            "average_precision": NaN,
+            "excluded_csv_mask_conflicts": 0,
+            "normal_cutline_count": 45,
+            "normal_cutline_alert_rate": 1.0
+          },
+          "scoring_seconds": 1.567988502967637,
+          "drift_first_alarm_frame": 192
+        },
+        "T1_S478_I118_2": {
+          "frozen": {
+            "threshold": 0.21027159541845325,
+            "tp": 82,
+            "fp": 1757,
+            "fn": 0,
+            "tn": 533,
+            "recall": 1.0,
+            "precision": 0.044589450788472,
+            "false_alarms_per_10000_normals": 7672.489082969432,
+            "count": 2372,
+            "anomalies": 82,
+            "auroc": 0.7694269890297156,
+            "average_precision": 0.1070224669441241,
+            "excluded_csv_mask_conflicts": 0,
+            "defect_top_1pct_region_hit": 0.9390243902439024,
+            "normal_cutline_count": 106,
+            "normal_cutline_alert_rate": 0.9905660377358491
+          },
+          "scoring_seconds": 2.7800315089989454,
+          "drift_first_alarm_frame": 192
+        }
+      }
+    },
+    "classic_8_feature": {
+      "threshold": 4.364496326446535,
+      "source_heldout": {
+        "threshold": 4.364496326446535,
+        "tp": 11,
+        "fp": 0,
+        "fn": 59,
+        "tn": 1914,
+        "recall": 0.15714285714285714,
+        "precision": 1.0,
+        "false_alarms_per_10000_normals": 0.0,
+        "count": 1984,
+        "anomalies": 70,
+        "auroc": 0.9960964323033289,
+        "average_precision": 0.9064956363317631,
+        "excluded_csv_mask_conflicts": 0,
+        "defect_top_1pct_region_hit": 1.0,
+        "normal_cutline_count": 85,
+        "normal_cutline_alert_rate": 0.0
+      },
+      "targets": {
+        "T1_S174_I111_1": {
+          "frozen": {
+            "threshold": 4.364496326446535,
+            "tp": 0,
+            "fp": 8,
+            "fn": 0,
+            "tn": 3256,
+            "recall": NaN,
+            "precision": 0.0,
+            "false_alarms_per_10000_normals": 24.50980392156863,
+            "count": 3264,
+            "anomalies": 0,
+            "auroc": NaN,
+            "average_precision": NaN,
+            "excluded_csv_mask_conflicts": 0,
+            "normal_cutline_count": 140,
+            "normal_cutline_alert_rate": 0.0
+          },
+          "scoring_seconds": 0.3578951960080303
+        },
+        "T1_S164_I36_1": {
+          "frozen": {
+            "threshold": 4.364496326446535,
+            "tp": 0,
+            "fp": 601,
+            "fn": 0,
+            "tn": 374,
+            "recall": NaN,
+            "precision": 0.0,
+            "false_alarms_per_10000_normals": 6164.102564102564,
+            "count": 975,
+            "anomalies": 0,
+            "auroc": NaN,
+            "average_precision": NaN,
+            "excluded_csv_mask_conflicts": 0,
+            "normal_cutline_count": 45,
+            "normal_cutline_alert_rate": 0.26666666666666666
+          },
+          "scoring_seconds": 0.1584868099889718
+        },
+        "T1_S478_I118_2": {
+          "frozen": {
+            "threshold": 4.364496326446535,
+            "tp": 0,
+            "fp": 0,
+            "fn": 82,
+            "tn": 2290,
+            "recall": 0.0,
+            "precision": NaN,
+            "false_alarms_per_10000_normals": 0.0,
+            "count": 2372,
+            "anomalies": 82,
+            "auroc": 0.9535999573969539,
+            "average_precision": 0.44451742557103485,
+            "excluded_csv_mask_conflicts": 0,
+            "defect_top_1pct_region_hit": 0.8170731707317073,
+            "normal_cutline_count": 106,
+            "normal_cutline_alert_rate": 0.0
+          },
+          "scoring_seconds": 0.34030128800077364
+        }
+      }
+    }
+  }
+}

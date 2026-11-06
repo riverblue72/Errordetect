@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 238" role="img" aria-labelledby="title desc">
+<title id="title">Visual change across two production runs</title>
+<desc id="desc">The last 16 consecutive reference windows and first 16 windows of a separate changed normal run are plotted at equal intervals. The reference run stays below the alert limit. The first three changed-run windows exceed it, confirming an alert at frame 192; the chart continues through frame 608.</desc>
+<style>
+text{font-family:Segoe UI,Arial,sans-serif}
+.heading{fill:#59698f;font-size:11px;letter-spacing:1px}
+.axis{fill:#75829b;font-size:10px}
+.alert{fill:#ba676c;font-size:10px;letter-spacing:1px}
+</style>
+<text x="54" y="26" class="heading">REFERENCE RUN</text>
+<text x="548" y="26" text-anchor="end" class="heading">NEW RUN</text>
+<line x1="301.0" x2="301.0" y1="49" y2="189" stroke="#cbd2e1" stroke-dasharray="4 5"/>
+<line x1="54" x2="548" y1="57.0" y2="57.0" stroke="#dce2ef"/>
+<text x="44" y="60.0" text-anchor="end" class="axis">1</text>
+<line x1="54" x2="548" y1="118.5" y2="118.5" stroke="#dce2ef"/>
+<text x="44" y="121.5" text-anchor="end" class="axis">0.5</text>
+<line x1="54" x2="548" y1="180.0" y2="180.0" stroke="#dce2ef"/>
+<text x="44" y="183.0" text-anchor="end" class="axis">0</text>
+<line x1="54" x2="548" y1="172.1" y2="172.1" stroke="#ba8f71" stroke-width="1.5" stroke-dasharray="5 4"/>
+<text x="54" y="164.1" class="axis">ALERT LIMIT · 0.064</text>
+<polyline points="54.0,176.9 69.9,178.1 85.9,177.6 101.8,177.6 117.7,178.5 133.7,177.8 149.6,177.1 165.5,178.3 181.5,178.0 197.4,177.4 213.4,178.2 229.3,177.1 245.2,178.0 261.2,177.4 277.1,177.2 293.0,178.1" fill="none" stroke="#7788bf" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<polyline points="293.0,178.1 309.0,65.7 324.9,64.2 340.8,68.1 356.8,70.2 372.7,65.7 388.6,66.6 404.6,65.5 420.5,66.0 436.5,68.3 452.4,65.7 468.3,63.5 484.3,67.0 500.2,64.5 516.1,67.5 532.1,70.8 548.0,64.5" fill="none" stroke="#d98387" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="54.0" cy="176.9" r="1.7" fill="#7788bf"/>
+<circle cx="69.9" cy="178.1" r="1.7" fill="#7788bf"/>
+<circle cx="85.9" cy="177.6" r="1.7" fill="#7788bf"/>
+<circle cx="101.8" cy="177.6" r="1.7" fill="#7788bf"/>
+<circle cx="117.7" cy="178.5" r="1.7" fill="#7788bf"/>
+<circle cx="133.7" cy="177.8" r="1.7" fill="#7788bf"/>
+<circle cx="149.6" cy="177.1" r="1.7" fill="#7788bf"/>
+<circle cx="165.5" cy="178.3" r="1.7" fill="#7788bf"/>
+<circle cx="181.5" cy="178.0" r="1.7" fill="#7788bf"/>
+<circle cx="197.4" cy="177.4" r="1.7" fill="#7788bf"/>
+<circle cx="213.4" cy="178.2" r="1.7" fill="#7788bf"/>
+<circle cx="229.3" cy="177.1" r="1.7" fill="#7788bf"/>
+<circle cx="245.2" cy="178.0" r="1.7" fill="#7788bf"/>
+<circle cx="261.2" cy="177.4" r="1.7" fill="#7788bf"/>
+<circle cx="277.1" cy="177.2" r="1.7" fill="#7788bf"/>
+<circle cx="293.0" cy="178.1" r="1.7" fill="#7788bf"/>
+<circle cx="309.0" cy="65.7" r="1.7" fill="#d98387"/>
+<circle cx="324.9" cy="64.2" r="1.7" fill="#d98387"/>
+<circle cx="340.8" cy="68.1" r="1.7" fill="#d98387"/>
+<circle cx="356.8" cy="70.2" r="1.7" fill="#d98387"/>
+<circle cx="372.7" cy="65.7" r="1.7" fill="#d98387"/>
+<circle cx="388.6" cy="66.6" r="1.7" fill="#d98387"/>
+<circle cx="404.6" cy="65.5" r="1.7" fill="#d98387"/>
+<circle cx="420.5" cy="66.0" r="1.7" fill="#d98387"/>
+<circle cx="436.5" cy="68.3" r="1.7" fill="#d98387"/>
+<circle cx="452.4" cy="65.7" r="1.7" fill="#d98387"/>
+<circle cx="468.3" cy="63.5" r="1.7" fill="#d98387"/>
+<circle cx="484.3" cy="67.0" r="1.7" fill="#d98387"/>
+<circle cx="500.2" cy="64.5" r="1.7" fill="#d98387"/>
+<circle cx="516.1" cy="67.5" r="1.7" fill="#d98387"/>
+<circle cx="532.1" cy="70.8" r="1.7" fill="#d98387"/>
+<circle cx="548.0" cy="64.5" r="1.7" fill="#d98387"/>
+<circle cx="340.8" cy="68.1" r="8" fill="none" stroke="#ba676c" stroke-width="1.5"/>
+<text x="340.8" y="202" text-anchor="middle" class="axis">192</text>
+<text x="340.8" y="225" text-anchor="middle" class="alert">ALERT</text>
+<text x="548" y="202" text-anchor="end" class="axis">608</text>
+</svg>

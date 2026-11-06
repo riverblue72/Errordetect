@@ -1,0 +1,142 @@
+{
+  "protocol": {
+    "target": "T1_S148_I108_2",
+    "source": "T1_S174_I111_1",
+    "warmup": [
+      680,
+      696
+    ],
+    "stream": [
+      2240,
+      2368
+    ],
+    "batched": [
+      [
+        704,
+        1216
+      ],
+      [
+        1216,
+        1728
+      ],
+      [
+        1728,
+        2240
+      ]
+    ],
+    "image_size": [
+      448,
+      364
+    ],
+    "model": "frozen DINOv2-S/14",
+    "scorer": "source PatchScorer, k=3, top 1% patch distances",
+    "reference_images": 308,
+    "reference_vectors": 7392,
+    "zip_read_and_decode_included": true,
+    "excluded": [
+      "ZIP index construction",
+      "model load",
+      "reference build",
+      "warmup",
+      "camera capture",
+      "change detector",
+      "UI and export"
+    ],
+    "labels_used": false
+  },
+  "environment": {
+    "gpu": "NVIDIA GeForce RTX 3090",
+    "torch": "2.2.2+cu118",
+    "cuda_runtime": "11.8",
+    "python": "3.10.12",
+    "numpy": "1.24.1",
+    "pillow": "9.0.1",
+    "peak_cuda_allocated_bytes": 311807488,
+    "peak_cuda_reserved_bytes": 461373440
+  },
+  "batched": [
+    {
+      "zero_based_range": [
+        704,
+        1216
+      ],
+      "frames": 512,
+      "batch_size": 8,
+      "elapsed_s": 4.84906188302557,
+      "frames_per_s": 105.58743368326284,
+      "phase_elapsed_s": {
+        "decode": 0.6579592078633141,
+        "encode": 3.759723267983645,
+        "score": 0.4293206879810896,
+        "total": 4.847003163828049
+      }
+    },
+    {
+      "zero_based_range": [
+        1216,
+        1728
+      ],
+      "frames": 512,
+      "batch_size": 8,
+      "elapsed_s": 4.860112430003937,
+      "frames_per_s": 105.347357159716,
+      "phase_elapsed_s": {
+        "decode": 0.6646110989968292,
+        "encode": 3.7650604240770917,
+        "score": 0.42839339587953873,
+        "total": 4.85806491895346
+      }
+    },
+    {
+      "zero_based_range": [
+        1728,
+        2240
+      ],
+      "frames": 512,
+      "batch_size": 8,
+      "elapsed_s": 4.853796526003862,
+      "frames_per_s": 105.48443826538613,
+      "phase_elapsed_s": {
+        "decode": 0.6592538238910493,
+        "encode": 3.7635722020058893,
+        "score": 0.4289060340379365,
+        "total": 4.851732059934875
+      }
+    }
+  ],
+  "batched_median_frames_per_s": 105.48443826538613,
+  "streaming": {
+    "zero_based_range": [
+      2240,
+      2368
+    ],
+    "frames": 128,
+    "batch_size": 1,
+    "elapsed_s": 1.7966389139764942,
+    "frames_per_s": 71.24414316324591,
+    "phase_elapsed_s": {
+      "decode": 0.17436415891279466,
+      "encode": 1.490251501032617,
+      "score": 0.12981742818374187,
+      "total": 1.7944330881291535
+    },
+    "single_photo_latency": {
+      "decode": {
+        "median_ms": 1.3625905121443793,
+        "p95_ms": 1.4437788471695967
+      },
+      "encode": {
+        "median_ms": 11.587342989514582,
+        "p95_ms": 12.071172456489876
+      },
+      "score": {
+        "median_ms": 1.0041299974545836,
+        "p95_ms": 1.0903639034950172
+      },
+      "total": {
+        "median_ms": 13.952702502137981,
+        "p95_ms": 14.518963810405694
+      }
+    }
+  }
+}

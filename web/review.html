@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Review selected production frames and compare a trial reference on later TSFabrics frames.">
+  <title>Review trial | SurfaceTrace</title>
+  <link rel="icon" type="image/svg+xml" href="./favicon.svg">
+  <link rel="stylesheet" href="./site.css">
+  <link rel="stylesheet" href="./pipeline.css">
+  <link rel="stylesheet" href="./review.css">
+  <link rel="stylesheet" href="./theme.css">
+  <script src="./review.js" defer></script>
+</head>
+<body class="inspector-page review-page">
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header inspect-header">
+    <a class="logo" href="./index.html" aria-label="SurfaceTrace home"><span class="logo-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span>SurfaceTrace<small>VISUAL INSPECTION</small></span></a>
+    <nav class="main-nav" aria-label="Main navigation"><a href="./index.html">← Overview</a><a href="./next-inspect.html">Change-aware samples</a><span class="nav-current" aria-current="page">Review trial</span></nav>
+  </header>
+  <main id="main" class="review-main">
+    <div class="review-intro"><div><p class="section-kicker">TSFABRICS · RECORDED RUN</p><h1>Review the shift.</h1><p>Check selected frames, then compare a trial reference on later frames.</p></div><label class="review-run-picker">Production run<select id="reviewRun"><option value="T1_S164_I36_1">Run 02 · normal shift</option><option value="T1_S478_I118_2">Run 03 · larger shift</option></select></label></div>
+    <div class="review-progress" aria-label="Review progress"><span class="is-active">01 <em>Change alert</em></span><span>02 <em>Review frames</em></span><span>03 <em>Compare</em></span></div>
+    <section class="review-overview" id="reviewOverview"><div class="review-alert-mark" aria-hidden="true"><span></span><span></span><span></span></div><div><p class="section-kicker">VISUAL CHANGE</p><h2>New appearance detected</h2><p>Alert at frame 192. The reference remains unchanged while selected frames are checked.</p></div><button class="button button-dark" id="startReview" type="button">Review selected frames <span aria-hidden="true">→</span></button></section>
+    <section class="review-workspace" id="reviewWorkspace" hidden aria-labelledby="reviewHeading">
+      <div class="review-workspace-head"><div><p class="section-kicker">SELECTED AFTER ALERT · HIGHEST SCORE FIRST</p><h2 id="reviewHeading">Check the frame</h2></div><div class="review-workspace-actions"><span id="reviewCounter">—</span><button id="finishReview" type="button">Check remaining</button></div></div>
+      <div class="review-frame-layout"><div class="review-photo"><img id="reviewPhoto" alt="Selected production frame"><div class="review-photo-foot"><span id="reviewFrameName">—</span><span id="reviewScore">—</span></div></div><div class="review-decision"><div class="review-decision-open" id="reviewDecisionOpen"><p>Frame selected from unusual, visually distinct images.</p><button class="button button-dark" id="revealLabel" type="button">Check frame <span aria-hidden="true">→</span></button></div><div class="review-decision-closed" id="reviewDecisionClosed" hidden><p class="section-kicker">DATASET LABEL</p><strong id="reviewLabel">—</strong><p id="reviewAction">—</p><button id="nextReview" type="button">Next frame <span aria-hidden="true">→</span></button></div></div></div>
+      <div class="review-track" id="reviewTrack" aria-label="Selected frames"></div>
+      <div class="review-batch" id="reviewBatch" hidden><div class="review-batch-head"><div><h3>Review complete</h3><p id="reviewBatchCount"></p></div><button class="button button-dark" id="compareResults" type="button">Compare results <span aria-hidden="true">→</span></button></div><div class="review-batch-grid" id="reviewBatchGrid"></div></div>
+    </section>
+    <section class="review-comparison" id="reviewComparison" hidden aria-labelledby="compareHeading"><div class="review-comparison-head"><div><p class="section-kicker">LATER FRAMES · FIXED ALERT LIMIT</p><h2 id="compareHeading">Before and after review</h2><p>Confirmed false alerts supply candidate patches. Later frames test the effect.</p></div><div class="review-comparison-count" id="reviewSelectionCount"></div></div><div class="review-metrics" id="reviewMetrics"></div><div class="review-chart-wrap"><div class="review-chart-head"><h3>Score distribution by dataset label</h3><div class="review-chart-key"><span><i class="before"></i> Current</span><span><i class="after"></i> Reviewed candidate</span></div></div><svg id="reviewChart" viewBox="0 0 760 300" role="img" aria-label="Anomaly score distributions before and after review, separated by dataset label"></svg><p>Scores are divided by the fixed alert limit. Values right of the line are flagged.</p></div><section class="review-guard" id="reviewGuard" hidden><div class="review-guard-head"><div><p class="section-kicker">SEPARATE RUN · DEFECT CHECK</p><h3>Does the update keep detecting defects?</h3><p>The Run 02 candidate is also tested on later frames from Run 03.</p></div><strong id="guardMetric"></strong></div><div class="review-chart-wrap"><div class="review-chart-head"><h3>Score distribution by dataset label</h3><div class="review-chart-key"><span><i class="before"></i> Current</span><span><i class="after"></i> Reviewed candidate</span></div></div><svg id="guardChart" viewBox="0 0 760 300" role="img" aria-label="Defect guard score distributions before and after review"></svg><p>Same fixed alert limit. Run 03 contains both normal and defect frames.</p></div></section><p class="review-conclusion" id="reviewConclusion"></p></section>
+    <p class="review-source-note">Recorded replay · published labels appear after each check; trial scores were computed in advance. The frozen reference remains active after <a href="https://github.com/gohyunsu/surface-trace/blob/main/experiments/unsupervised/FEEDBACK_VALIDATION_RESULTS.md">validation</a>.</p>
+  </main>
+  <footer class="site-footer"><div class="footer-top"><a class="footer-brand" href="./index.html">SurfaceTrace</a><span>ISM × RIKU</span></div><div class="footer-bottom"><p>© 2026 Hyunsu Go · <a href="https://github.com/gohyunsu/surface-trace" target="_blank" rel="noopener noreferrer">GitHub</a></p><p>Images: <a href="https://doi.org/10.6084/m9.figshare.29573381" target="_blank" rel="noopener noreferrer">TSFabrics · Ni et al. (2026)</a> · <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer">CC BY 4.0</a>.</p></div></footer>
+</body>
+</html>

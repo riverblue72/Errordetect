@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="An interval summary of anomaly scores, visual change, and up to eight frames selected for review.">
+  <title>Interval summary | SurfaceTrace</title>
+  <link rel="icon" type="image/svg+xml" href="./favicon.svg">
+  <link rel="stylesheet" href="./site.css">
+  <link rel="stylesheet" href="./interval.css">
+  <link rel="stylesheet" href="./theme.css">
+  <script src="./interval.js" defer></script>
+</head>
+<body class="interval-page">
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header inspect-header">
+    <a class="logo" href="./index.html" aria-label="SurfaceTrace home"><span class="logo-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span>SurfaceTrace<small>VISUAL INSPECTION</small></span></a>
+    <nav class="main-nav" aria-label="Main navigation"><a href="./index.html">← Overview</a><a href="./next-inspect.html">Change-aware samples</a><span class="nav-current" aria-current="page">Interval summary</span></nav>
+  </header>
+  <main id="main" class="interval-main">
+    <div class="interval-heading"><div><p class="section-kicker">TSFABRICS · RECORDED RUN</p><h1>Interval summary.</h1><p>Frozen DINOv2 reference · up to eight frames for review.</p></div><div class="interval-id"><span>RUN</span><strong>T1_S478_I118_2</strong></div></div>
+    <p class="interval-error" id="intervalError" role="alert" hidden></p>
+    <div class="interval-grid">
+      <section class="interval-panel score-panel" aria-labelledby="scoresTitle">
+        <div class="interval-panel-head"><span class="interval-number">01</span><div><p class="section-kicker">ANOMALY SCORES</p><h2 id="scoresTitle">Unusual frames across the interval</h2></div></div>
+        <div class="interval-metrics"><div><strong id="frameCount">—</strong><span>Frames scored</span></div><div><strong id="scoreMedian">—</strong><span>Median score</span></div><div><strong id="scoreP99">—</strong><span>99th percentile</span></div></div>
+        <div class="interval-chart-head"><span>FRAME INDEX →</span><span>HIGHER = MORE UNUSUAL</span></div><svg id="scoreChart" class="interval-chart" viewBox="0 0 760 170" role="img" aria-label="Anomaly score trend over the recorded interval"></svg>
+        <p class="interval-hint">Each point is the highest score in eight consecutive frames.</p>
+      </section>
+      <section class="interval-panel change-panel" aria-labelledby="changeTitle">
+        <div class="interval-panel-head"><span class="interval-number">02</span><div><p class="section-kicker">VISUAL CHANGE</p><h2 id="changeTitle">New appearance detected</h2></div></div>
+        <div class="change-state"><span class="change-pulse" aria-hidden="true"></span><div><strong id="changeFrame">—</strong><span>Frame of the new run when the alert was confirmed</span></div></div>
+        <svg id="changeChart" class="interval-chart" viewBox="0 0 420 170" role="img" aria-label="Visual-change scores before and after the recorded run changes"></svg>
+        <div class="change-key"><span><i class="change-key-limit"></i>Alert limit</span><span><i class="change-key-boundary"></i>New run</span></div>
+        <p class="interval-hint">The boundary joins two separate recordings.</p>
+      </section>
+    </div>
+    <section class="interval-panel request-panel" aria-labelledby="requestsTitle">
+      <div class="request-heading"><div class="interval-panel-head"><span class="interval-number">03</span><div><p class="section-kicker">LIMITED REVIEW</p><h2 id="requestsTitle">Start with two frames</h2></div></div><p id="reviewGate">Highest scores, at least 16 frames apart.</p></div>
+      <div class="request-progress"><div><span id="reviewProgress">0 / 8 checked</span><span id="reviewCounts">—</span></div><div class="request-progress-track"><i id="reviewProgressBar"></i></div></div>
+      <div class="request-grid" id="requestGrid"></div>
+      <button class="review-override" id="reviewOverride" type="button" hidden>Review six more <span aria-hidden="true">→</span></button>
+      <p class="interval-hint">Recorded outcomes appear only after a frame is checked. The active reference stays fixed.</p>
+    </section>
+    <div class="interval-foot"><a href="./next-inspect.html">Browse change-aware samples <span aria-hidden="true">→</span></a><a href="https://github.com/gohyunsu/surface-trace/blob/main/experiments/unsupervised/UNLABELED_REVIEW_RESULTS.md">Experiment results <span aria-hidden="true">↗</span></a></div>
+  </main>
+  <footer class="site-footer"><div class="footer-top"><a class="footer-brand" href="./index.html">SurfaceTrace</a><span>ISM × RIKU</span></div><div class="footer-bottom"><p>© 2026 Hyunsu Go · <a href="https://github.com/gohyunsu/surface-trace">GitHub</a></p><p>Images: <a href="https://doi.org/10.6084/m9.figshare.29573381">TSFabrics</a> · <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a></p></div></footer>
+</body>
+</html>

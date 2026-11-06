@@ -1,0 +1,2745 @@
+{
+  "protocol": {
+    "phase": "final",
+    "source": "T1_S174_I111_1",
+    "targets": [
+      "T1_S148_I108_1",
+      "T1_S164_I192_1",
+      "T1_S164_I193_1",
+      "T1_S164_I199_1",
+      "T1_S174_I108_1",
+      "T1_S177_I108_1",
+      "T1_S179_I35_1",
+      "T1_S478_I118_2",
+      "T2_S262_I45_1",
+      "T2_S287_I184_1",
+      "T2_S287_I185_1",
+      "T2_S303_I44_1",
+      "T2_S466_I39_1",
+      "T3_S165_I175_1",
+      "T3_S165_I178_1",
+      "T3_S165_I178_2"
+    ],
+    "spacing_frames": [
+      1,
+      4,
+      8,
+      12,
+      16
+    ],
+    "review_budget": 8,
+    "evaluation_start": 320,
+    "label_use": "post-selection audit only"
+  },
+  "runs": {
+    "T1_S148_I108_1": {
+      "frames": 3262,
+      "new_episodes": 69,
+      "spacing": {
+        "1": {
+          "fixed8": {
+            "frames": [
+              2936,
+              2820,
+              2819,
+              2935,
+              2934,
+              2938,
+              2937,
+              3087
+            ],
+            "review_count": 8,
+            "defect_reviews": 8,
+            "normal_reviews": 0,
+            "ambiguous_reviews": 0,
+            "new_episodes": 3
+          },
+          "two_first": {
+            "frames": [
+              2936,
+              2820,
+              2819,
+              2935,
+              2934,
+              2938,
+              2937,
+              3087
+            ],
+            "review_count": 8,
+            "defect_reviews": 8,
+            "normal_reviews": 0,
+            "ambiguous_reviews": 0,
+            "new_episodes": 3
+          }
+        },
+        "4": {
+          "fixed8": {
+            "frames": [
+              2936,
+              2820,
+              3087,
+              1339,
+              1471,
+              2558,
+              741,
+              2452
+            ],
+            "review_count": 8,
+            "defect_reviews": 8,
+            "normal_reviews": 0,
+            "ambiguous_reviews": 0,
+            "new_episodes": 8
+          },
+          "two_first": {
+            "frames": [
+              2936,
+              2820,
+              3087,
+              1339,
+              1471,
+              2558,
+              741,
+              2452
+            ],
+            "review_count": 8,
+            "defect_reviews": 8,
+            "normal_reviews": 0,
+            "ambiguous_reviews": 0,
+            "new_episodes": 8
+          }
+        },
+        "8": {
+          "fixed8": {
+            "frames": [
+              2936,
+              2820,
+              3087,
+              1339,
+              1471,
+              2558,
+              741,
+              2452
+            ],
+            "review_count": 8,
+            "defect_reviews": 8,
+            "normal_reviews": 0,
+            "ambiguous_reviews": 0,
+            "new_episodes": 8
+          },
+          "two_first": {
+            "frames": [
+              2936,
+              2820,
+              3087,
+              1339,
+              1471,
+              2558,
+              741,
+              2452
+            ],
+            "review_count": 8,
+            "defect_reviews": 8,
+            "normal_reviews": 0,
+            "ambiguous_reviews": 0,
+            "new_episodes": 8
+          }
+        },
+        "12": {
+          "fixed8": {
+            "frames": [
+              2936,
+              2820,
+              3087,
+              1339,
+              1471,
+              2558,
+              741,
+              2452
+            ],
+            "review_count": 8,
+            "defect_reviews": 8,
+            "normal_reviews": 0,
+            "ambiguous_reviews": 0,
+            "new_episodes": 8
+          },
+          "two_first": {
+            "frames": [
+              2936,
+              2820,
+              3087,
+              1339,
+              1471,
+              2558,
+              741,
+              2452
+            ],
+            "review_count": 8,
+            "defect_reviews": 8,
+            "normal_reviews": 0,
+            "ambiguous_reviews": 0,
+            "new_episodes": 8
+          }
+        },
+        "16": {
+          "fixed8": {
+            "frames": [
+              2936,
+              2820,
+              3087,
+              1339,
+              1471,
+              2558,
+              741,
+              2452
+            ],
+            "review_count": 8,
+            "defect_reviews": 8,
+            "normal_reviews": 0,
+            "ambiguous_reviews": 0,
+            "new_episodes": 8
+          },
+          "two_first": {
+            "frames": [
+              2936,
+              2820,
+              3087,
+              1339,
+              1471,
+              2558,
+              741,
+              2452
+            ],
+            "review_count": 8,
+            "defect_reviews": 8,
+            "normal_reviews": 0,
+            "ambiguous_reviews": 0,
+            "new_episodes": 8
+          }
+        }
+      }
+    },
+    "T1_S164_I192_1": {
+      "frames": 1020,
+      "new_episodes": 0,
+      "spacing": {
+        "1": {
+          "fixed8": {
+            "frames": [
+              474,
+              979,
+              472,
+              473,
+              977,
+              980,
+              475,
+              724
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          },
+          "two_first": {
+            "frames": [
+              474,
+              979
+            ],
+            "review_count": 2,
+            "defect_reviews": 0,
+            "normal_reviews": 2,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        },
+        "4": {
+          "fixed8": {
+            "frames": [
+              474,
+              979,
+              724,
+              975,
+              671,
+              912,
+              923,
+              666
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          },
+          "two_first": {
+            "frames": [
+              474,
+              979
+            ],
+            "review_count": 2,
+            "defect_reviews": 0,
+            "normal_reviews": 2,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        },
+        "8": {
+          "fixed8": {
+            "frames": [
+              474,
+              979,
+              724,
+              671,
+              912,
+              923,
+              795,
+              657
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          },
+          "two_first": {
+            "frames": [
+              474,
+              979
+            ],
+            "review_count": 2,
+            "defect_reviews": 0,
+            "normal_reviews": 2,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        },
+        "12": {
+          "fixed8": {
+            "frames": [
+              474,
+              979,
+              724,
+              671,
+              912,
+              795,
+              657,
+              781
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          },
+          "two_first": {
+            "frames": [
+              474,
+              979
+            ],
+            "review_count": 2,
+            "defect_reviews": 0,
+            "normal_reviews": 2,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        },
+        "16": {
+          "fixed8": {
+            "frames": [
+              474,
+              979,
+              724,
+              671,
+              912,
+              795,
+              522,
+              415
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          },
+          "two_first": {
+            "frames": [
+              474,
+              979
+            ],
+            "review_count": 2,
+            "defect_reviews": 0,
+            "normal_reviews": 2,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        }
+      }
+    },
+    "T1_S164_I193_1": {
+      "frames": 1037,
+      "new_episodes": 0,
+      "spacing": {
+        "1": {
+          "fixed8": {
+            "frames": [
+              547,
+              802,
+              548,
+              800,
+              803,
+              546,
+              549,
+              799
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          },
+          "two_first": {
+            "frames": [
+              547,
+              802
+            ],
+            "review_count": 2,
+            "defect_reviews": 0,
+            "normal_reviews": 2,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        },
+        "4": {
+          "fixed8": {
+            "frames": [
+              547,
+              802,
+              615,
+              490,
+              735,
+              999,
+              729,
+              551
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          },
+          "two_first": {
+            "frames": [
+              547,
+              802
+            ],
+            "review_count": 2,
+            "defect_reviews": 0,
+            "normal_reviews": 2,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        },
+        "8": {
+          "fixed8": {
+            "frames": [
+              547,
+              802,
+              615,
+              490,
+              735,
+              999,
+              343,
+              877
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          },
+          "two_first": {
+            "frames": [
+              547,
+              802
+            ],
+            "review_count": 2,
+            "defect_reviews": 0,
+            "normal_reviews": 2,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        },
+        "12": {
+          "fixed8": {
+            "frames": [
+              547,
+              802,
+              615,
+              490,
+              735,
+              999,
+              343,
+              877
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          },
+          "two_first": {
+            "frames": [
+              547,
+              802
+            ],
+            "review_count": 2,
+            "defect_reviews": 0,
+            "normal_reviews": 2,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        },
+        "16": {
+          "fixed8": {
+            "frames": [
+              547,
+              802,
+              615,
+              490,
+              735,
+              999,
+              343,
+              877
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          },
+          "two_first": {
+            "frames": [
+              547,
+              802
+            ],
+            "review_count": 2,
+            "defect_reviews": 0,
+            "normal_reviews": 2,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        }
+      }
+    },
+    "T1_S164_I199_1": {
+      "frames": 1212,
+      "new_episodes": 0,
+      "spacing": {
+        "1": {
+          "fixed8": {
+            "frames": [
+              1143,
+              971,
+              1145,
+              632,
+              629,
+              462,
+              798,
+              1144
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          },
+          "two_first": {
+            "frames": [
+              1143,
+              971
+            ],
+            "review_count": 2,
+            "defect_reviews": 0,
+            "normal_reviews": 2,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        },
+        "4": {
+          "fixed8": {
+            "frames": [
+              1143,
+              971,
+              632,
+              462,
+              798,
+              967,
+              628,
+              604
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          },
+          "two_first": {
+            "frames": [
+              1143,
+              971
+            ],
+            "review_count": 2,
+            "defect_reviews": 0,
+            "normal_reviews": 2,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        },
+        "8": {
+          "fixed8": {
+            "frames": [
+              1143,
+              971,
+              632,
+              462,
+              798,
+              604,
+              1023,
+              502
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          },
+          "two_first": {
+            "frames": [
+              1143,
+              971
+            ],
+            "review_count": 2,
+            "defect_reviews": 0,
+            "normal_reviews": 2,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        },
+        "12": {
+          "fixed8": {
+            "frames": [
+              1143,
+              971,
+              632,
+              462,
+              798,
+              604,
+              1023,
+              502
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          },
+          "two_first": {
+            "frames": [
+              1143,
+              971
+            ],
+            "review_count": 2,
+            "defect_reviews": 0,
+            "normal_reviews": 2,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        },
+        "16": {
+          "fixed8": {
+            "frames": [
+              1143,
+              971,
+              632,
+              462,
+              798,
+              604,
+              1023,
+              502
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          },
+          "two_first": {
+            "frames": [
+              1143,
+              971
+            ],
+            "review_count": 2,
+            "defect_reviews": 0,
+            "normal_reviews": 2,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        }
+      }
+    },
+    "T1_S174_I108_1": {
+      "frames": 617,
+      "new_episodes": 11,
+      "spacing": {
+        "1": {
+          "fixed8": {
+            "frames": [
+              517,
+              518,
+              431,
+              334,
+              478,
+              371,
+              576,
+              575
+            ],
+            "review_count": 8,
+            "defect_reviews": 8,
+            "normal_reviews": 0,
+            "ambiguous_reviews": 0,
+            "new_episodes": 6
+          },
+          "two_first": {
+            "frames": [
+              517,
+              518,
+              431,
+              334,
+              478,
+              371,
+              576,
+              575
+            ],
+            "review_count": 8,
+            "defect_reviews": 8,
+            "normal_reviews": 0,
+            "ambiguous_reviews": 0,
+            "new_episodes": 6
+          }
+        },
+        "4": {
+          "fixed8": {
+            "frames": [
+              517,
+              431,
+              334,
+              478,
+              371,
+              576,
+              452,
+              394
+            ],
+            "review_count": 8,
+            "defect_reviews": 8,
+            "normal_reviews": 0,
+            "ambiguous_reviews": 0,
+            "new_episodes": 8
+          },
+          "two_first": {
+            "frames": [
+              517,
+              431,
+              334,
+              478,
+              371,
+              576,
+              452,
+              394
+            ],
+            "review_count": 8,
+            "defect_reviews": 8,
+            "normal_reviews": 0,
+            "ambiguous_reviews": 0,
+            "new_episodes": 8
+          }
+        },
+        "8": {
+          "fixed8": {
+            "frames": [
+              517,
+              431,
+              334,
+              478,
+              371,
+              576,
+              452,
+              394
+            ],
+            "review_count": 8,
+            "defect_reviews": 8,
+            "normal_reviews": 0,
+            "ambiguous_reviews": 0,
+            "new_episodes": 8
+          },
+          "two_first": {
+            "frames": [
+              517,
+              431,
+              334,
+              478,
+              371,
+              576,
+              452,
+              394
+            ],
+            "review_count": 8,
+            "defect_reviews": 8,
+            "normal_reviews": 0,
+            "ambiguous_reviews": 0,
+            "new_episodes": 8
+          }
+        },
+        "12": {
+          "fixed8": {
+            "frames": [
+              517,
+              431,
+              334,
+              478,
+              371,
+              576,
+              452,
+              394
+            ],
+            "review_count": 8,
+            "defect_reviews": 8,
+            "normal_reviews": 0,
+            "ambiguous_reviews": 0,
+            "new_episodes": 8
+          },
+          "two_first": {
+            "frames": [
+              517,
+              431,
+              334,
+              478,
+              371,
+              576,
+              452,
+              394
+            ],
+            "review_count": 8,
+            "defect_reviews": 8,
+            "normal_reviews": 0,
+            "ambiguous_reviews": 0,
+            "new_episodes": 8
+          }
+        },
+        "16": {
+          "fixed8": {
+            "frames": [
+              517,
+              431,
+              334,
+              478,
+              371,
+              576,
+              452,
+              394
+            ],
+            "review_count": 8,
+            "defect_reviews": 8,
+            "normal_reviews": 0,
+            "ambiguous_reviews": 0,
+            "new_episodes": 8
+          },
+          "two_first": {
+            "frames": [
+              517,
+              431,
+              334,
+              478,
+              371,
+              576,
+              452,
+              394
+            ],
+            "review_count": 8,
+            "defect_reviews": 8,
+            "normal_reviews": 0,
+            "ambiguous_reviews": 0,
+            "new_episodes": 8
+          }
+        }
+      }
+    },
+    "T1_S177_I108_1": {
+      "frames": 4096,
+      "new_episodes": 0,
+      "spacing": {
+        "1": {
+          "fixed8": {
+            "frames": [
+              1707,
+              649,
+              1178,
+              2235,
+              1530,
+              1001,
+              823,
+              2587
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          },
+          "two_first": {
+            "frames": [
+              1707,
+              649
+            ],
+            "review_count": 2,
+            "defect_reviews": 0,
+            "normal_reviews": 2,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        },
+        "4": {
+          "fixed8": {
+            "frames": [
+              1707,
+              649,
+              1178,
+              2235,
+              1530,
+              1001,
+              823,
+              2587
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          },
+          "two_first": {
+            "frames": [
+              1707,
+              649
+            ],
+            "review_count": 2,
+            "defect_reviews": 0,
+            "normal_reviews": 2,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        },
+        "8": {
+          "fixed8": {
+            "frames": [
+              1707,
+              649,
+              1178,
+              2235,
+              1530,
+              1001,
+              823,
+              2587
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          },
+          "two_first": {
+            "frames": [
+              1707,
+              649
+            ],
+            "review_count": 2,
+            "defect_reviews": 0,
+            "normal_reviews": 2,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        },
+        "12": {
+          "fixed8": {
+            "frames": [
+              1707,
+              649,
+              1178,
+              2235,
+              1530,
+              1001,
+              823,
+              2587
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          },
+          "two_first": {
+            "frames": [
+              1707,
+              649
+            ],
+            "review_count": 2,
+            "defect_reviews": 0,
+            "normal_reviews": 2,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        },
+        "16": {
+          "fixed8": {
+            "frames": [
+              1707,
+              649,
+              1178,
+              2235,
+              1530,
+              1001,
+              823,
+              2587
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          },
+          "two_first": {
+            "frames": [
+              1707,
+              649
+            ],
+            "review_count": 2,
+            "defect_reviews": 0,
+            "normal_reviews": 2,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        }
+      }
+    },
+    "T1_S179_I35_1": {
+      "frames": 1807,
+      "new_episodes": 0,
+      "spacing": {
+        "1": {
+          "fixed8": {
+            "frames": [
+              1586,
+              327,
+              866,
+              1046,
+              1588,
+              1587,
+              686,
+              687
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          },
+          "two_first": {
+            "frames": [
+              1586,
+              327
+            ],
+            "review_count": 2,
+            "defect_reviews": 0,
+            "normal_reviews": 2,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        },
+        "4": {
+          "fixed8": {
+            "frames": [
+              1586,
+              327,
+              866,
+              1046,
+              686,
+              1406,
+              1226,
+              507
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          },
+          "two_first": {
+            "frames": [
+              1586,
+              327
+            ],
+            "review_count": 2,
+            "defect_reviews": 0,
+            "normal_reviews": 2,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        },
+        "8": {
+          "fixed8": {
+            "frames": [
+              1586,
+              327,
+              866,
+              1046,
+              686,
+              1406,
+              1226,
+              507
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          },
+          "two_first": {
+            "frames": [
+              1586,
+              327
+            ],
+            "review_count": 2,
+            "defect_reviews": 0,
+            "normal_reviews": 2,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        },
+        "12": {
+          "fixed8": {
+            "frames": [
+              1586,
+              327,
+              866,
+              1046,
+              686,
+              1406,
+              1226,
+              507
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          },
+          "two_first": {
+            "frames": [
+              1586,
+              327
+            ],
+            "review_count": 2,
+            "defect_reviews": 0,
+            "normal_reviews": 2,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        },
+        "16": {
+          "fixed8": {
+            "frames": [
+              1586,
+              327,
+              866,
+              1046,
+              686,
+              1406,
+              1226,
+              507
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          },
+          "two_first": {
+            "frames": [
+              1586,
+              327
+            ],
+            "review_count": 2,
+            "defect_reviews": 0,
+            "normal_reviews": 2,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        }
+      }
+    },
+    "T1_S478_I118_2": {
+      "frames": 3204,
+      "new_episodes": 6,
+      "spacing": {
+        "1": {
+          "fixed8": {
+            "frames": [
+              1506,
+              2473,
+              538,
+              1984,
+              1509,
+              1026,
+              536,
+              1986
+            ],
+            "review_count": 8,
+            "defect_reviews": 8,
+            "normal_reviews": 0,
+            "ambiguous_reviews": 0,
+            "new_episodes": 5
+          },
+          "two_first": {
+            "frames": [
+              1506,
+              2473,
+              538,
+              1984,
+              1509,
+              1026,
+              536,
+              1986
+            ],
+            "review_count": 8,
+            "defect_reviews": 8,
+            "normal_reviews": 0,
+            "ambiguous_reviews": 0,
+            "new_episodes": 5
+          }
+        },
+        "4": {
+          "fixed8": {
+            "frames": [
+              1506,
+              2473,
+              538,
+              1984,
+              1026,
+              1021,
+              1510,
+              2967
+            ],
+            "review_count": 8,
+            "defect_reviews": 8,
+            "normal_reviews": 0,
+            "ambiguous_reviews": 0,
+            "new_episodes": 6
+          },
+          "two_first": {
+            "frames": [
+              1506,
+              2473,
+              538,
+              1984,
+              1026,
+              1021,
+              1510,
+              2967
+            ],
+            "review_count": 8,
+            "defect_reviews": 8,
+            "normal_reviews": 0,
+            "ambiguous_reviews": 0,
+            "new_episodes": 6
+          }
+        },
+        "8": {
+          "fixed8": {
+            "frames": [
+              1506,
+              2473,
+              538,
+              1984,
+              1026,
+              2967,
+              405,
+              1018
+            ],
+            "review_count": 8,
+            "defect_reviews": 7,
+            "normal_reviews": 1,
+            "ambiguous_reviews": 0,
+            "new_episodes": 6
+          },
+          "two_first": {
+            "frames": [
+              1506,
+              2473,
+              538,
+              1984,
+              1026,
+              2967,
+              405,
+              1018
+            ],
+            "review_count": 8,
+            "defect_reviews": 7,
+            "normal_reviews": 1,
+            "ambiguous_reviews": 0,
+            "new_episodes": 6
+          }
+        },
+        "12": {
+          "fixed8": {
+            "frames": [
+              1506,
+              2473,
+              538,
+              1984,
+              1026,
+              2967,
+              405,
+              1380
+            ],
+            "review_count": 8,
+            "defect_reviews": 6,
+            "normal_reviews": 2,
+            "ambiguous_reviews": 0,
+            "new_episodes": 6
+          },
+          "two_first": {
+            "frames": [
+              1506,
+              2473,
+              538,
+              1984,
+              1026,
+              2967,
+              405,
+              1380
+            ],
+            "review_count": 8,
+            "defect_reviews": 6,
+            "normal_reviews": 2,
+            "ambiguous_reviews": 0,
+            "new_episodes": 6
+          }
+        },
+        "16": {
+          "fixed8": {
+            "frames": [
+              1506,
+              2473,
+              538,
+              1984,
+              1026,
+              2967,
+              405,
+              1380
+            ],
+            "review_count": 8,
+            "defect_reviews": 6,
+            "normal_reviews": 2,
+            "ambiguous_reviews": 0,
+            "new_episodes": 6
+          },
+          "two_first": {
+            "frames": [
+              1506,
+              2473,
+              538,
+              1984,
+              1026,
+              2967,
+              405,
+              1380
+            ],
+            "review_count": 8,
+            "defect_reviews": 6,
+            "normal_reviews": 2,
+            "ambiguous_reviews": 0,
+            "new_episodes": 6
+          }
+        }
+      }
+    },
+    "T2_S262_I45_1": {
+      "frames": 1526,
+      "new_episodes": 0,
+      "spacing": {
+        "1": {
+          "fixed8": {
+            "frames": [
+              389,
+              382,
+              1162,
+              1032,
+              454,
+              642,
+              777,
+              379
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          },
+          "two_first": {
+            "frames": [
+              389,
+              382
+            ],
+            "review_count": 2,
+            "defect_reviews": 0,
+            "normal_reviews": 2,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        },
+        "4": {
+          "fixed8": {
+            "frames": [
+              389,
+              382,
+              1162,
+              1032,
+              454,
+              642,
+              777,
+              901
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          },
+          "two_first": {
+            "frames": [
+              389,
+              382
+            ],
+            "review_count": 2,
+            "defect_reviews": 0,
+            "normal_reviews": 2,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        },
+        "8": {
+          "fixed8": {
+            "frames": [
+              389,
+              1162,
+              1032,
+              454,
+              642,
+              777,
+              379,
+              901
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          },
+          "two_first": {
+            "frames": [
+              389,
+              1162
+            ],
+            "review_count": 2,
+            "defect_reviews": 0,
+            "normal_reviews": 2,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        },
+        "12": {
+          "fixed8": {
+            "frames": [
+              389,
+              1162,
+              1032,
+              454,
+              642,
+              777,
+              901,
+              1411
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          },
+          "two_first": {
+            "frames": [
+              389,
+              1162
+            ],
+            "review_count": 2,
+            "defect_reviews": 0,
+            "normal_reviews": 2,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        },
+        "16": {
+          "fixed8": {
+            "frames": [
+              389,
+              1162,
+              1032,
+              454,
+              642,
+              777,
+              901,
+              1411
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          },
+          "two_first": {
+            "frames": [
+              389,
+              1162
+            ],
+            "review_count": 2,
+            "defect_reviews": 0,
+            "normal_reviews": 2,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        }
+      }
+    },
+    "T2_S287_I184_1": {
+      "frames": 1807,
+      "new_episodes": 0,
+      "spacing": {
+        "1": {
+          "fixed8": {
+            "frames": [
+              1091,
+              488,
+              487,
+              1292,
+              1092,
+              1090,
+              1492,
+              891
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          },
+          "two_first": {
+            "frames": [
+              1091,
+              488
+            ],
+            "review_count": 2,
+            "defect_reviews": 0,
+            "normal_reviews": 2,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        },
+        "4": {
+          "fixed8": {
+            "frames": [
+              1091,
+              488,
+              1292,
+              1492,
+              891,
+              689,
+              1694,
+              1095
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          },
+          "two_first": {
+            "frames": [
+              1091,
+              488
+            ],
+            "review_count": 2,
+            "defect_reviews": 0,
+            "normal_reviews": 2,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        },
+        "8": {
+          "fixed8": {
+            "frames": [
+              1091,
+              488,
+              1292,
+              1492,
+              891,
+              689,
+              1694,
+              1712
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          },
+          "two_first": {
+            "frames": [
+              1091,
+              488
+            ],
+            "review_count": 2,
+            "defect_reviews": 0,
+            "normal_reviews": 2,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        },
+        "12": {
+          "fixed8": {
+            "frames": [
+              1091,
+              488,
+              1292,
+              1492,
+              891,
+              689,
+              1694,
+              1712
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          },
+          "two_first": {
+            "frames": [
+              1091,
+              488
+            ],
+            "review_count": 2,
+            "defect_reviews": 0,
+            "normal_reviews": 2,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        },
+        "16": {
+          "fixed8": {
+            "frames": [
+              1091,
+              488,
+              1292,
+              1492,
+              891,
+              689,
+              1694,
+              1712
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          },
+          "two_first": {
+            "frames": [
+              1091,
+              488
+            ],
+            "review_count": 2,
+            "defect_reviews": 0,
+            "normal_reviews": 2,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        }
+      }
+    },
+    "T2_S287_I185_1": {
+      "frames": 1178,
+      "new_episodes": 4,
+      "spacing": {
+        "1": {
+          "fixed8": {
+            "frames": [
+              690,
+              689,
+              688,
+              691,
+              685,
+              687,
+              686,
+              683
+            ],
+            "review_count": 8,
+            "defect_reviews": 8,
+            "normal_reviews": 0,
+            "ambiguous_reviews": 0,
+            "new_episodes": 1
+          },
+          "two_first": {
+            "frames": [
+              690,
+              689,
+              688,
+              691,
+              685,
+              687,
+              686,
+              683
+            ],
+            "review_count": 8,
+            "defect_reviews": 8,
+            "normal_reviews": 0,
+            "ambiguous_reviews": 0,
+            "new_episodes": 1
+          }
+        },
+        "4": {
+          "fixed8": {
+            "frames": [
+              690,
+              685,
+              710,
+              681,
+              714,
+              406,
+              706,
+              400
+            ],
+            "review_count": 8,
+            "defect_reviews": 8,
+            "normal_reviews": 0,
+            "ambiguous_reviews": 0,
+            "new_episodes": 2
+          },
+          "two_first": {
+            "frames": [
+              690,
+              685,
+              710,
+              681,
+              714,
+              406,
+              706,
+              400
+            ],
+            "review_count": 8,
+            "defect_reviews": 8,
+            "normal_reviews": 0,
+            "ambiguous_reviews": 0,
+            "new_episodes": 2
+          }
+        },
+        "8": {
+          "fixed8": {
+            "frames": [
+              690,
+              682,
+              710,
+              406,
+              641,
+              398,
+              649,
+              756
+            ],
+            "review_count": 8,
+            "defect_reviews": 7,
+            "normal_reviews": 1,
+            "ambiguous_reviews": 0,
+            "new_episodes": 3
+          },
+          "two_first": {
+            "frames": [
+              690,
+              682,
+              710,
+              406,
+              641,
+              398,
+              649,
+              756
+            ],
+            "review_count": 8,
+            "defect_reviews": 7,
+            "normal_reviews": 1,
+            "ambiguous_reviews": 0,
+            "new_episodes": 3
+          }
+        },
+        "12": {
+          "fixed8": {
+            "frames": [
+              690,
+              710,
+              406,
+              641,
+              756,
+              1053,
+              363,
+              456
+            ],
+            "review_count": 8,
+            "defect_reviews": 5,
+            "normal_reviews": 3,
+            "ambiguous_reviews": 0,
+            "new_episodes": 4
+          },
+          "two_first": {
+            "frames": [
+              690,
+              710,
+              406,
+              641,
+              756,
+              1053,
+              363,
+              456
+            ],
+            "review_count": 8,
+            "defect_reviews": 5,
+            "normal_reviews": 3,
+            "ambiguous_reviews": 0,
+            "new_episodes": 4
+          }
+        },
+        "16": {
+          "fixed8": {
+            "frames": [
+              690,
+              710,
+              406,
+              641,
+              756,
+              1053,
+              363,
+              456
+            ],
+            "review_count": 8,
+            "defect_reviews": 5,
+            "normal_reviews": 3,
+            "ambiguous_reviews": 0,
+            "new_episodes": 4
+          },
+          "two_first": {
+            "frames": [
+              690,
+              710,
+              406,
+              641,
+              756,
+              1053,
+              363,
+              456
+            ],
+            "review_count": 8,
+            "defect_reviews": 5,
+            "normal_reviews": 3,
+            "ambiguous_reviews": 0,
+            "new_episodes": 4
+          }
+        }
+      }
+    },
+    "T2_S303_I44_1": {
+      "frames": 1808,
+      "new_episodes": 0,
+      "spacing": {
+        "1": {
+          "fixed8": {
+            "frames": [
+              1182,
+              467,
+              1245,
+              469,
+              1637,
+              1374,
+              470,
+              1377
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          },
+          "two_first": {
+            "frames": [
+              1182,
+              467
+            ],
+            "review_count": 2,
+            "defect_reviews": 0,
+            "normal_reviews": 2,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        },
+        "4": {
+          "fixed8": {
+            "frames": [
+              1182,
+              467,
+              1245,
+              1637,
+              1374,
+              924,
+              462,
+              1708
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          },
+          "two_first": {
+            "frames": [
+              1182,
+              467
+            ],
+            "review_count": 2,
+            "defect_reviews": 0,
+            "normal_reviews": 2,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        },
+        "8": {
+          "fixed8": {
+            "frames": [
+              1182,
+              467,
+              1245,
+              1637,
+              1374,
+              924,
+              1708,
+              340
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          },
+          "two_first": {
+            "frames": [
+              1182,
+              467
+            ],
+            "review_count": 2,
+            "defect_reviews": 0,
+            "normal_reviews": 2,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        },
+        "12": {
+          "fixed8": {
+            "frames": [
+              1182,
+              467,
+              1245,
+              1637,
+              1374,
+              924,
+              1708,
+              340
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          },
+          "two_first": {
+            "frames": [
+              1182,
+              467
+            ],
+            "review_count": 2,
+            "defect_reviews": 0,
+            "normal_reviews": 2,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        },
+        "16": {
+          "fixed8": {
+            "frames": [
+              1182,
+              467,
+              1245,
+              1637,
+              1374,
+              924,
+              1708,
+              340
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          },
+          "two_first": {
+            "frames": [
+              1182,
+              467
+            ],
+            "review_count": 2,
+            "defect_reviews": 0,
+            "normal_reviews": 2,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        }
+      }
+    },
+    "T2_S466_I39_1": {
+      "frames": 4096,
+      "new_episodes": 0,
+      "spacing": {
+        "1": {
+          "fixed8": {
+            "frames": [
+              1024,
+              3732,
+              1167,
+              3728,
+              2741,
+              3591,
+              1738,
+              3162
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          },
+          "two_first": {
+            "frames": [
+              1024,
+              3732
+            ],
+            "review_count": 2,
+            "defect_reviews": 0,
+            "normal_reviews": 2,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        },
+        "4": {
+          "fixed8": {
+            "frames": [
+              1024,
+              3732,
+              1167,
+              3728,
+              2741,
+              3591,
+              1738,
+              3162
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          },
+          "two_first": {
+            "frames": [
+              1024,
+              3732
+            ],
+            "review_count": 2,
+            "defect_reviews": 0,
+            "normal_reviews": 2,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        },
+        "8": {
+          "fixed8": {
+            "frames": [
+              1024,
+              3732,
+              1167,
+              2741,
+              3591,
+              1738,
+              3162,
+              3025
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          },
+          "two_first": {
+            "frames": [
+              1024,
+              3732
+            ],
+            "review_count": 2,
+            "defect_reviews": 0,
+            "normal_reviews": 2,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        },
+        "12": {
+          "fixed8": {
+            "frames": [
+              1024,
+              3732,
+              1167,
+              2741,
+              3591,
+              1738,
+              3162,
+              3025
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          },
+          "two_first": {
+            "frames": [
+              1024,
+              3732
+            ],
+            "review_count": 2,
+            "defect_reviews": 0,
+            "normal_reviews": 2,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        },
+        "16": {
+          "fixed8": {
+            "frames": [
+              1024,
+              3732,
+              1167,
+              2741,
+              3591,
+              1738,
+              3162,
+              3025
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          },
+          "two_first": {
+            "frames": [
+              1024,
+              3732
+            ],
+            "review_count": 2,
+            "defect_reviews": 0,
+            "normal_reviews": 2,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        }
+      }
+    },
+    "T3_S165_I175_1": {
+      "frames": 1807,
+      "new_episodes": 0,
+      "spacing": {
+        "1": {
+          "fixed8": {
+            "frames": [
+              1376,
+              690,
+              1551,
+              1035,
+              1032,
+              1721,
+              346,
+              1031
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          },
+          "two_first": {
+            "frames": [
+              1376,
+              690
+            ],
+            "review_count": 2,
+            "defect_reviews": 0,
+            "normal_reviews": 2,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        },
+        "4": {
+          "fixed8": {
+            "frames": [
+              1376,
+              690,
+              1551,
+              1035,
+              1721,
+              346,
+              1031,
+              1727
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          },
+          "two_first": {
+            "frames": [
+              1376,
+              690
+            ],
+            "review_count": 2,
+            "defect_reviews": 0,
+            "normal_reviews": 2,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        },
+        "8": {
+          "fixed8": {
+            "frames": [
+              1376,
+              690,
+              1551,
+              1035,
+              1721,
+              346,
+              865,
+              1207
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          },
+          "two_first": {
+            "frames": [
+              1376,
+              690
+            ],
+            "review_count": 2,
+            "defect_reviews": 0,
+            "normal_reviews": 2,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        },
+        "12": {
+          "fixed8": {
+            "frames": [
+              1376,
+              690,
+              1551,
+              1035,
+              1721,
+              346,
+              865,
+              1207
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          },
+          "two_first": {
+            "frames": [
+              1376,
+              690
+            ],
+            "review_count": 2,
+            "defect_reviews": 0,
+            "normal_reviews": 2,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        },
+        "16": {
+          "fixed8": {
+            "frames": [
+              1376,
+              690,
+              1551,
+              1035,
+              1721,
+              346,
+              865,
+              1207
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          },
+          "two_first": {
+            "frames": [
+              1376,
+              690
+            ],
+            "review_count": 2,
+            "defect_reviews": 0,
+            "normal_reviews": 2,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        }
+      }
+    },
+    "T3_S165_I178_1": {
+      "frames": 1808,
+      "new_episodes": 0,
+      "spacing": {
+        "1": {
+          "fixed8": {
+            "frames": [
+              1760,
+              378,
+              381,
+              379,
+              721,
+              1757,
+              375,
+              896
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          },
+          "two_first": {
+            "frames": [
+              1760,
+              378
+            ],
+            "review_count": 2,
+            "defect_reviews": 0,
+            "normal_reviews": 2,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        },
+        "4": {
+          "fixed8": {
+            "frames": [
+              1760,
+              378,
+              721,
+              896,
+              1584,
+              551,
+              1411,
+              1415
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          },
+          "two_first": {
+            "frames": [
+              1760,
+              378
+            ],
+            "review_count": 2,
+            "defect_reviews": 0,
+            "normal_reviews": 2,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        },
+        "8": {
+          "fixed8": {
+            "frames": [
+              1760,
+              378,
+              721,
+              896,
+              1584,
+              551,
+              1411,
+              1071
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          },
+          "two_first": {
+            "frames": [
+              1760,
+              378
+            ],
+            "review_count": 2,
+            "defect_reviews": 0,
+            "normal_reviews": 2,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        },
+        "12": {
+          "fixed8": {
+            "frames": [
+              1760,
+              378,
+              721,
+              896,
+              1584,
+              551,
+              1411,
+              1071
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          },
+          "two_first": {
+            "frames": [
+              1760,
+              378
+            ],
+            "review_count": 2,
+            "defect_reviews": 0,
+            "normal_reviews": 2,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        },
+        "16": {
+          "fixed8": {
+            "frames": [
+              1760,
+              378,
+              721,
+              896,
+              1584,
+              551,
+              1411,
+              1071
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          },
+          "two_first": {
+            "frames": [
+              1760,
+              378
+            ],
+            "review_count": 2,
+            "defect_reviews": 0,
+            "normal_reviews": 2,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        }
+      }
+    },
+    "T3_S165_I178_2": {
+      "frames": 1807,
+      "new_episodes": 0,
+      "spacing": {
+        "1": {
+          "fixed8": {
+            "frames": [
+              1697,
+              1007,
+              1182,
+              1183,
+              836,
+              1351,
+              1353,
+              492
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          },
+          "two_first": {
+            "frames": [
+              1697,
+              1007
+            ],
+            "review_count": 2,
+            "defect_reviews": 0,
+            "normal_reviews": 2,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        },
+        "4": {
+          "fixed8": {
+            "frames": [
+              1697,
+              1007,
+              1182,
+              836,
+              1351,
+              492,
+              1526,
+              1178
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          },
+          "two_first": {
+            "frames": [
+              1697,
+              1007
+            ],
+            "review_count": 2,
+            "defect_reviews": 0,
+            "normal_reviews": 2,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        },
+        "8": {
+          "fixed8": {
+            "frames": [
+              1697,
+              1007,
+              1182,
+              836,
+              1351,
+              492,
+              1526,
+              665
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          },
+          "two_first": {
+            "frames": [
+              1697,
+              1007
+            ],
+            "review_count": 2,
+            "defect_reviews": 0,
+            "normal_reviews": 2,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        },
+        "12": {
+          "fixed8": {
+            "frames": [
+              1697,
+              1007,
+              1182,
+              836,
+              1351,
+              492,
+              1526,
+              665
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          },
+          "two_first": {
+            "frames": [
+              1697,
+              1007
+            ],
+            "review_count": 2,
+            "defect_reviews": 0,
+            "normal_reviews": 2,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        },
+        "16": {
+          "fixed8": {
+            "frames": [
+              1697,
+              1007,
+              1182,
+              836,
+              1351,
+              492,
+              1526,
+              665
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          },
+          "two_first": {
+            "frames": [
+              1697,
+              1007
+            ],
+            "review_count": 2,
+            "defect_reviews": 0,
+            "normal_reviews": 2,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        }
+      }
+    }
+  },
+  "summary": {
+    "1": {
+      "fixed8": {
+        "requests": 128,
+        "normal_reviews": 96,
+        "defect_reviews": 32,
+        "episodes_found": 15,
+        "episodes_total": 90,
+        "macro_coverage": 0.41806653491436097
+      },
+      "two_first": {
+        "requests": 56,
+        "normal_reviews": 24,
+        "defect_reviews": 32,
+        "episodes_found": 15,
+        "episodes_total": 90,
+        "macro_coverage": 0.41806653491436097
+      }
+    },
+    "4": {
+      "fixed8": {
+        "requests": 128,
+        "normal_reviews": 96,
+        "defect_reviews": 32,
+        "episodes_found": 24,
+        "episodes_total": 90,
+        "macro_coverage": 0.5858036890645586
+      },
+      "two_first": {
+        "requests": 56,
+        "normal_reviews": 24,
+        "defect_reviews": 32,
+        "episodes_found": 24,
+        "episodes_total": 90,
+        "macro_coverage": 0.5858036890645586
+      }
+    },
+    "8": {
+      "fixed8": {
+        "requests": 128,
+        "normal_reviews": 98,
+        "defect_reviews": 30,
+        "episodes_found": 25,
+        "episodes_total": 90,
+        "macro_coverage": 0.6483036890645586
+      },
+      "two_first": {
+        "requests": 56,
+        "normal_reviews": 26,
+        "defect_reviews": 30,
+        "episodes_found": 25,
+        "episodes_total": 90,
+        "macro_coverage": 0.6483036890645586
+      }
+    },
+    "12": {
+      "fixed8": {
+        "requests": 128,
+        "normal_reviews": 101,
+        "defect_reviews": 27,
+        "episodes_found": 26,
+        "episodes_total": 90,
+        "macro_coverage": 0.7108036890645586
+      },
+      "two_first": {
+        "requests": 56,
+        "normal_reviews": 29,
+        "defect_reviews": 27,
+        "episodes_found": 26,
+        "episodes_total": 90,
+        "macro_coverage": 0.7108036890645586
+      }
+    },
+    "16": {
+      "fixed8": {
+        "requests": 128,
+        "normal_reviews": 101,
+        "defect_reviews": 27,
+        "episodes_found": 26,
+        "episodes_total": 90,
+        "macro_coverage": 0.7108036890645586
+      },
+      "two_first": {
+        "requests": 56,
+        "normal_reviews": 29,
+        "defect_reviews": 27,
+        "episodes_found": 26,
+        "episodes_total": 90,
+        "macro_coverage": 0.7108036890645586
+      }
+    }
+  },
+  "complete": true
+}

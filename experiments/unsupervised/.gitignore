@@ -1,0 +1,13 @@
+data/
+features/
+results/*
+!results/*.json
+!results/condition_reference_distributions.png
+!results/feedback_loop.svg
+.cache/
+.tmp/
+.venv/
+animation_data/
+site_export/
+ablation_export/
+*.log

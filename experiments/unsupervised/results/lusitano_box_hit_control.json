@@ -1,0 +1,43 @@
+{
+  "dataset": "LUSITANOv2",
+  "official_label_archive_md5": "8a55ba8b620315fe74c3db92a5e042f5",
+  "test_defect_images": 1248,
+  "test_defect_boxes": 1865,
+  "control": "Uniform random patch positions without replacement, conditional on official boxes",
+  "modes": {
+    "global": {
+      "patch_positions_per_image": 333,
+      "top_1pct_position_count": 4,
+      "images_with_a_center_inside_a_box": 1084,
+      "random_single_hottest_patch_box_hit": 0.08962327712327688,
+      "random_top_1pct_patch_box_hit": 0.26261167551639153,
+      "observed": {
+        "all_unlabeled": {
+          "single_hottest_patch_box_hit": 0.624198717948718,
+          "top_1pct_patch_box_hit": 0.7483974358974359
+        },
+        "mutual_selected": {
+          "single_hottest_patch_box_hit": 0.6754807692307693,
+          "top_1pct_patch_box_hit": 0.7652243589743589
+        }
+      }
+    },
+    "tiles": {
+      "patch_positions_per_image": 6845,
+      "top_1pct_position_count": 69,
+      "images_with_a_center_inside_a_box": 1248,
+      "random_single_hottest_patch_box_hit": 0.09250845179899238,
+      "random_top_1pct_patch_box_hit": 0.7518507949687542,
+      "observed": {
+        "all_unlabeled": {
+          "single_hottest_patch_box_hit": 0.7235576923076923,
+          "top_1pct_patch_box_hit": 0.9447115384615384
+        },
+        "mutual_selected": {
+          "single_hottest_patch_box_hit": 0.749198717948718,
+          "top_1pct_patch_box_hit": 0.9479166666666666
+        }
+      }
+    }
+  }
+}

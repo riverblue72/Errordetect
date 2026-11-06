@@ -1,0 +1,74 @@
+{
+  "dataset": "TSFabrics",
+  "intervals": [
+    {
+      "id": "reference",
+      "title": "Reference run",
+      "scenario": "T1_S174_I111_1",
+      "start": 2113,
+      "end": 4096,
+      "first_alarm": null,
+      "current": {
+        "count": 1984,
+        "flagged": 20
+      },
+      "review_frames": []
+    },
+    {
+      "id": "T1_S148_I108_2",
+      "title": "Run 01",
+      "scenario": "T1_S148_I108_2",
+      "start": 833,
+      "end": 4804,
+      "first_alarm": 3744,
+      "current": {
+        "count": 3972,
+        "flagged": 82
+      },
+      "review_frames": []
+    },
+    {
+      "id": "T1_S164_I36_1",
+      "title": "Run 02",
+      "scenario": "T1_S164_I36_1",
+      "start": 833,
+      "end": 1807,
+      "first_alarm": 192,
+      "current": {
+        "count": 975,
+        "flagged": 11
+      },
+      "review_frames": [
+        {
+          "frame": 1,
+          "image": "./scenario/target-001.jpg"
+        },
+        {
+          "frame": 64,
+          "image": "./scenario/target-064.jpg"
+        },
+        {
+          "frame": 128,
+          "image": "./scenario/target-128.jpg"
+        },
+        {
+          "frame": 192,
+          "image": "./scenario/target-192.jpg"
+        }
+      ]
+    },
+    {
+      "id": "T1_S478_I118_2",
+      "title": "Run 03",
+      "scenario": "T1_S478_I118_2",
+      "start": 833,
+      "end": 3204,
+      "first_alarm": 192,
+      "current": {
+        "count": 2372,
+        "flagged": 33
+      },
+      "review_frames": []
+    }
+  ]
+}

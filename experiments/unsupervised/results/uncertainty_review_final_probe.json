@@ -1,0 +1,95 @@
+{
+  "protocol": {
+    "source": "T1_S174_I111_1",
+    "source_threshold": 0.47077027037739766,
+    "targets": [
+      "T1_S478_I118_2"
+    ],
+    "scorer": "frozen source DINOv2 patch nearest neighbor",
+    "evaluation_start": 320,
+    "target_cap": 4096,
+    "review_budget": 8,
+    "spacing": 16,
+    "episode_gap": 8,
+    "label_use": "retrospective audit only; no labels in queue selection",
+    "selection": "exploratory comparison on previously inspected runs"
+  },
+  "runs": {
+    "T1_S478_I118_2": {
+      "split": "previously inspected final",
+      "feature_source": "cache",
+      "evaluation_frames": 2884,
+      "new_defect_episodes": 6,
+      "queues": {
+        "top8_spaced": {
+          "frames": [
+            1506,
+            2473,
+            538,
+            1984,
+            1026,
+            2967,
+            405,
+            1380
+          ],
+          "review_count": 8,
+          "defect_reviews": 6,
+          "normal_reviews": 2,
+          "ambiguous_reviews": 0,
+          "new_episodes": 6
+        },
+        "high6_near2": {
+          "frames": [
+            1506,
+            2473,
+            538,
+            1984,
+            1026,
+            2967,
+            405,
+            1380
+          ],
+          "review_count": 8,
+          "defect_reviews": 6,
+          "normal_reviews": 2,
+          "ambiguous_reviews": 0,
+          "new_episodes": 6
+        },
+        "high6_below2": {
+          "frames": [
+            1506,
+            2473,
+            538,
+            1984,
+            1026,
+            2967,
+            405,
+            1380
+          ],
+          "review_count": 8,
+          "defect_reviews": 6,
+          "normal_reviews": 2,
+          "ambiguous_reviews": 0,
+          "new_episodes": 6
+        },
+        "high4_near4": {
+          "frames": [
+            1506,
+            2473,
+            538,
+            1984,
+            1024,
+            405,
+            2968,
+            1380
+          ],
+          "review_count": 8,
+          "defect_reviews": 6,
+          "normal_reviews": 2,
+          "ambiguous_reviews": 0,
+          "new_episodes": 6
+        }
+      }
+    }
+  }
+}

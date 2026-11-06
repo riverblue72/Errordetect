@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="600" viewBox="0 0 1120 600" role="img" aria-labelledby="title desc">
+<title id="title">Reviewed candidate on two later test intervals</title>
+<desc id="desc">For each run, bars compare detected defect frames and flagged normal frames for current, candidate, and after-review models. Exact counts are printed beside every bar.</desc>
+<rect width="1120" height="600" fill="#f8faf9"/>
+<text x="42" y="47" font-family="Arial, sans-serif" font-size="23" font-weight="500" fill="#243447">Interval feedback · same-frame comparison</text>
+<text x="42" y="73" font-family="Arial, sans-serif" font-size="14" font-weight="400" fill="#667583">Higher detection and fewer false alerts are preferable.</text>
+<rect x="30" y="93" width="1060" height="226" rx="12" fill="#ffffff" stroke="#e1e8e6"/>
+<text x="49" y="120" font-family="Arial, sans-serif" font-size="17" font-weight="500" fill="#243447">Development · T1_S478_I118_1</text>
+<text x="49" y="151" font-family="Arial, sans-serif" font-size="14" font-weight="500" fill="#667583">Defect frames detected / 92</text>
+<text x="49" y="192" font-family="Arial, sans-serif" font-size="14" font-weight="400" fill="#243447">Current</text>
+<rect x="175" y="176" width="270" height="21" rx="3" fill="#edf1f1"/>
+<rect x="175" y="176" width="32.28" height="21" rx="3" fill="#7386a0"/>
+<text x="459" y="192" font-family="Arial, sans-serif" font-size="15" font-weight="500" fill="#243447">11</text>
+<text x="49" y="234" font-family="Arial, sans-serif" font-size="14" font-weight="400" fill="#243447">Candidate</text>
+<rect x="175" y="218" width="270" height="21" rx="3" fill="#edf1f1"/>
+<rect x="175" y="218" width="267.07" height="21" rx="3" fill="#d58d67"/>
+<text x="459" y="234" font-family="Arial, sans-serif" font-size="15" font-weight="500" fill="#243447">91</text>
+<text x="49" y="276" font-family="Arial, sans-serif" font-size="14" font-weight="400" fill="#243447">After review</text>
+<rect x="175" y="260" width="270" height="21" rx="3" fill="#edf1f1"/>
+<rect x="175" y="260" width="261.20" height="21" rx="3" fill="#4f9182"/>
+<text x="459" y="276" font-family="Arial, sans-serif" font-size="15" font-weight="500" fill="#243447">89</text>
+<text x="579" y="151" font-family="Arial, sans-serif" font-size="14" font-weight="500" fill="#667583">Normal frames flagged / 1491</text>
+<text x="579" y="192" font-family="Arial, sans-serif" font-size="14" font-weight="400" fill="#243447">Current</text>
+<rect x="705" y="176" width="270" height="21" rx="3" fill="#edf1f1"/>
+<text x="989" y="192" font-family="Arial, sans-serif" font-size="15" font-weight="500" fill="#243447">0</text>
+<text x="579" y="234" font-family="Arial, sans-serif" font-size="14" font-weight="400" fill="#243447">Candidate</text>
+<rect x="705" y="218" width="270" height="21" rx="3" fill="#edf1f1"/>
+<rect x="705" y="218" width="270.00" height="21" rx="3" fill="#d58d67"/>
+<text x="989" y="234" font-family="Arial, sans-serif" font-size="15" font-weight="500" fill="#243447">14</text>
+<text x="579" y="276" font-family="Arial, sans-serif" font-size="14" font-weight="400" fill="#243447">After review</text>
+<rect x="705" y="260" width="270" height="21" rx="3" fill="#edf1f1"/>
+<rect x="705" y="260" width="19.29" height="21" rx="3" fill="#4f9182"/>
+<text x="989" y="276" font-family="Arial, sans-serif" font-size="15" font-weight="500" fill="#243447">1</text>
+<rect x="30" y="339" width="1060" height="226" rx="12" fill="#ffffff" stroke="#e1e8e6"/>
+<text x="49" y="366" font-family="Arial, sans-serif" font-size="17" font-weight="500" fill="#243447">Later interval · T1_S555_I117_1</text>
+<text x="49" y="397" font-family="Arial, sans-serif" font-size="14" font-weight="500" fill="#667583">Defect frames detected / 588</text>
+<text x="49" y="438" font-family="Arial, sans-serif" font-size="14" font-weight="400" fill="#243447">Current</text>
+<rect x="175" y="422" width="270" height="21" rx="3" fill="#edf1f1"/>
+<rect x="175" y="422" width="178.62" height="21" rx="3" fill="#7386a0"/>
+<text x="459" y="438" font-family="Arial, sans-serif" font-size="15" font-weight="500" fill="#243447">389</text>
+<text x="49" y="480" font-family="Arial, sans-serif" font-size="14" font-weight="400" fill="#243447">Candidate</text>
+<rect x="175" y="464" width="270" height="21" rx="3" fill="#edf1f1"/>
+<rect x="175" y="464" width="269.54" height="21" rx="3" fill="#d58d67"/>
+<text x="459" y="480" font-family="Arial, sans-serif" font-size="15" font-weight="500" fill="#243447">587</text>
+<text x="49" y="522" font-family="Arial, sans-serif" font-size="14" font-weight="400" fill="#243447">After review</text>
+<rect x="175" y="506" width="270" height="21" rx="3" fill="#edf1f1"/>
+<rect x="175" y="506" width="269.54" height="21" rx="3" fill="#4f9182"/>
+<text x="459" y="522" font-family="Arial, sans-serif" font-size="15" font-weight="500" fill="#243447">587</text>
+<text x="579" y="397" font-family="Arial, sans-serif" font-size="14" font-weight="500" fill="#667583">Normal frames flagged / 3508</text>
+<text x="579" y="438" font-family="Arial, sans-serif" font-size="14" font-weight="400" fill="#243447">Current</text>
+<rect x="705" y="422" width="270" height="21" rx="3" fill="#edf1f1"/>
+<text x="989" y="438" font-family="Arial, sans-serif" font-size="15" font-weight="500" fill="#243447">0</text>
+<text x="579" y="480" font-family="Arial, sans-serif" font-size="14" font-weight="400" fill="#243447">Candidate</text>
+<rect x="705" y="464" width="270" height="21" rx="3" fill="#edf1f1"/>
+<rect x="705" y="464" width="270.00" height="21" rx="3" fill="#d58d67"/>
+<text x="989" y="480" font-family="Arial, sans-serif" font-size="15" font-weight="500" fill="#243447">41</text>
+<text x="579" y="522" font-family="Arial, sans-serif" font-size="14" font-weight="400" fill="#243447">After review</text>
+<rect x="705" y="506" width="270" height="21" rx="3" fill="#edf1f1"/>
+<rect x="705" y="506" width="158.05" height="21" rx="3" fill="#4f9182"/>
+<text x="989" y="522" font-family="Arial, sans-serif" font-size="15" font-weight="500" fill="#243447">24</text>
+</svg>

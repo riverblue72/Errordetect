@@ -1,3 +1,21 @@
+# SurfaceTrace website and presenter demo
+
+This repository contains the original SurfaceTrace website and a separate guided presenter demo.
+
+- Homepage: `docs/index.html` (source: `web/landing.html`)
+- English demo: `docs/presenter-en.html`
+- Korean demo: `docs/presenter.html`
+- Open the homepage and choose **Open demo**, or use **Demo** in the navigation.
+- The original `demo.html` replay and recorded video are retained.
+
+GitHub Pages publishing source: **Deploy from a branch → main → /docs**.
+The intended site address is `https://riverblue72.github.io/Errordetect/` once Pages is enabled.
+
+Edit `web/` and run `python scripts/build_site.py` to regenerate `docs/`.
+The earlier workspace/report source files remain available in this repository.
+
+---
+
 # Errordetect · SurfaceTrace
 
 금속 표면의 이상 영역을 찾고, **AI 박스 초안을 사람이 수정·확정한 뒤 일일 보고서와 라벨 데이터로 내보내는** 팀 시연 프로젝트입니다.

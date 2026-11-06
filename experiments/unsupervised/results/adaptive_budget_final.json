@@ -1,0 +1,1754 @@
+{
+  "protocol": {
+    "phase": "final",
+    "per_run_baseline": 8,
+    "batch_budget": 128,
+    "review_spacing": 16,
+    "candidate_stream": "rank rounds across chronological 512-frame blocks",
+    "label_use": "requested decisions for routing; remaining labels for audit"
+  },
+  "summary": {
+    "runs": 16,
+    "budget": 128,
+    "new_episodes": 90,
+    "methods": {
+      "fixed8": {
+        "requests": 128,
+        "normal_reviews": 101,
+        "defect_reviews": 27,
+        "uncertain_reviews": 0,
+        "episodes_found": 26,
+        "macro_episode_coverage": 0.7108036890645586,
+        "runs_losing_vs_fixed8": [],
+        "stopped_defect_runs": []
+      },
+      "two_first": {
+        "requests": 56,
+        "normal_reviews": 29,
+        "defect_reviews": 27,
+        "uncertain_reviews": 0,
+        "episodes_found": 26,
+        "macro_episode_coverage": 0.7108036890645586,
+        "runs_losing_vs_fixed8": [],
+        "stopped_defect_runs": []
+      },
+      "feedback_audit": {
+        "requests": 128,
+        "normal_reviews": 77,
+        "defect_reviews": 51,
+        "uncertain_reviews": 0,
+        "episodes_found": 50,
+        "macro_episode_coverage": 0.7977602108036891,
+        "runs_losing_vs_fixed8": [],
+        "stopped_defect_runs": []
+      },
+      "feedback_no_audit": {
+        "requests": 128,
+        "normal_reviews": 72,
+        "defect_reviews": 56,
+        "uncertain_reviews": 0,
+        "episodes_found": 55,
+        "macro_episode_coverage": 0.8158761528326746,
+        "runs_losing_vs_fixed8": [],
+        "stopped_defect_runs": []
+      },
+      "baseline_reserving_audit": {
+        "requests": 128,
+        "normal_reviews": 77,
+        "defect_reviews": 51,
+        "uncertain_reviews": 0,
+        "episodes_found": 50,
+        "macro_episode_coverage": 0.7977602108036891,
+        "runs_losing_vs_fixed8": [],
+        "stopped_defect_runs": []
+      }
+    }
+  },
+  "methods": {
+    "fixed8": {
+      "T1_S148_I108_1": {
+        "frames": [
+          2936,
+          2820,
+          3087,
+          1339,
+          1471,
+          2558,
+          741,
+          2452
+        ],
+        "requests": 8,
+        "normal_reviews": 0,
+        "defect_reviews": 8,
+        "uncertain_reviews": 0,
+        "found_episode_ids": [
+          20,
+          31,
+          35,
+          60,
+          62,
+          71,
+          73,
+          75
+        ],
+        "new_episodes": 69,
+        "stopped_with_unseen_episode": false
+      },
+      "T1_S164_I192_1": {
+        "frames": [
+          474,
+          979,
+          724,
+          671,
+          912,
+          795,
+          522,
+          415
+        ],
+        "requests": 8,
+        "normal_reviews": 8,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "found_episode_ids": [],
+        "new_episodes": 0,
+        "stopped_with_unseen_episode": false
+      },
+      "T1_S164_I193_1": {
+        "frames": [
+          547,
+          802,
+          615,
+          490,
+          735,
+          999,
+          343,
+          877
+        ],
+        "requests": 8,
+        "normal_reviews": 8,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "found_episode_ids": [],
+        "new_episodes": 0,
+        "stopped_with_unseen_episode": false
+      },
+      "T1_S164_I199_1": {
+        "frames": [
+          1143,
+          971,
+          632,
+          462,
+          798,
+          604,
+          1023,
+          502
+        ],
+        "requests": 8,
+        "normal_reviews": 8,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "found_episode_ids": [],
+        "new_episodes": 0,
+        "stopped_with_unseen_episode": false
+      },
+      "T1_S174_I108_1": {
+        "frames": [
+          517,
+          431,
+          334,
+          478,
+          371,
+          576,
+          452,
+          394
+        ],
+        "requests": 8,
+        "normal_reviews": 0,
+        "defect_reviews": 8,
+        "uncertain_reviews": 0,
+        "found_episode_ids": [
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          20,
+          22
+        ],
+        "new_episodes": 11,
+        "stopped_with_unseen_episode": false
+      },
+      "T1_S177_I108_1": {
+        "frames": [
+          1707,
+          649,
+          1178,
+          2235,
+          1530,
+          1001,
+          823,
+          2587
+        ],
+        "requests": 8,
+        "normal_reviews": 8,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "found_episode_ids": [],
+        "new_episodes": 0,
+        "stopped_with_unseen_episode": false
+      },
+      "T1_S179_I35_1": {
+        "frames": [
+          1586,
+          327,
+          866,
+          1046,
+          686,
+          1406,
+          1226,
+          507
+        ],
+        "requests": 8,
+        "normal_reviews": 8,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "found_episode_ids": [],
+        "new_episodes": 0,
+        "stopped_with_unseen_episode": false
+      },
+      "T1_S478_I118_2": {
+        "frames": [
+          1506,
+          2473,
+          538,
+          1984,
+          1026,
+          2967,
+          405,
+          1380
+        ],
+        "requests": 8,
+        "normal_reviews": 2,
+        "defect_reviews": 6,
+        "uncertain_reviews": 0,
+        "found_episode_ids": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        "new_episodes": 6,
+        "stopped_with_unseen_episode": false
+      },
+      "T2_S262_I45_1": {
+        "frames": [
+          389,
+          1162,
+          1032,
+          454,
+          642,
+          777,
+          901,
+          324
+        ],
+        "requests": 8,
+        "normal_reviews": 8,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "found_episode_ids": [],
+        "new_episodes": 0,
+        "stopped_with_unseen_episode": false
+      },
+      "T2_S287_I184_1": {
+        "frames": [
+          1091,
+          488,
+          1292,
+          1492,
+          891,
+          689,
+          1694,
+          1712
+        ],
+        "requests": 8,
+        "normal_reviews": 8,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "found_episode_ids": [],
+        "new_episodes": 0,
+        "stopped_with_unseen_episode": false
+      },
+      "T2_S287_I185_1": {
+        "frames": [
+          690,
+          710,
+          406,
+          641,
+          756,
+          1053,
+          363,
+          456
+        ],
+        "requests": 8,
+        "normal_reviews": 3,
+        "defect_reviews": 5,
+        "uncertain_reviews": 0,
+        "found_episode_ids": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "new_episodes": 4,
+        "stopped_with_unseen_episode": false
+      },
+      "T2_S303_I44_1": {
+        "frames": [
+          1182,
+          467,
+          1245,
+          1637,
+          1374,
+          924,
+          1708,
+          340
+        ],
+        "requests": 8,
+        "normal_reviews": 8,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "found_episode_ids": [],
+        "new_episodes": 0,
+        "stopped_with_unseen_episode": false
+      },
+      "T2_S466_I39_1": {
+        "frames": [
+          1024,
+          3732,
+          1167,
+          2741,
+          1738,
+          3591,
+          3162,
+          3025
+        ],
+        "requests": 8,
+        "normal_reviews": 8,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "found_episode_ids": [],
+        "new_episodes": 0,
+        "stopped_with_unseen_episode": false
+      },
+      "T3_S165_I175_1": {
+        "frames": [
+          690,
+          1376,
+          1551,
+          1035,
+          1721,
+          346,
+          865,
+          1207
+        ],
+        "requests": 8,
+        "normal_reviews": 8,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "found_episode_ids": [],
+        "new_episodes": 0,
+        "stopped_with_unseen_episode": false
+      },
+      "T3_S165_I178_1": {
+        "frames": [
+          1760,
+          378,
+          721,
+          896,
+          1584,
+          551,
+          1411,
+          1071
+        ],
+        "requests": 8,
+        "normal_reviews": 8,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "found_episode_ids": [],
+        "new_episodes": 0,
+        "stopped_with_unseen_episode": false
+      },
+      "T3_S165_I178_2": {
+        "frames": [
+          1697,
+          1007,
+          1182,
+          836,
+          1351,
+          492,
+          1526,
+          665
+        ],
+        "requests": 8,
+        "normal_reviews": 8,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "found_episode_ids": [],
+        "new_episodes": 0,
+        "stopped_with_unseen_episode": false
+      }
+    },
+    "two_first": {
+      "T1_S148_I108_1": {
+        "frames": [
+          2936,
+          2820,
+          3087,
+          1339,
+          1471,
+          2558,
+          741,
+          2452
+        ],
+        "requests": 8,
+        "normal_reviews": 0,
+        "defect_reviews": 8,
+        "uncertain_reviews": 0,
+        "found_episode_ids": [
+          20,
+          31,
+          35,
+          60,
+          62,
+          71,
+          73,
+          75
+        ],
+        "new_episodes": 69,
+        "stopped_with_unseen_episode": false
+      },
+      "T1_S164_I192_1": {
+        "frames": [
+          474,
+          979
+        ],
+        "requests": 2,
+        "normal_reviews": 2,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "found_episode_ids": [],
+        "new_episodes": 0,
+        "stopped_with_unseen_episode": false
+      },
+      "T1_S164_I193_1": {
+        "frames": [
+          547,
+          802
+        ],
+        "requests": 2,
+        "normal_reviews": 2,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "found_episode_ids": [],
+        "new_episodes": 0,
+        "stopped_with_unseen_episode": false
+      },
+      "T1_S164_I199_1": {
+        "frames": [
+          1143,
+          971
+        ],
+        "requests": 2,
+        "normal_reviews": 2,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "found_episode_ids": [],
+        "new_episodes": 0,
+        "stopped_with_unseen_episode": false
+      },
+      "T1_S174_I108_1": {
+        "frames": [
+          517,
+          431,
+          334,
+          478,
+          371,
+          576,
+          452,
+          394
+        ],
+        "requests": 8,
+        "normal_reviews": 0,
+        "defect_reviews": 8,
+        "uncertain_reviews": 0,
+        "found_episode_ids": [
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          20,
+          22
+        ],
+        "new_episodes": 11,
+        "stopped_with_unseen_episode": false
+      },
+      "T1_S177_I108_1": {
+        "frames": [
+          1707,
+          649
+        ],
+        "requests": 2,
+        "normal_reviews": 2,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "found_episode_ids": [],
+        "new_episodes": 0,
+        "stopped_with_unseen_episode": false
+      },
+      "T1_S179_I35_1": {
+        "frames": [
+          1586,
+          327
+        ],
+        "requests": 2,
+        "normal_reviews": 2,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "found_episode_ids": [],
+        "new_episodes": 0,
+        "stopped_with_unseen_episode": false
+      },
+      "T1_S478_I118_2": {
+        "frames": [
+          1506,
+          2473,
+          538,
+          1984,
+          1026,
+          2967,
+          405,
+          1380
+        ],
+        "requests": 8,
+        "normal_reviews": 2,
+        "defect_reviews": 6,
+        "uncertain_reviews": 0,
+        "found_episode_ids": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        "new_episodes": 6,
+        "stopped_with_unseen_episode": false
+      },
+      "T2_S262_I45_1": {
+        "frames": [
+          389,
+          1162
+        ],
+        "requests": 2,
+        "normal_reviews": 2,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "found_episode_ids": [],
+        "new_episodes": 0,
+        "stopped_with_unseen_episode": false
+      },
+      "T2_S287_I184_1": {
+        "frames": [
+          1091,
+          488
+        ],
+        "requests": 2,
+        "normal_reviews": 2,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "found_episode_ids": [],
+        "new_episodes": 0,
+        "stopped_with_unseen_episode": false
+      },
+      "T2_S287_I185_1": {
+        "frames": [
+          690,
+          710,
+          406,
+          641,
+          756,
+          1053,
+          363,
+          456
+        ],
+        "requests": 8,
+        "normal_reviews": 3,
+        "defect_reviews": 5,
+        "uncertain_reviews": 0,
+        "found_episode_ids": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "new_episodes": 4,
+        "stopped_with_unseen_episode": false
+      },
+      "T2_S303_I44_1": {
+        "frames": [
+          1182,
+          467
+        ],
+        "requests": 2,
+        "normal_reviews": 2,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "found_episode_ids": [],
+        "new_episodes": 0,
+        "stopped_with_unseen_episode": false
+      },
+      "T2_S466_I39_1": {
+        "frames": [
+          1024,
+          3732
+        ],
+        "requests": 2,
+        "normal_reviews": 2,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "found_episode_ids": [],
+        "new_episodes": 0,
+        "stopped_with_unseen_episode": false
+      },
+      "T3_S165_I175_1": {
+        "frames": [
+          690,
+          1376
+        ],
+        "requests": 2,
+        "normal_reviews": 2,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "found_episode_ids": [],
+        "new_episodes": 0,
+        "stopped_with_unseen_episode": false
+      },
+      "T3_S165_I178_1": {
+        "frames": [
+          1760,
+          378
+        ],
+        "requests": 2,
+        "normal_reviews": 2,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "found_episode_ids": [],
+        "new_episodes": 0,
+        "stopped_with_unseen_episode": false
+      },
+      "T3_S165_I178_2": {
+        "frames": [
+          1697,
+          1007
+        ],
+        "requests": 2,
+        "normal_reviews": 2,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "found_episode_ids": [],
+        "new_episodes": 0,
+        "stopped_with_unseen_episode": false
+      }
+    },
+    "feedback_audit": {
+      "T1_S148_I108_1": {
+        "frames": [
+          2936,
+          2820,
+          741,
+          1339,
+          1471,
+          1959,
+          573,
+          881,
+          1490,
+          2166,
+          2558,
+          3087,
+          435,
+          1062,
+          1506,
+          2337,
+          2452,
+          3010,
+          623,
+          960,
+          1640,
+          1880,
+          2377,
+          3226,
+          672,
+          844,
+          1726,
+          2102,
+          2752,
+          3033,
+          723,
+          999,
+          1774,
+          1901
+        ],
+        "requests": 34,
+        "normal_reviews": 2,
+        "defect_reviews": 32,
+        "uncertain_reviews": 0,
+        "found_episode_ids": [
+          12,
+          15,
+          17,
+          18,
+          19,
+          20,
+          22,
+          23,
+          26,
+          27,
+          31,
+          35,
+          36,
+          37,
+          40,
+          42,
+          43,
+          45,
+          46,
+          48,
+          51,
+          53,
+          57,
+          58,
+          60,
+          62,
+          68,
+          71,
+          73,
+          74,
+          75,
+          78
+        ],
+        "new_episodes": 69,
+        "stopped_with_unseen_episode": false
+      },
+      "T1_S164_I192_1": {
+        "frames": [
+          474,
+          979,
+          741
+        ],
+        "requests": 3,
+        "normal_reviews": 3,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "found_episode_ids": [],
+        "new_episodes": 0,
+        "stopped_with_unseen_episode": false
+      },
+      "T1_S164_I193_1": {
+        "frames": [
+          547,
+          802,
+          762
+        ],
+        "requests": 3,
+        "normal_reviews": 3,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "found_episode_ids": [],
+        "new_episodes": 0,
+        "stopped_with_unseen_episode": false
+      },
+      "T1_S164_I199_1": {
+        "frames": [
+          1143,
+          971,
+          645
+        ],
+        "requests": 3,
+        "normal_reviews": 3,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "found_episode_ids": [],
+        "new_episodes": 0,
+        "stopped_with_unseen_episode": false
+      },
+      "T1_S174_I108_1": {
+        "frames": [
+          517,
+          431,
+          334,
+          478,
+          371,
+          576,
+          452,
+          394
+        ],
+        "requests": 8,
+        "normal_reviews": 0,
+        "defect_reviews": 8,
+        "uncertain_reviews": 0,
+        "found_episode_ids": [
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          20,
+          22
+        ],
+        "new_episodes": 11,
+        "stopped_with_unseen_episode": false
+      },
+      "T1_S177_I108_1": {
+        "frames": [
+          1707,
+          649,
+          2805
+        ],
+        "requests": 3,
+        "normal_reviews": 3,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "found_episode_ids": [],
+        "new_episodes": 0,
+        "stopped_with_unseen_episode": false
+      },
+      "T1_S179_I35_1": {
+        "frames": [
+          1586,
+          327,
+          1383
+        ],
+        "requests": 3,
+        "normal_reviews": 3,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "found_episode_ids": [],
+        "new_episodes": 0,
+        "stopped_with_unseen_episode": false
+      },
+      "T1_S478_I118_2": {
+        "frames": [
+          1506,
+          2473,
+          538,
+          1026,
+          1984,
+          2967,
+          405,
+          892,
+          1380,
+          2337,
+          2837,
+          3163,
+          588,
+          1080,
+          1854,
+          2403,
+          2941,
+          468,
+          856,
+          1592,
+          1927,
+          2529,
+          2900,
+          427,
+          1118,
+          1473,
+          2039,
+          2387,
+          3053,
+          615,
+          947,
+          1572,
+          2150,
+          2707
+        ],
+        "requests": 34,
+        "normal_reviews": 28,
+        "defect_reviews": 6,
+        "uncertain_reviews": 0,
+        "found_episode_ids": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        "new_episodes": 6,
+        "stopped_with_unseen_episode": false
+      },
+      "T2_S262_I45_1": {
+        "frames": [
+          389,
+          1162,
+          421
+        ],
+        "requests": 3,
+        "normal_reviews": 3,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "found_episode_ids": [],
+        "new_episodes": 0,
+        "stopped_with_unseen_episode": false
+      },
+      "T2_S287_I184_1": {
+        "frames": [
+          1091,
+          488,
+          1383
+        ],
+        "requests": 3,
+        "normal_reviews": 3,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "found_episode_ids": [],
+        "new_episodes": 0,
+        "stopped_with_unseen_episode": false
+      },
+      "T2_S287_I185_1": {
+        "frames": [
+          690,
+          710,
+          1053,
+          989,
+          406,
+          1015,
+          641,
+          949,
+          756,
+          866,
+          363,
+          834,
+          456,
+          1107,
+          383,
+          1132
+        ],
+        "requests": 16,
+        "normal_reviews": 11,
+        "defect_reviews": 5,
+        "uncertain_reviews": 0,
+        "found_episode_ids": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "new_episodes": 4,
+        "stopped_with_unseen_episode": false
+      },
+      "T2_S303_I44_1": {
+        "frames": [
+          1182,
+          467,
+          437
+        ],
+        "requests": 3,
+        "normal_reviews": 3,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "found_episode_ids": [],
+        "new_episodes": 0,
+        "stopped_with_unseen_episode": false
+      },
+      "T2_S466_I39_1": {
+        "frames": [
+          1024,
+          3732,
+          2805
+        ],
+        "requests": 3,
+        "normal_reviews": 3,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "found_episode_ids": [],
+        "new_episodes": 0,
+        "stopped_with_unseen_episode": false
+      },
+      "T3_S165_I175_1": {
+        "frames": [
+          690,
+          1376,
+          1556
+        ],
+        "requests": 3,
+        "normal_reviews": 3,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "found_episode_ids": [],
+        "new_episodes": 0,
+        "stopped_with_unseen_episode": false
+      },
+      "T3_S165_I178_1": {
+        "frames": [
+          1760,
+          378,
+          437
+        ],
+        "requests": 3,
+        "normal_reviews": 3,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "found_episode_ids": [],
+        "new_episodes": 0,
+        "stopped_with_unseen_episode": false
+      },
+      "T3_S165_I178_2": {
+        "frames": [
+          1697,
+          1007,
+          1383
+        ],
+        "requests": 3,
+        "normal_reviews": 3,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "found_episode_ids": [],
+        "new_episodes": 0,
+        "stopped_with_unseen_episode": false
+      }
+    },
+    "feedback_no_audit": {
+      "T1_S148_I108_1": {
+        "frames": [
+          2936,
+          2820,
+          741,
+          1339,
+          1471,
+          1959,
+          573,
+          881,
+          1490,
+          2166,
+          2558,
+          3087,
+          435,
+          1062,
+          1506,
+          2337,
+          2452,
+          3010,
+          623,
+          960,
+          1640,
+          1880,
+          2377,
+          3226,
+          672,
+          844,
+          1726,
+          2102,
+          2752,
+          3033,
+          723,
+          999,
+          1774,
+          1901,
+          2603,
+          3055,
+          512,
+          1227,
+          1363,
+          2035
+        ],
+        "requests": 40,
+        "normal_reviews": 3,
+        "defect_reviews": 37,
+        "uncertain_reviews": 0,
+        "found_episode_ids": [
+          12,
+          14,
+          15,
+          17,
+          18,
+          19,
+          20,
+          22,
+          23,
+          26,
+          27,
+          28,
+          31,
+          32,
+          35,
+          36,
+          37,
+          40,
+          42,
+          43,
+          45,
+          46,
+          48,
+          50,
+          51,
+          53,
+          57,
+          58,
+          60,
+          62,
+          64,
+          68,
+          71,
+          73,
+          74,
+          75,
+          78
+        ],
+        "new_episodes": 69,
+        "stopped_with_unseen_episode": false
+      },
+      "T1_S164_I192_1": {
+        "frames": [
+          474,
+          979
+        ],
+        "requests": 2,
+        "normal_reviews": 2,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "found_episode_ids": [],
+        "new_episodes": 0,
+        "stopped_with_unseen_episode": false
+      },
+      "T1_S164_I193_1": {
+        "frames": [
+          547,
+          802
+        ],
+        "requests": 2,
+        "normal_reviews": 2,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "found_episode_ids": [],
+        "new_episodes": 0,
+        "stopped_with_unseen_episode": false
+      },
+      "T1_S164_I199_1": {
+        "frames": [
+          1143,
+          971
+        ],
+        "requests": 2,
+        "normal_reviews": 2,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "found_episode_ids": [],
+        "new_episodes": 0,
+        "stopped_with_unseen_episode": false
+      },
+      "T1_S174_I108_1": {
+        "frames": [
+          517,
+          431,
+          334,
+          478,
+          371,
+          576,
+          452,
+          394
+        ],
+        "requests": 8,
+        "normal_reviews": 0,
+        "defect_reviews": 8,
+        "uncertain_reviews": 0,
+        "found_episode_ids": [
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          20,
+          22
+        ],
+        "new_episodes": 11,
+        "stopped_with_unseen_episode": false
+      },
+      "T1_S177_I108_1": {
+        "frames": [
+          1707,
+          649
+        ],
+        "requests": 2,
+        "normal_reviews": 2,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "found_episode_ids": [],
+        "new_episodes": 0,
+        "stopped_with_unseen_episode": false
+      },
+      "T1_S179_I35_1": {
+        "frames": [
+          1586,
+          327
+        ],
+        "requests": 2,
+        "normal_reviews": 2,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "found_episode_ids": [],
+        "new_episodes": 0,
+        "stopped_with_unseen_episode": false
+      },
+      "T1_S478_I118_2": {
+        "frames": [
+          1506,
+          2473,
+          538,
+          1026,
+          1984,
+          2967,
+          405,
+          892,
+          1380,
+          2337,
+          2837,
+          3163,
+          588,
+          1080,
+          1854,
+          2403,
+          2941,
+          468,
+          856,
+          1592,
+          1927,
+          2529,
+          2900,
+          427,
+          1118,
+          1473,
+          2039,
+          2387,
+          3053,
+          615,
+          947,
+          1572,
+          2150,
+          2707,
+          3032,
+          365,
+          1230,
+          1813,
+          2353,
+          2650
+        ],
+        "requests": 40,
+        "normal_reviews": 34,
+        "defect_reviews": 6,
+        "uncertain_reviews": 0,
+        "found_episode_ids": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        "new_episodes": 6,
+        "stopped_with_unseen_episode": false
+      },
+      "T2_S262_I45_1": {
+        "frames": [
+          389,
+          1162
+        ],
+        "requests": 2,
+        "normal_reviews": 2,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "found_episode_ids": [],
+        "new_episodes": 0,
+        "stopped_with_unseen_episode": false
+      },
+      "T2_S287_I184_1": {
+        "frames": [
+          1091,
+          488
+        ],
+        "requests": 2,
+        "normal_reviews": 2,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "found_episode_ids": [],
+        "new_episodes": 0,
+        "stopped_with_unseen_episode": false
+      },
+      "T2_S287_I185_1": {
+        "frames": [
+          690,
+          710,
+          1053,
+          989,
+          406,
+          1015,
+          641,
+          949,
+          756,
+          866,
+          363,
+          834,
+          456,
+          1107,
+          383,
+          1132
+        ],
+        "requests": 16,
+        "normal_reviews": 11,
+        "defect_reviews": 5,
+        "uncertain_reviews": 0,
+        "found_episode_ids": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "new_episodes": 4,
+        "stopped_with_unseen_episode": false
+      },
+      "T2_S303_I44_1": {
+        "frames": [
+          1182,
+          467
+        ],
+        "requests": 2,
+        "normal_reviews": 2,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "found_episode_ids": [],
+        "new_episodes": 0,
+        "stopped_with_unseen_episode": false
+      },
+      "T2_S466_I39_1": {
+        "frames": [
+          1024,
+          3732
+        ],
+        "requests": 2,
+        "normal_reviews": 2,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "found_episode_ids": [],
+        "new_episodes": 0,
+        "stopped_with_unseen_episode": false
+      },
+      "T3_S165_I175_1": {
+        "frames": [
+          690,
+          1376
+        ],
+        "requests": 2,
+        "normal_reviews": 2,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "found_episode_ids": [],
+        "new_episodes": 0,
+        "stopped_with_unseen_episode": false
+      },
+      "T3_S165_I178_1": {
+        "frames": [
+          1760,
+          378
+        ],
+        "requests": 2,
+        "normal_reviews": 2,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "found_episode_ids": [],
+        "new_episodes": 0,
+        "stopped_with_unseen_episode": false
+      },
+      "T3_S165_I178_2": {
+        "frames": [
+          1697,
+          1007
+        ],
+        "requests": 2,
+        "normal_reviews": 2,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "found_episode_ids": [],
+        "new_episodes": 0,
+        "stopped_with_unseen_episode": false
+      }
+    },
+    "baseline_reserving_audit": {
+      "T1_S148_I108_1": {
+        "frames": [
+          2936,
+          2820,
+          3087,
+          1339,
+          1471,
+          2558,
+          741,
+          2452,
+          1959,
+          573,
+          881,
+          1490,
+          2166,
+          435,
+          1062,
+          1506,
+          2337,
+          3010,
+          623,
+          960,
+          1640,
+          1880,
+          2377,
+          3226,
+          672,
+          844,
+          1726,
+          2102,
+          2752,
+          3033,
+          723,
+          999,
+          1774,
+          1901
+        ],
+        "requests": 34,
+        "normal_reviews": 2,
+        "defect_reviews": 32,
+        "uncertain_reviews": 0,
+        "found_episode_ids": [
+          12,
+          15,
+          17,
+          18,
+          19,
+          20,
+          22,
+          23,
+          26,
+          27,
+          31,
+          35,
+          36,
+          37,
+          40,
+          42,
+          43,
+          45,
+          46,
+          48,
+          51,
+          53,
+          57,
+          58,
+          60,
+          62,
+          68,
+          71,
+          73,
+          74,
+          75,
+          78
+        ],
+        "new_episodes": 69,
+        "stopped_with_unseen_episode": false
+      },
+      "T1_S164_I192_1": {
+        "frames": [
+          474,
+          979,
+          741
+        ],
+        "requests": 3,
+        "normal_reviews": 3,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "found_episode_ids": [],
+        "new_episodes": 0,
+        "stopped_with_unseen_episode": false
+      },
+      "T1_S164_I193_1": {
+        "frames": [
+          547,
+          802,
+          762
+        ],
+        "requests": 3,
+        "normal_reviews": 3,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "found_episode_ids": [],
+        "new_episodes": 0,
+        "stopped_with_unseen_episode": false
+      },
+      "T1_S164_I199_1": {
+        "frames": [
+          1143,
+          971,
+          1208
+        ],
+        "requests": 3,
+        "normal_reviews": 3,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "found_episode_ids": [],
+        "new_episodes": 0,
+        "stopped_with_unseen_episode": false
+      },
+      "T1_S174_I108_1": {
+        "frames": [
+          517,
+          431,
+          334,
+          478,
+          371,
+          576,
+          452,
+          394
+        ],
+        "requests": 8,
+        "normal_reviews": 0,
+        "defect_reviews": 8,
+        "uncertain_reviews": 0,
+        "found_episode_ids": [
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          20,
+          22
+        ],
+        "new_episodes": 11,
+        "stopped_with_unseen_episode": false
+      },
+      "T1_S177_I108_1": {
+        "frames": [
+          1707,
+          649,
+          2805
+        ],
+        "requests": 3,
+        "normal_reviews": 3,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "found_episode_ids": [],
+        "new_episodes": 0,
+        "stopped_with_unseen_episode": false
+      },
+      "T1_S179_I35_1": {
+        "frames": [
+          1586,
+          327,
+          1383
+        ],
+        "requests": 3,
+        "normal_reviews": 3,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "found_episode_ids": [],
+        "new_episodes": 0,
+        "stopped_with_unseen_episode": false
+      },
+      "T1_S478_I118_2": {
+        "frames": [
+          1506,
+          2473,
+          538,
+          1984,
+          1026,
+          2967,
+          405,
+          1380,
+          892,
+          2337,
+          2837,
+          3163,
+          588,
+          1080,
+          1854,
+          2403,
+          2941,
+          468,
+          856,
+          1592,
+          1927,
+          2529,
+          2900,
+          427,
+          1118,
+          1473,
+          2039,
+          2387,
+          3053,
+          615,
+          947,
+          1572,
+          2150,
+          2707
+        ],
+        "requests": 34,
+        "normal_reviews": 28,
+        "defect_reviews": 6,
+        "uncertain_reviews": 0,
+        "found_episode_ids": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        "new_episodes": 6,
+        "stopped_with_unseen_episode": false
+      },
+      "T2_S262_I45_1": {
+        "frames": [
+          389,
+          1162,
+          421
+        ],
+        "requests": 3,
+        "normal_reviews": 3,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "found_episode_ids": [],
+        "new_episodes": 0,
+        "stopped_with_unseen_episode": false
+      },
+      "T2_S287_I184_1": {
+        "frames": [
+          1091,
+          488,
+          1383
+        ],
+        "requests": 3,
+        "normal_reviews": 3,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "found_episode_ids": [],
+        "new_episodes": 0,
+        "stopped_with_unseen_episode": false
+      },
+      "T2_S287_I185_1": {
+        "frames": [
+          690,
+          710,
+          406,
+          641,
+          756,
+          1053,
+          363,
+          456,
+          989,
+          1015,
+          949,
+          866,
+          834,
+          1107,
+          383,
+          1132
+        ],
+        "requests": 16,
+        "normal_reviews": 11,
+        "defect_reviews": 5,
+        "uncertain_reviews": 0,
+        "found_episode_ids": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "new_episodes": 4,
+        "stopped_with_unseen_episode": false
+      },
+      "T2_S303_I44_1": {
+        "frames": [
+          1182,
+          467,
+          437
+        ],
+        "requests": 3,
+        "normal_reviews": 3,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "found_episode_ids": [],
+        "new_episodes": 0,
+        "stopped_with_unseen_episode": false
+      },
+      "T2_S466_I39_1": {
+        "frames": [
+          1024,
+          3732,
+          2805
+        ],
+        "requests": 3,
+        "normal_reviews": 3,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "found_episode_ids": [],
+        "new_episodes": 0,
+        "stopped_with_unseen_episode": false
+      },
+      "T3_S165_I175_1": {
+        "frames": [
+          690,
+          1376,
+          1478
+        ],
+        "requests": 3,
+        "normal_reviews": 3,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "found_episode_ids": [],
+        "new_episodes": 0,
+        "stopped_with_unseen_episode": false
+      },
+      "T3_S165_I178_1": {
+        "frames": [
+          1760,
+          378,
+          437
+        ],
+        "requests": 3,
+        "normal_reviews": 3,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "found_episode_ids": [],
+        "new_episodes": 0,
+        "stopped_with_unseen_episode": false
+      },
+      "T3_S165_I178_2": {
+        "frames": [
+          1697,
+          1007,
+          1383
+        ],
+        "requests": 3,
+        "normal_reviews": 3,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "found_episode_ids": [],
+        "new_episodes": 0,
+        "stopped_with_unseen_episode": false
+      }
+    }
+  }
+}

@@ -1,3 +1,19 @@
+# 현재 웹사이트 구성
+
+첨부된 최신 SurfaceTrace 홈페이지와 별도의 발표용 시연을 이 저장소에 통합했습니다.
+메인 `Open demo` 또는 상단 `Demo`에서 영어 시연으로 이동하고, 시연 헤더에서 한국어를 선택할 수 있습니다.
+
+- 메인: `web/landing.html` → `docs/index.html`
+- 영어 시연: `web/presenter-en.html`, `presenter-en.js`, `presenter-en.css`
+- 한국어 시연: `web/presenter.html`, `presenter.js`, `presenter.css`
+- 공통 실제 사진·기록된 점수: `web/presenter-data.js`
+- 빌드: `python scripts/build_site.py`
+- GitHub Pages: Settings → Pages → Deploy from a branch → main → /docs
+
+아래 내용은 이전 검수 워크스페이스의 개발 안내입니다. 해당 소스와 보고서 파일은 보존되어 있습니다.
+
+---
+
 # 팀 작업 안내
 
 ## 코드와 시연 사이트

@@ -1,0 +1,248 @@
+[
+  {
+    "id": 1,
+    "scenario": "T1_S148_I108_2",
+    "frame": 2057,
+    "dataset_label": "Defect",
+    "score": 4.044304370880127,
+    "threshold": 3.7415819525718748,
+    "alert": true,
+    "overlay": "sample-01-classic.png"
+  },
+  {
+    "id": 2,
+    "scenario": "T1_S148_I108_2",
+    "frame": 4091,
+    "dataset_label": "Normal",
+    "score": 1.2600871324539185,
+    "threshold": 3.7415819525718748,
+    "alert": false,
+    "overlay": "sample-02-classic.png"
+  },
+  {
+    "id": 3,
+    "scenario": "T1_S148_I108_2",
+    "frame": 2314,
+    "dataset_label": "Normal",
+    "score": 2.75429630279541,
+    "threshold": 3.7415819525718748,
+    "alert": false,
+    "overlay": "sample-03-classic.png"
+  },
+  {
+    "id": 4,
+    "scenario": "T1_S148_I108_2",
+    "frame": 3010,
+    "dataset_label": "Defect",
+    "score": 5.45220947265625,
+    "threshold": 3.7415819525718748,
+    "alert": true,
+    "overlay": "sample-04-classic.png"
+  },
+  {
+    "id": 5,
+    "scenario": "T1_S164_I36_1",
+    "frame": 1595,
+    "dataset_label": "Normal",
+    "score": 4.212963104248047,
+    "threshold": 3.7415819525718748,
+    "alert": true,
+    "overlay": "sample-05-classic.png"
+  },
+  {
+    "id": 6,
+    "scenario": "T1_S164_I36_1",
+    "frame": 1263,
+    "dataset_label": "Normal",
+    "score": 4.580361366271973,
+    "threshold": 3.7415819525718748,
+    "alert": true,
+    "overlay": "sample-06-classic.png",
+    "all_unlabeled": {
+      "score": 0.20412202179431915,
+      "threshold": 0.20342822186648854,
+      "alert": true,
+      "overlay": "sample-06-all.png"
+    }
+  },
+  {
+    "id": 7,
+    "scenario": "T1_S478_I118_2",
+    "frame": 1508,
+    "dataset_label": "Defect",
+    "score": 3.2714452743530273,
+    "threshold": 3.7415819525718748,
+    "alert": false,
+    "overlay": "sample-07-classic.png"
+  },
+  {
+    "id": 8,
+    "scenario": "T1_S478_I118_2",
+    "frame": 1031,
+    "dataset_label": "Defect",
+    "score": 3.6764121055603027,
+    "threshold": 3.7415819525718748,
+    "alert": false,
+    "overlay": "sample-08-classic.png"
+  },
+  {
+    "id": 9,
+    "scenario": "T1_S478_I118_2",
+    "frame": 2674,
+    "dataset_label": "Normal",
+    "score": 2.074317455291748,
+    "threshold": 3.7415819525718748,
+    "alert": false,
+    "overlay": "sample-09-classic.png"
+  },
+  {
+    "id": 10,
+    "scenario": "T1_S478_I118_2",
+    "frame": 2472,
+    "dataset_label": "Defect",
+    "score": 3.16723895072937,
+    "threshold": 3.7415819525718748,
+    "alert": false,
+    "overlay": "sample-10-classic.png"
+  },
+  {
+    "id": 11,
+    "scenario": "T1_S478_I118_2",
+    "frame": 1989,
+    "dataset_label": "Defect",
+    "score": 2.9470443725585938,
+    "threshold": 3.7415819525718748,
+    "alert": false,
+    "overlay": "sample-11-classic.png"
+  },
+  {
+    "id": 12,
+    "scenario": "T1_S478_I118_2",
+    "frame": 2168,
+    "dataset_label": "Normal",
+    "score": 1.3997595310211182,
+    "threshold": 3.7415819525718748,
+    "alert": false,
+    "overlay": "sample-12-classic.png"
+  },
+  {
+    "id": 13,
+    "scenario": "T1_S148_I108_2",
+    "frame": 929,
+    "dataset_label": "Defect",
+    "score": 3.7107272148132324,
+    "threshold": 3.7415819525718748,
+    "alert": false,
+    "overlay": "sample-13-classic.png"
+  },
+  {
+    "id": 14,
+    "scenario": "T1_S148_I108_2",
+    "frame": 1739,
+    "dataset_label": "Defect",
+    "score": 3.109083652496338,
+    "threshold": 3.7415819525718748,
+    "alert": false,
+    "overlay": "sample-14-classic.png"
+  },
+  {
+    "id": 15,
+    "scenario": "T1_S148_I108_2",
+    "frame": 4591,
+    "dataset_label": "Normal",
+    "score": 1.505251169204712,
+    "threshold": 3.7415819525718748,
+    "alert": false,
+    "overlay": "sample-15-classic.png"
+  },
+  {
+    "id": 16,
+    "scenario": "T1_S148_I108_2",
+    "frame": 2521,
+    "dataset_label": "Defect",
+    "score": 4.120488166809082,
+    "threshold": 3.7415819525718748,
+    "alert": true,
+    "overlay": "sample-16-classic.png"
+  },
+  {
+    "id": 17,
+    "scenario": "T1_S164_I36_1",
+    "frame": 837,
+    "dataset_label": "Normal",
+    "score": 4.561460494995117,
+    "threshold": 3.7415819525718748,
+    "alert": true,
+    "overlay": "sample-17-classic.png"
+  },
+  {
+    "id": 18,
+    "scenario": "T1_S164_I36_1",
+    "frame": 1724,
+    "dataset_label": "Normal",
+    "score": 4.368963241577148,
+    "threshold": 3.7415819525718748,
+    "alert": true,
+    "overlay": "sample-18-classic.png"
+  },
+  {
+    "id": 19,
+    "scenario": "T1_S164_I36_1",
+    "frame": 1439,
+    "dataset_label": "Normal",
+    "score": 4.573611259460449,
+    "threshold": 3.7415819525718748,
+    "alert": true,
+    "overlay": "sample-19-classic.png"
+  },
+  {
+    "id": 20,
+    "scenario": "T1_S164_I36_1",
+    "frame": 990,
+    "dataset_label": "Normal",
+    "score": 4.360196113586426,
+    "threshold": 3.7415819525718748,
+    "alert": true,
+    "overlay": "sample-20-classic.png"
+  },
+  {
+    "id": 21,
+    "scenario": "T1_S478_I118_2",
+    "frame": 2966,
+    "dataset_label": "Defect",
+    "score": 3.118154525756836,
+    "threshold": 3.7415819525718748,
+    "alert": false,
+    "overlay": "sample-21-classic.png"
+  },
+  {
+    "id": 22,
+    "scenario": "T1_S478_I118_2",
+    "frame": 3178,
+    "dataset_label": "Normal",
+    "score": 1.638311743736267,
+    "threshold": 3.7415819525718748,
+    "alert": false,
+    "overlay": "sample-22-classic.png"
+  },
+  {
+    "id": 23,
+    "scenario": "T1_S478_I118_2",
+    "frame": 1213,
+    "dataset_label": "Normal",
+    "score": 2.2431893348693848,
+    "threshold": 3.7415819525718748,
+    "alert": false,
+    "overlay": "sample-23-classic.png"
+  },
+  {
+    "id": 24,
+    "scenario": "T1_S478_I118_2",
+    "frame": 1770,
+    "dataset_label": "Normal",
+    "score": 2.578381061553955,
+    "threshold": 3.7415819525718748,
+    "alert": false,
+    "overlay": "sample-24-classic.png"
+  }
+]

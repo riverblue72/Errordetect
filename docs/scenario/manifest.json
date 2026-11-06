@@ -1,0 +1,86 @@
+[
+  {
+    "file": "source-3136.jpg",
+    "scenario": "T1_S174_I111_1",
+    "index": 3135,
+    "display_frame": 3136,
+    "dataset_label": "Normal"
+  },
+  {
+    "file": "source-4095.jpg",
+    "scenario": "T1_S174_I111_1",
+    "index": 4094,
+    "display_frame": 4095,
+    "dataset_label": "Normal"
+  },
+  {
+    "file": "source-4096.jpg",
+    "scenario": "T1_S174_I111_1",
+    "index": 4095,
+    "display_frame": 4096,
+    "dataset_label": "Normal"
+  },
+  {
+    "file": "target-001.jpg",
+    "scenario": "T1_S164_I36_1",
+    "index": 0,
+    "display_frame": 1,
+    "dataset_label": "Normal"
+  },
+  {
+    "file": "target-064.jpg",
+    "scenario": "T1_S164_I36_1",
+    "index": 63,
+    "display_frame": 64,
+    "dataset_label": "Normal"
+  },
+  {
+    "file": "target-128.jpg",
+    "scenario": "T1_S164_I36_1",
+    "index": 127,
+    "display_frame": 128,
+    "dataset_label": "Normal"
+  },
+  {
+    "file": "target-192.jpg",
+    "scenario": "T1_S164_I36_1",
+    "index": 191,
+    "display_frame": 192,
+    "dataset_label": "Normal"
+  },
+  {
+    "file": "demo-001.jpg",
+    "scenario": "T1_S478_I118_2",
+    "index": 0,
+    "display_frame": 1,
+    "dataset_label": "Normal"
+  },
+  {
+    "file": "demo-032.jpg",
+    "scenario": "T1_S478_I118_2",
+    "index": 31,
+    "display_frame": 32,
+    "dataset_label": "Defect"
+  },
+  {
+    "file": "demo-064.jpg",
+    "scenario": "T1_S478_I118_2",
+    "index": 63,
+    "display_frame": 64,
+    "dataset_label": "Normal"
+  },
+  {
+    "file": "demo-096.jpg",
+    "scenario": "T1_S478_I118_2",
+    "index": 95,
+    "display_frame": 96,
+    "dataset_label": "Normal"
+  },
+  {
+    "file": "demo-192.jpg",
+    "scenario": "T1_S478_I118_2",
+    "index": 191,
+    "display_frame": 192,
+    "dataset_label": "Normal"
+  }
+]

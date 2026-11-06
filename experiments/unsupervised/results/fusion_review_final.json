@@ -1,0 +1,1505 @@
+{
+  "protocol": {
+    "phase": "final",
+    "source": "T1_S174_I111_1",
+    "targets": [
+      "T1_S148_I108_1",
+      "T1_S164_I192_1",
+      "T1_S164_I193_1",
+      "T1_S164_I199_1",
+      "T1_S174_I108_1",
+      "T1_S177_I108_1",
+      "T1_S179_I35_1",
+      "T1_S478_I118_2",
+      "T2_S262_I45_1",
+      "T2_S287_I184_1",
+      "T2_S287_I185_1",
+      "T2_S303_I44_1",
+      "T2_S466_I39_1",
+      "T3_S165_I175_1",
+      "T3_S165_I178_1",
+      "T3_S165_I178_2"
+    ],
+    "evaluation_start": 320,
+    "target_cap": 4096,
+    "review_budget": 8,
+    "spacing": 16,
+    "fusion": "within-interval percentile ranks of frozen source scores",
+    "label_use": "post-selection audit only; development chooses the comparison rule",
+    "status": "exploratory; these runs have been inspected in earlier studies"
+  },
+  "runs": {
+    "T1_S148_I108_1": {
+      "feature_source": "in_memory",
+      "evaluated_frames": 2942,
+      "defect_frames": 640,
+      "new_defect_episodes": 69,
+      "methods": {
+        "frozen_dino": {
+          "average_precision": 0.8584654339041268,
+          "auroc": 0.9683644656820156,
+          "spaced8": {
+            "frames": [
+              2936,
+              2820,
+              3087,
+              1339,
+              1471,
+              2558,
+              741,
+              2452
+            ],
+            "review_count": 8,
+            "defect_reviews": 8,
+            "normal_reviews": 0,
+            "ambiguous_reviews": 0,
+            "new_episodes": 8
+          }
+        },
+        "handcrafted": {
+          "average_precision": 0.9392211562728464,
+          "auroc": 0.9803452161164206,
+          "spaced8": {
+            "frames": [
+              2822,
+              2935,
+              1640,
+              744,
+              1869,
+              2031,
+              2793,
+              1338
+            ],
+            "review_count": 8,
+            "defect_reviews": 8,
+            "normal_reviews": 0,
+            "ambiguous_reviews": 0,
+            "new_episodes": 8
+          }
+        },
+        "dino_75_handcrafted_25": {
+          "average_precision": 0.8887962770285995,
+          "auroc": 0.9747071160947003,
+          "spaced8": {
+            "frames": [
+              2936,
+              2820,
+              741,
+              1339,
+              1471,
+              2558,
+              2452,
+              624
+            ],
+            "review_count": 8,
+            "defect_reviews": 8,
+            "normal_reviews": 0,
+            "ambiguous_reviews": 0,
+            "new_episodes": 8
+          }
+        },
+        "equal_rank_mean": {
+          "average_precision": 0.9166688479256697,
+          "auroc": 0.9807137814943527,
+          "spaced8": {
+            "frames": [
+              2820,
+              2936,
+              741,
+              1339,
+              1472,
+              1640,
+              2557,
+              624
+            ],
+            "review_count": 8,
+            "defect_reviews": 8,
+            "normal_reviews": 0,
+            "ambiguous_reviews": 0,
+            "new_episodes": 8
+          }
+        }
+      }
+    },
+    "T1_S164_I192_1": {
+      "feature_source": "in_memory",
+      "evaluated_frames": 700,
+      "defect_frames": 0,
+      "new_defect_episodes": 0,
+      "methods": {
+        "frozen_dino": {
+          "average_precision": null,
+          "auroc": null,
+          "spaced8": {
+            "frames": [
+              474,
+              979,
+              724,
+              671,
+              912,
+              795,
+              522,
+              415
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        },
+        "handcrafted": {
+          "average_precision": null,
+          "auroc": null,
+          "spaced8": {
+            "frames": [
+              669,
+              419,
+              918,
+              543,
+              559,
+              795,
+              402,
+              379
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        },
+        "dino_75_handcrafted_25": {
+          "average_precision": null,
+          "auroc": null,
+          "spaced8": {
+            "frames": [
+              912,
+              668,
+              415,
+              795,
+              559,
+              928,
+              977,
+              476
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        },
+        "equal_rank_mean": {
+          "average_precision": null,
+          "auroc": null,
+          "spaced8": {
+            "frames": [
+              912,
+              669,
+              415,
+              795,
+              559,
+              543,
+              928,
+              476
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        }
+      }
+    },
+    "T1_S164_I193_1": {
+      "feature_source": "in_memory",
+      "evaluated_frames": 717,
+      "defect_frames": 0,
+      "new_defect_episodes": 0,
+      "methods": {
+        "frozen_dino": {
+          "average_precision": null,
+          "auroc": null,
+          "spaced8": {
+            "frames": [
+              547,
+              802,
+              615,
+              490,
+              735,
+              999,
+              343,
+              877
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        },
+        "handcrafted": {
+          "average_precision": null,
+          "auroc": null,
+          "spaced8": {
+            "frames": [
+              741,
+              491,
+              992,
+              369,
+              868,
+              618,
+              1010,
+              635
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        },
+        "dino_75_handcrafted_25": {
+          "average_precision": null,
+          "auroc": null,
+          "spaced8": {
+            "frames": [
+              490,
+              738,
+              999,
+              615,
+              506,
+              876,
+              755,
+              635
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        },
+        "equal_rank_mean": {
+          "average_precision": null,
+          "auroc": null,
+          "spaced8": {
+            "frames": [
+              490,
+              997,
+              738,
+              876,
+              617,
+              635,
+              506,
+              755
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        }
+      }
+    },
+    "T1_S164_I199_1": {
+      "feature_source": "in_memory",
+      "evaluated_frames": 892,
+      "defect_frames": 0,
+      "new_defect_episodes": 0,
+      "methods": {
+        "frozen_dino": {
+          "average_precision": null,
+          "auroc": null,
+          "spaced8": {
+            "frames": [
+              1143,
+              971,
+              632,
+              462,
+              798,
+              604,
+              502,
+              1023
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        },
+        "handcrafted": {
+          "average_precision": null,
+          "auroc": null,
+          "spaced8": {
+            "frames": [
+              594,
+              1098,
+              757,
+              422,
+              932,
+              681,
+              338,
+              850
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        },
+        "dino_75_handcrafted_25": {
+          "average_precision": null,
+          "auroc": null,
+          "spaced8": {
+            "frames": [
+              341,
+              592,
+              423,
+              849,
+              1023,
+              681,
+              932,
+              1183
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        },
+        "equal_rank_mean": {
+          "average_precision": null,
+          "auroc": null,
+          "spaced8": {
+            "frames": [
+              592,
+              341,
+              423,
+              681,
+              932,
+              849,
+              1023,
+              755
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        }
+      }
+    },
+    "T1_S174_I108_1": {
+      "feature_source": "in_memory",
+      "evaluated_frames": 297,
+      "defect_frames": 70,
+      "new_defect_episodes": 11,
+      "methods": {
+        "frozen_dino": {
+          "average_precision": 0.8582865280310139,
+          "auroc": 0.9551290119572058,
+          "spaced8": {
+            "frames": [
+              517,
+              431,
+              334,
+              478,
+              371,
+              576,
+              452,
+              394
+            ],
+            "review_count": 8,
+            "defect_reviews": 8,
+            "normal_reviews": 0,
+            "ambiguous_reviews": 0,
+            "new_episodes": 8
+          }
+        },
+        "handcrafted": {
+          "average_precision": 0.9853518849351952,
+          "auroc": 0.9952800503461297,
+          "spaced8": {
+            "frames": [
+              472,
+              374,
+              555,
+              615,
+              429,
+              452,
+              497,
+              577
+            ],
+            "review_count": 8,
+            "defect_reviews": 8,
+            "normal_reviews": 0,
+            "ambiguous_reviews": 0,
+            "new_episodes": 8
+          }
+        },
+        "dino_75_handcrafted_25": {
+          "average_precision": 0.9186967686635203,
+          "auroc": 0.9739773442416614,
+          "spaced8": {
+            "frames": [
+              478,
+              431,
+              452,
+              518,
+              371,
+              575,
+              557,
+              334
+            ],
+            "review_count": 8,
+            "defect_reviews": 8,
+            "normal_reviews": 0,
+            "ambiguous_reviews": 0,
+            "new_episodes": 8
+          }
+        },
+        "equal_rank_mean": {
+          "average_precision": 0.9742273662278491,
+          "auroc": 0.9918502202643171,
+          "spaced8": {
+            "frames": [
+              478,
+              374,
+              452,
+              431,
+              557,
+              518,
+              497,
+              613
+            ],
+            "review_count": 8,
+            "defect_reviews": 8,
+            "normal_reviews": 0,
+            "ambiguous_reviews": 0,
+            "new_episodes": 8
+          }
+        }
+      }
+    },
+    "T1_S177_I108_1": {
+      "feature_source": "in_memory",
+      "evaluated_frames": 3776,
+      "defect_frames": 0,
+      "new_defect_episodes": 0,
+      "methods": {
+        "frozen_dino": {
+          "average_precision": null,
+          "auroc": null,
+          "spaced8": {
+            "frames": [
+              1707,
+              649,
+              1178,
+              2235,
+              1530,
+              1001,
+              823,
+              2587
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        },
+        "handcrafted": {
+          "average_precision": null,
+          "auroc": null,
+          "spaced8": {
+            "frames": [
+              2640,
+              2290,
+              2900,
+              2984,
+              1926,
+              1534,
+              345,
+              1316
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        },
+        "dino_75_handcrafted_25": {
+          "average_precision": null,
+          "auroc": null,
+          "spaced8": {
+            "frames": [
+              2235,
+              1001,
+              1354,
+              2942,
+              649,
+              1177,
+              1707,
+              3294
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        },
+        "equal_rank_mean": {
+          "average_precision": null,
+          "auroc": null,
+          "spaced8": {
+            "frames": [
+              2235,
+              1001,
+              1352,
+              2586,
+              2942,
+              1533,
+              2638,
+              649
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        }
+      }
+    },
+    "T1_S179_I35_1": {
+      "feature_source": "in_memory",
+      "evaluated_frames": 1487,
+      "defect_frames": 0,
+      "new_defect_episodes": 0,
+      "methods": {
+        "frozen_dino": {
+          "average_precision": null,
+          "auroc": null,
+          "spaced8": {
+            "frames": [
+              1586,
+              327,
+              866,
+              1046,
+              686,
+              1406,
+              1226,
+              507
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        },
+        "handcrafted": {
+          "average_precision": null,
+          "auroc": null,
+          "spaced8": {
+            "frames": [
+              646,
+              540,
+              840,
+              1647,
+              1383,
+              381,
+              1568,
+              923
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        },
+        "dino_75_handcrafted_25": {
+          "average_precision": null,
+          "auroc": null,
+          "spaced8": {
+            "frames": [
+              1378,
+              562,
+              657,
+              1099,
+              1645,
+              817,
+              1196,
+              456
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        },
+        "equal_rank_mean": {
+          "average_precision": null,
+          "auroc": null,
+          "spaced8": {
+            "frames": [
+              1378,
+              1645,
+              817,
+              1099,
+              456,
+              381,
+              657,
+              559
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        }
+      }
+    },
+    "T1_S478_I118_2": {
+      "feature_source": "cache",
+      "evaluated_frames": 2884,
+      "defect_frames": 98,
+      "new_defect_episodes": 6,
+      "methods": {
+        "frozen_dino": {
+          "average_precision": 0.8744561063742237,
+          "auroc": 0.9865105410434095,
+          "spaced8": {
+            "frames": [
+              1506,
+              2473,
+              538,
+              1984,
+              1026,
+              2967,
+              405,
+              1380
+            ],
+            "review_count": 8,
+            "defect_reviews": 6,
+            "normal_reviews": 2,
+            "ambiguous_reviews": 0,
+            "new_episodes": 6
+          }
+        },
+        "handcrafted": {
+          "average_precision": 0.6200490651355244,
+          "auroc": 0.9729185285025712,
+          "spaced8": {
+            "frames": [
+              1025,
+              541,
+              1989,
+              2474,
+              2217,
+              1748,
+              2731,
+              2974
+            ],
+            "review_count": 8,
+            "defect_reviews": 5,
+            "normal_reviews": 3,
+            "ambiguous_reviews": 0,
+            "new_episodes": 5
+          }
+        },
+        "dino_75_handcrafted_25": {
+          "average_precision": 0.9825892582374406,
+          "auroc": 0.9987363933369471,
+          "spaced8": {
+            "frames": [
+              1025,
+              1987,
+              536,
+              1510,
+              2474,
+              2968,
+              2707,
+              2941
+            ],
+            "review_count": 8,
+            "defect_reviews": 6,
+            "normal_reviews": 2,
+            "ambiguous_reviews": 0,
+            "new_episodes": 6
+          }
+        },
+        "equal_rank_mean": {
+          "average_precision": 0.9939209943781088,
+          "auroc": 0.9997839049474779,
+          "spaced8": {
+            "frames": [
+              1025,
+              1987,
+              539,
+              2474,
+              1510,
+              2968,
+              2707,
+              2230
+            ],
+            "review_count": 8,
+            "defect_reviews": 6,
+            "normal_reviews": 2,
+            "ambiguous_reviews": 0,
+            "new_episodes": 6
+          }
+        }
+      }
+    },
+    "T2_S262_I45_1": {
+      "feature_source": "in_memory",
+      "evaluated_frames": 1206,
+      "defect_frames": 0,
+      "new_defect_episodes": 0,
+      "methods": {
+        "frozen_dino": {
+          "average_precision": null,
+          "auroc": null,
+          "spaced8": {
+            "frames": [
+              389,
+              1162,
+              1032,
+              454,
+              642,
+              777,
+              901,
+              1411
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        },
+        "handcrafted": {
+          "average_precision": null,
+          "auroc": null,
+          "spaced8": {
+            "frames": [
+              889,
+              758,
+              369,
+              1277,
+              1408,
+              498,
+              1148,
+              1016
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        },
+        "dino_75_handcrafted_25": {
+          "average_precision": null,
+          "auroc": null,
+          "spaced8": {
+            "frames": [
+              639,
+              377,
+              768,
+              1027,
+              964,
+              1159,
+              443,
+              1286
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        },
+        "equal_rank_mean": {
+          "average_precision": null,
+          "auroc": null,
+          "spaced8": {
+            "frames": [
+              639,
+              377,
+              768,
+              1027,
+              1159,
+              508,
+              1286,
+              974
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        }
+      }
+    },
+    "T2_S287_I184_1": {
+      "feature_source": "in_memory",
+      "evaluated_frames": 1487,
+      "defect_frames": 0,
+      "new_defect_episodes": 0,
+      "methods": {
+        "frozen_dino": {
+          "average_precision": null,
+          "auroc": null,
+          "spaced8": {
+            "frames": [
+              1091,
+              488,
+              1292,
+              891,
+              1492,
+              689,
+              1694,
+              1712
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        },
+        "handcrafted": {
+          "average_precision": null,
+          "auroc": null,
+          "spaced8": {
+            "frames": [
+              894,
+              1296,
+              1698,
+              491,
+              1496,
+              1094,
+              691,
+              1045
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        },
+        "dino_75_handcrafted_25": {
+          "average_precision": null,
+          "auroc": null,
+          "spaced8": {
+            "frames": [
+              488,
+              1292,
+              1091,
+              891,
+              1493,
+              689,
+              1694,
+              1248
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        },
+        "equal_rank_mean": {
+          "average_precision": null,
+          "auroc": null,
+          "spaced8": {
+            "frames": [
+              1292,
+              488,
+              891,
+              1091,
+              1694,
+              691,
+              1493,
+              1248
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        }
+      }
+    },
+    "T2_S287_I185_1": {
+      "feature_source": "in_memory",
+      "evaluated_frames": 857,
+      "defect_frames": 75,
+      "new_defect_episodes": 4,
+      "methods": {
+        "frozen_dino": {
+          "average_precision": 0.8233080596426524,
+          "auroc": 0.951918158567775,
+          "spaced8": {
+            "frames": [
+              690,
+              710,
+              406,
+              641,
+              756,
+              1053,
+              363,
+              456
+            ],
+            "review_count": 8,
+            "defect_reviews": 5,
+            "normal_reviews": 3,
+            "ambiguous_reviews": 0,
+            "new_episodes": 4
+          }
+        },
+        "handcrafted": {
+          "average_precision": 0.11051010281652415,
+          "auroc": 0.5865984654731458,
+          "spaced8": {
+            "frames": [
+              763,
+              463,
+              1061,
+              988,
+              692,
+              1137,
+              861,
+              710
+            ],
+            "review_count": 8,
+            "defect_reviews": 2,
+            "normal_reviews": 6,
+            "ambiguous_reviews": 0,
+            "new_episodes": 1
+          }
+        },
+        "dino_75_handcrafted_25": {
+          "average_precision": 0.45813068777171967,
+          "auroc": 0.8954305200341006,
+          "spaced8": {
+            "frames": [
+              692,
+              710,
+              1053,
+              756,
+              398,
+              456,
+              989,
+              838
+            ],
+            "review_count": 8,
+            "defect_reviews": 3,
+            "normal_reviews": 5,
+            "ambiguous_reviews": 0,
+            "new_episodes": 2
+          }
+        },
+        "equal_rank_mean": {
+          "average_precision": 0.2847961532181293,
+          "auroc": 0.8103239556692242,
+          "spaced8": {
+            "frames": [
+              692,
+              1053,
+              756,
+              710,
+              459,
+              398,
+              989,
+              1155
+            ],
+            "review_count": 8,
+            "defect_reviews": 3,
+            "normal_reviews": 5,
+            "ambiguous_reviews": 0,
+            "new_episodes": 2
+          }
+        }
+      }
+    },
+    "T2_S303_I44_1": {
+      "feature_source": "in_memory",
+      "evaluated_frames": 1488,
+      "defect_frames": 0,
+      "new_defect_episodes": 0,
+      "methods": {
+        "frozen_dino": {
+          "average_precision": null,
+          "auroc": null,
+          "spaced8": {
+            "frames": [
+              1182,
+              467,
+              1245,
+              1637,
+              1374,
+              924,
+              1708,
+              340
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        },
+        "handcrafted": {
+          "average_precision": null,
+          "auroc": null,
+          "spaced8": {
+            "frames": [
+              326,
+              1364,
+              1492,
+              845,
+              1102,
+              454,
+              1623,
+              583
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        },
+        "dino_75_handcrafted_25": {
+          "average_precision": null,
+          "auroc": null,
+          "spaced8": {
+            "frames": [
+              467,
+              622,
+              986,
+              1633,
+              868,
+              1374,
+              1113,
+              725
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        },
+        "equal_rank_mean": {
+          "average_precision": null,
+          "auroc": null,
+          "spaced8": {
+            "frames": [
+              467,
+              622,
+              1633,
+              986,
+              853,
+              1502,
+              1374,
+              1113
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        }
+      }
+    },
+    "T2_S466_I39_1": {
+      "feature_source": "in_memory",
+      "evaluated_frames": 3776,
+      "defect_frames": 0,
+      "new_defect_episodes": 0,
+      "methods": {
+        "frozen_dino": {
+          "average_precision": null,
+          "auroc": null,
+          "spaced8": {
+            "frames": [
+              1024,
+              3732,
+              1167,
+              2741,
+              3591,
+              1738,
+              3162,
+              3025
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        },
+        "handcrafted": {
+          "average_precision": null,
+          "auroc": null,
+          "spaced8": {
+            "frames": [
+              2740,
+              3589,
+              4013,
+              2175,
+              3022,
+              3163,
+              3729,
+              1910
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        },
+        "dino_75_handcrafted_25": {
+          "average_precision": null,
+          "auroc": null,
+          "spaced8": {
+            "frames": [
+              2597,
+              2387,
+              2739,
+              3162,
+              2228,
+              2175,
+              3587,
+              3728
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        },
+        "equal_rank_mean": {
+          "average_precision": null,
+          "auroc": null,
+          "spaced8": {
+            "frames": [
+              2597,
+              2387,
+              2175,
+              2228,
+              3587,
+              4013,
+              2739,
+              3163
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        }
+      }
+    },
+    "T3_S165_I175_1": {
+      "feature_source": "in_memory",
+      "evaluated_frames": 1487,
+      "defect_frames": 0,
+      "new_defect_episodes": 0,
+      "methods": {
+        "frozen_dino": {
+          "average_precision": null,
+          "auroc": null,
+          "spaced8": {
+            "frames": [
+              1376,
+              690,
+              1551,
+              1035,
+              1721,
+              346,
+              865,
+              1207
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        },
+        "handcrafted": {
+          "average_precision": null,
+          "auroc": null,
+          "spaced8": {
+            "frames": [
+              693,
+              1555,
+              865,
+              1383,
+              348,
+              1210,
+              1727,
+              1037
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        },
+        "dino_75_handcrafted_25": {
+          "average_precision": null,
+          "auroc": null,
+          "spaced8": {
+            "frames": [
+              690,
+              1727,
+              865,
+              1554,
+              1382,
+              344,
+              1037,
+              519
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        },
+        "equal_rank_mean": {
+          "average_precision": null,
+          "auroc": null,
+          "spaced8": {
+            "frames": [
+              865,
+              1727,
+              690,
+              1554,
+              1382,
+              347,
+              1037,
+              519
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        }
+      }
+    },
+    "T3_S165_I178_1": {
+      "feature_source": "in_memory",
+      "evaluated_frames": 1488,
+      "defect_frames": 0,
+      "new_defect_episodes": 0,
+      "methods": {
+        "frozen_dino": {
+          "average_precision": null,
+          "auroc": null,
+          "spaced8": {
+            "frames": [
+              1760,
+              378,
+              721,
+              896,
+              1584,
+              551,
+              1411,
+              1071
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        },
+        "handcrafted": {
+          "average_precision": null,
+          "auroc": null,
+          "spaced8": {
+            "frames": [
+              554,
+              1244,
+              1416,
+              899,
+              1071,
+              1760,
+              726,
+              1588
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        },
+        "dino_75_handcrafted_25": {
+          "average_precision": null,
+          "auroc": null,
+          "spaced8": {
+            "frames": [
+              1760,
+              381,
+              1071,
+              1415,
+              726,
+              1586,
+              897,
+              1241
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        },
+        "equal_rank_mean": {
+          "average_precision": null,
+          "auroc": null,
+          "spaced8": {
+            "frames": [
+              1760,
+              381,
+              1071,
+              1415,
+              726,
+              1586,
+              553,
+              1243
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        }
+      }
+    },
+    "T3_S165_I178_2": {
+      "feature_source": "in_memory",
+      "evaluated_frames": 1487,
+      "defect_frames": 0,
+      "new_defect_episodes": 0,
+      "methods": {
+        "frozen_dino": {
+          "average_precision": null,
+          "auroc": null,
+          "spaced8": {
+            "frames": [
+              1697,
+              1182,
+              1007,
+              836,
+              1351,
+              492,
+              1526,
+              665
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        },
+        "handcrafted": {
+          "average_precision": null,
+          "auroc": null,
+          "spaced8": {
+            "frames": [
+              495,
+              1184,
+              668,
+              322,
+              1012,
+              970,
+              1316,
+              1529
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        },
+        "dino_75_handcrafted_25": {
+          "average_precision": null,
+          "auroc": null,
+          "spaced8": {
+            "frames": [
+              1183,
+              1007,
+              1528,
+              667,
+              495,
+              322,
+              835,
+              969
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        },
+        "equal_rank_mean": {
+          "average_precision": null,
+          "auroc": null,
+          "spaced8": {
+            "frames": [
+              1184,
+              1012,
+              1528,
+              495,
+              667,
+              322,
+              969,
+              799
+            ],
+            "review_count": 8,
+            "defect_reviews": 0,
+            "normal_reviews": 8,
+            "ambiguous_reviews": 0,
+            "new_episodes": 0
+          }
+        }
+      }
+    }
+  }
+}

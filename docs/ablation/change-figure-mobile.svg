@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 223" role="img" aria-labelledby="title desc">
+<title id="title">Visual change across two production runs</title>
+<desc id="desc">The last 16 consecutive reference windows and first 16 windows of a separate changed normal run are plotted at equal intervals. The reference run stays below the alert limit. The first three changed-run windows exceed it, confirming an alert at frame 192; the chart continues through frame 608.</desc>
+<style>
+text{font-family:Segoe UI,Arial,sans-serif}
+.heading{fill:#59698f;font-size:11px;letter-spacing:1px}
+.axis{fill:#75829b;font-size:10px}
+.alert{fill:#ba676c;font-size:10px;letter-spacing:1px}
+</style>
+<text x="35" y="24" class="heading">REFERENCE RUN</text>
+<text x="274" y="24" text-anchor="end" class="heading">NEW RUN</text>
+<line x1="154.5" x2="154.5" y1="36" y2="172" stroke="#cbd2e1" stroke-dasharray="4 5"/>
+<line x1="35" x2="274" y1="44.0" y2="44.0" stroke="#dce2ef"/>
+<text x="25" y="47.0" text-anchor="end" class="axis">1</text>
+<line x1="35" x2="274" y1="103.5" y2="103.5" stroke="#dce2ef"/>
+<text x="25" y="106.5" text-anchor="end" class="axis">0.5</text>
+<line x1="35" x2="274" y1="163.0" y2="163.0" stroke="#dce2ef"/>
+<text x="25" y="166.0" text-anchor="end" class="axis">0</text>
+<line x1="35" x2="274" y1="155.4" y2="155.4" stroke="#ba8f71" stroke-width="1.5" stroke-dasharray="5 4"/>
+<text x="35" y="147.4" class="axis">ALERT LIMIT · 0.064</text>
+<polyline points="35.0,160.0 42.7,161.1 50.4,160.6 58.1,160.7 65.8,161.5 73.5,160.8 81.3,160.2 89.0,161.4 96.7,161.0 104.4,160.5 112.1,161.2 119.8,160.2 127.5,161.1 135.2,160.4 142.9,160.3 150.6,161.2" fill="none" stroke="#7788bf" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<polyline points="150.6,161.2 158.4,52.4 166.1,50.9 173.8,54.7 181.5,56.8 189.2,52.4 196.9,53.3 204.6,52.2 212.3,52.7 220.0,55.0 227.7,52.5 235.5,50.3 243.2,53.7 250.9,51.2 258.6,54.2 266.3,57.3 274.0,51.3" fill="none" stroke="#d98387" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="35.0" cy="160.0" r="1.2" fill="#7788bf"/>
+<circle cx="42.7" cy="161.1" r="1.2" fill="#7788bf"/>
+<circle cx="50.4" cy="160.6" r="1.2" fill="#7788bf"/>
+<circle cx="58.1" cy="160.7" r="1.2" fill="#7788bf"/>
+<circle cx="65.8" cy="161.5" r="1.2" fill="#7788bf"/>
+<circle cx="73.5" cy="160.8" r="1.2" fill="#7788bf"/>
+<circle cx="81.3" cy="160.2" r="1.2" fill="#7788bf"/>
+<circle cx="89.0" cy="161.4" r="1.2" fill="#7788bf"/>
+<circle cx="96.7" cy="161.0" r="1.2" fill="#7788bf"/>
+<circle cx="104.4" cy="160.5" r="1.2" fill="#7788bf"/>
+<circle cx="112.1" cy="161.2" r="1.2" fill="#7788bf"/>
+<circle cx="119.8" cy="160.2" r="1.2" fill="#7788bf"/>
+<circle cx="127.5" cy="161.1" r="1.2" fill="#7788bf"/>
+<circle cx="135.2" cy="160.4" r="1.2" fill="#7788bf"/>
+<circle cx="142.9" cy="160.3" r="1.2" fill="#7788bf"/>
+<circle cx="150.6" cy="161.2" r="1.2" fill="#7788bf"/>
+<circle cx="158.4" cy="52.4" r="1.2" fill="#d98387"/>
+<circle cx="166.1" cy="50.9" r="1.2" fill="#d98387"/>
+<circle cx="173.8" cy="54.7" r="1.2" fill="#d98387"/>
+<circle cx="181.5" cy="56.8" r="1.2" fill="#d98387"/>
+<circle cx="189.2" cy="52.4" r="1.2" fill="#d98387"/>
+<circle cx="196.9" cy="53.3" r="1.2" fill="#d98387"/>
+<circle cx="204.6" cy="52.2" r="1.2" fill="#d98387"/>
+<circle cx="212.3" cy="52.7" r="1.2" fill="#d98387"/>
+<circle cx="220.0" cy="55.0" r="1.2" fill="#d98387"/>
+<circle cx="227.7" cy="52.5" r="1.2" fill="#d98387"/>
+<circle cx="235.5" cy="50.3" r="1.2" fill="#d98387"/>
+<circle cx="243.2" cy="53.7" r="1.2" fill="#d98387"/>
+<circle cx="250.9" cy="51.2" r="1.2" fill="#d98387"/>
+<circle cx="258.6" cy="54.2" r="1.2" fill="#d98387"/>
+<circle cx="266.3" cy="57.3" r="1.2" fill="#d98387"/>
+<circle cx="274.0" cy="51.3" r="1.2" fill="#d98387"/>
+<circle cx="173.8" cy="54.7" r="8" fill="none" stroke="#ba676c" stroke-width="1.5"/>
+<text x="173.8" y="185" text-anchor="middle" class="axis">192</text>
+<text x="173.8" y="208" text-anchor="middle" class="alert">ALERT</text>
+</svg>

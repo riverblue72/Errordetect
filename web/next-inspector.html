@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Compare saved anomaly maps and change signals on recorded production frames.">
+  <title>Change-aware samples | SurfaceTrace</title>
+  <link rel="icon" type="image/svg+xml" href="./favicon.svg">
+  <link rel="stylesheet" href="./site.css">
+  <link rel="stylesheet" href="./pipeline.css">
+  <link rel="stylesheet" href="./theme.css">
+  <script src="./next-app.js" defer></script>
+</head>
+<body class="inspector-page stream-page">
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header inspect-header">
+    <a class="logo" href="./index.html" aria-label="SurfaceTrace home"><span class="logo-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span>SurfaceTrace<small>VISUAL INSPECTION</small></span></a>
+    <nav class="main-nav" aria-label="Main navigation"><a href="./index.html">← Overview</a><a href="./inspect.html">Baseline samples</a><span class="nav-current" aria-current="page">Change-aware samples</span><a href="./review.html">Review trial</a></nav>
+  </header>
+  <main id="main" class="inspect-main stream-main">
+    <div class="inspect-intro stream-intro"><div><p class="section-kicker">TSFABRICS · RECORDED RESULTS</p><h1>Inspect production frames.</h1></div><div class="stream-intro-actions"><p class="inspect-prompt">Compare the baseline, frozen reference, and new-run trial.</p><button id="openSummary" class="button button-dark" type="button">Summarize interval <span aria-hidden="true">→</span></button></div></div>
+    <div class="stream-layout">
+      <section class="inspect-card stream-image-card" aria-labelledby="stream-photo-heading">
+        <div class="inspect-card-head"><h2 id="stream-photo-heading">Photo</h2><div class="sample-switcher"><button id="prevFrame" type="button" aria-label="Previous frame">←</button><span id="framePosition" aria-live="polite">—</span><button id="nextFrame" type="button" aria-label="Next frame">→</button></div></div>
+        <div class="stream-viewer"><div class="stream-image-wrap"><img id="frameImage" alt="Selected TSFabrics production photo"><img id="frameHeat" alt="Model anomaly highlight"></div></div>
+        <div class="stream-viewer-foot"><label class="range">Highlight <input id="streamOpacity" type="range" min="0" max="100" value="78" aria-label="Anomaly highlight opacity"></label><span class="legend"><i></i> Unusual area</span></div>
+        <div class="stream-photo-meta"><span id="runName">—</span><span id="frameName">—</span></div>
+      </section>
+      <div class="stream-results">
+        <section class="inspect-card stream-result-card" aria-labelledby="stream-result-heading">
+          <div class="inspect-card-head"><h2 id="stream-result-heading">Result</h2><span class="file-name" id="frameId">—</span></div>
+          <div class="reference-switch" role="group" aria-label="Inspection method"><button type="button" data-reference="handcrafted" aria-pressed="false"><span>Handcrafted</span><small id="handcraftedVerdict">—</small></button><button type="button" data-reference="current" aria-pressed="true"><span>Frozen DINOv2</span><small id="currentVerdict">—</small></button><button type="button" data-reference="candidate" aria-pressed="false"><span>New-run trial</span><small id="candidateVerdict">—</small></button></div>
+          <div class="stream-result-body"><div class="stream-status-line"><span class="status" id="streamStatus" role="status">Loading</span><span class="stream-model-state" id="modelState">Selected source reference</span></div><span class="dataset-label" id="frameTruth">—</span><div class="scoreline"><span class="score" id="streamScore">—</span><span class="scorecaption">Model score</span></div><div class="score-meter" id="streamMeter" role="img" aria-label="Model score and review threshold"><div class="meter"><span id="streamMeterFill"></span></div><div class="threshold-marker" id="streamThresholdMarker" aria-hidden="true"></div></div><p class="assessment" id="streamAssessment"></p></div>
+        </section>
+        <section class="inspect-card stream-change-card" aria-labelledby="change-heading"><div class="inspect-card-head"><h2 id="change-heading">Visual change</h2><span id="changeState" class="change-state">—</span></div><div class="change-body"><svg id="changeChart" viewBox="0 0 420 100" role="img" aria-label="Visual change score through the selected frame"></svg><div class="change-legend"><span><i></i> Change score</span><span><i></i> Alert limit</span></div><p id="changeNote"></p></div></section>
+      </div>
+    </div>
+    <section class="inspect-card stream-samples" aria-labelledby="stream-samples-heading"><div class="inspect-card-head"><div><h2 id="stream-samples-heading">Selected test frames</h2><p>Curated detections and errors.</p></div><div class="sample-filters" role="group" aria-label="Filter dataset labels"><button type="button" data-stream-filter="all" aria-pressed="true">All</button><button type="button" data-stream-filter="defect" aria-pressed="false">Defect</button><button type="button" data-stream-filter="normal" aria-pressed="false">Normal</button></div></div><div class="stream-sample-groups" id="streamSamples"></div></section>
+  </main>
+  <dialog id="intervalDialog" class="interval-dialog" aria-labelledby="summaryTitle">
+    <div class="interval-dialog-inner">
+      <header class="interval-dialog-head"><div><p class="section-kicker">RECORDED INTERVAL</p><h2 id="summaryTitle">Interval summary</h2></div><button id="closeSummary" type="button" aria-label="Close summary">×</button></header>
+      <div class="interval-controls"><label for="intervalSelect">Production run</label><select id="intervalSelect"></select><span id="intervalRange"></span></div>
+      <div id="intervalSummary" aria-live="polite"></div>
+      <section id="candidateReview" class="candidate-review" hidden aria-labelledby="candidateReviewTitle"><div class="candidate-review-head"><div><p class="section-kicker">AFTER CHANGE ALERT</p><h3 id="candidateReviewTitle">Review buffered frames</h3><p id="candidateReviewNote"></p></div><div class="candidate-review-count"><span id="reviewCount"></span></div></div><div id="reviewFrames" class="review-frame-grid"></div><p class="review-footnote">Exported choices are a review record; the reference is unchanged.</p></section>
+      <div class="interval-footer"><span>Review decisions remain in this session until exported.</span><button id="exportSummary" type="button">Export summary</button></div>
+    </div>
+  </dialog>
+  <footer class="site-footer"><div class="footer-top"><a class="footer-brand" href="./index.html">SurfaceTrace</a><span>ISM × RIKU</span></div><div class="footer-bottom"><p>© 2026 Hyunsu Go · <a href="https://github.com/gohyunsu/surface-trace" target="_blank" rel="noopener noreferrer">GitHub</a></p><p>Images: <a href="https://doi.org/10.6084/m9.figshare.29573381" target="_blank" rel="noopener noreferrer">TSFabrics · Ni et al. (2026)</a> · <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer">CC BY 4.0</a>. Photos resized and marked with model output.</p></div></footer>
+</body>
+</html>

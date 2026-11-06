@@ -3,100 +3,252 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="description" content="Explore how a normal-reference model highlights unusual areas in real industrial surface photos.">
-  <title>SurfaceTrace | See where to look</title>
+  <meta name="description" content="Explore a surface inspection baseline and a change-aware experiment on recorded production runs.">
+  <title>SurfaceTrace | Visual inspection across changing conditions</title>
   <link rel="icon" type="image/svg+xml" href="./favicon.svg">
-  <link rel="stylesheet" href="./site.css">
-  <link rel="stylesheet" href="./workspace.css">
-  <link rel="stylesheet" href="./method-studio.css">
+  <link rel="stylesheet" href="./site.css?v=7961f4262136">
+  <link rel="stylesheet" href="./pipeline.css?v=8869817cbf14">
+  <link rel="stylesheet" href="./improvements.css?v=422df57bb09e">
+  <link rel="stylesheet" href="./theme.css?v=cffc97de4b89">
+  <link rel="stylesheet" href="./demo-entry.css?v=41bef8f640a8">
+  <script src="./ablation.js?v=45fb276265a3" defer></script>
+  <script src="./review-routing.js?v=1676cde7d12a" defer></script>
+  <script src="./landing-nav.js?v=32d6f43024c5" defer></script>
 </head>
-<body class="landing-page">
+<body class="landing-page pipeline-landing">
   <a class="skip-link" href="#main">Skip to content</a>
   <header class="site-header">
     <a class="logo" href="./index.html" aria-label="SurfaceTrace home"><span class="logo-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span>SurfaceTrace<small>VISUAL INSPECTION</small></span></a>
-    <nav class="main-nav" aria-label="Main navigation"><a href="#experience">Examples</a><a href="#workflow">Method</a><a href="./inspect.html">All samples</a><a class="nav-cta" href="./workspace.html">Labeling studio <span aria-hidden="true">↗</span></a></nav>
+    <nav class="main-nav" aria-label="Main navigation"><a href="#baseline">Baseline</a><a href="#feedback">Feedback</a><a href="#next">Change-aware</a><a href="./presenter-en.html">Demo ↗</a></nav>
   </header>
   <main id="main">
     <section class="hero"><div class="hero-inner">
       <div class="hero-copy">
-        <p class="eyebrow"><span class="eyebrow-line"></span> METAL SURFACE DEMO</p>
-        <h1>Find the area<br><em>to review.</em></h1>
-        <p class="hero-description">Compare a real metal surface photo with the normal reference. See where it differs.</p>
-        <div class="hero-actions"><a class="button button-light" href="./inspect.html?sample=1">Try a real sample <span aria-hidden="true">↗</span></a><a class="text-link" href="#workflow">See the method ↓</a></div>
-        <div class="hero-team">A project by ISM × RIKU</div>
+        <p class="eyebrow"><span class="eyebrow-line"></span> TWO INSPECTION APPROACHES</p>
+        <h1>Find unusual areas.<br><em>Track change.</em></h1>
+        <p class="hero-description">From a single-photo baseline to change-aware inspection of recorded runs.</p>
+        <div class="hero-actions"><a class="text-link hero-scroll" href="#baseline">Explore the project ↓</a><a class="text-link hero-scroll" href="./presenter-en.html">Open demo ↗</a></div>
       </div>
-      <a class="hero-demo" href="./inspect.html?sample=1" aria-label="Open the highlighted sample">
-        <div class="demo-top"><span>REAL TEST PHOTO</span><span>01 / 64</span></div>
-        <div class="demo-photo"><img class="base-photo" src="./landscape/sample-01.jpg" alt="Wide view of an industrial surface with a defect"><img class="heat-photo" src="./samples/sample-01-heat.png" alt="Highlighted anomaly area"></div>
-        <div class="demo-summary"><span class="demo-summary-status">Review needed</span><span>Score 3.50</span><span aria-hidden="true">↗</span></div>
-      </a>
+      <picture class="pipeline-hero-motion">
+        <source media="(prefers-reduced-motion: reduce)" srcset="./next-method/02-poster.png">
+        <img src="./next-method/hero.webp" alt="Recorded frames are compared with an unlabeled visual reference, checked for unusual regions and visual change, and sent for limited review." width="720" height="420" fetchpriority="high">
+      </picture>
     </div></section>
-    <section class="studio-entry" id="studio"><div class="section">
-      <div><p class="section-kicker">NEW · LABELING WORKSPACE</p><h2>From a highlight<br>to a useful label.</h2><p>AI가 제안한 영역을 다듬고, 라벨을 확정하세요.<br>검수 결과는 일일 품질 보고서로 이어집니다.</p><a class="button button-dark" href="./workspace.html">라벨링 시연 시작 <span aria-hidden="true">↗</span></a></div>
-      <a class="studio-entry-visual" href="./workspace.html" aria-label="AI 라벨링 작업대 열기" style="text-decoration:none"><div class="studio-entry-head"><span>AI-ASSISTED LABELING</span><span>HUMAN VERIFIED</span></div><div class="studio-entry-photo"><img src="./landscape/sample-01.jpg" alt="금속 표면의 결함 후보"><img src="./samples/sample-01-heat.png" alt="AI가 제안한 검수 영역"></div><div class="studio-entry-steps"><span>01 &nbsp; AI 초안 생성</span><span>→</span><span>02 &nbsp; 수정 · 확정</span><span>→</span><span>03 &nbsp; 일일 보고서</span></div></a>
-    </div></section>
-    <section class="section experience" id="experience">
-      <div class="section-heading"><div><p class="section-kicker">REAL PHOTOS</p><h2>See real photos.</h2></div><a class="section-link" href="./inspect.html">View all 64 samples ↗</a></div>
-      <div class="example-grid">
-        <a class="example-card" href="./inspect.html?sample=1"><div class="example-photo"><img src="./landscape/sample-01.jpg" alt="Held-out photo labeled as defective"><img class="heat-photo" src="./samples/sample-01-heat.png" alt="Model highlight"><span class="example-label">DEFECT IMAGE</span></div><div class="example-info"><span class="example-type">SAMPLE 01</span><div><h3>View a flagged defect photo</h3><span class="example-arrow" aria-hidden="true">↗</span></div></div></a>
-        <a class="example-card" href="./inspect.html?sample=4"><div class="example-photo"><img src="./landscape/sample-04.jpg" alt="Held-out photo labeled as normal"><span class="example-label neutral">NORMAL IMAGE</span></div><div class="example-info"><span class="example-type">SAMPLE 04</span><div><h3>Compare a normal photo</h3><span class="example-arrow" aria-hidden="true">↗</span></div></div></a>
-      </div>
-    </section>
-    <section class="method-section" id="workflow"><div class="section method-inner">
-      <div class="method-heading"><div><p class="section-kicker">HOW IT WORKS</p><h2>From photo to reviewed data.</h2></div><p class="method-intro" lang="ko">AI가 만든 초안을 사람이 수정·확정하고,<br>검수 결과를 보고서와 데이터로 이어갑니다.</p></div>
+
+    <section class="method-section baseline-section" id="baseline"><div class="section method-inner">
+      <div class="method-heading"><div><p class="section-kicker">01 / BASELINE MVP</p><h2>Compare with normal.</h2></div></div>
+      <div class="dataset-note"><span>KolektorSDD</span><p>Labeled photos of cracks in the plastic embedding of electrical commutators.</p></div>
       <div class="method-animation-grid">
-<article class="method-card" data-step="01"><div class="method-animation"><picture><source media="(prefers-reduced-motion: reduce)" srcset="./method/01-poster.png"><img src="./method/01.gif" alt="정상 사진의 특징을 미리 모아 새 사진과 비교할 기준을 만듭니다."></picture></div><div class="method-card-copy"><span>01</span><div><h3>Build the reference</h3><p lang="ko">정상 사진의 특징을 미리 모아 새 사진과 비교할 기준을 만듭니다.</p></div></div></article>
-<article class="method-card" data-step="02"><div class="method-animation"><picture><source media="(prefers-reduced-motion: reduce)" srcset="./method/02-poster.png"><img src="./method/02.gif" alt="사진 크기를 맞추고, 흑백 변환과 밝기 정규화를 수행합니다."></picture></div><div class="method-card-copy"><span>02</span><div><h3>Prepare the photo</h3><p lang="ko">사진 크기를 맞추고, 흑백 변환과 밝기 정규화를 수행합니다.</p></div></div></article>
-<article class="method-card" data-step="03"><div class="method-animation"><picture><source media="(prefers-reduced-motion: reduce)" srcset="./method/03-poster.png"><img src="./method/03.gif" alt="사진을 작은 패치로 나눠 표면의 각 부분을 살펴봅니다."></picture></div><div class="method-card-copy"><span>03</span><div><h3>Split into patches</h3><p lang="ko">사진을 작은 패치로 나눠 표면의 각 부분을 살펴봅니다.</p></div></div></article>
-<article class="method-card" data-step="04"><div class="method-animation"><picture><source media="(prefers-reduced-motion: reduce)" srcset="./method/04-poster.png"><img src="./method/04.gif" alt="각 패치의 밝기·어두운 틈·경계 특징을 수치로 표현합니다."></picture></div><div class="method-card-copy"><span>04</span><div><h3>Measure features</h3><p lang="ko">각 패치의 밝기·어두운 틈·경계 특징을 수치로 표현합니다.</p></div></div></article>
-<article class="method-card" data-step="05"><div class="method-animation"><picture><source media="(prefers-reduced-motion: reduce)" srcset="./method/05-poster.png"><img src="./method/05.gif" alt="가장 비슷한 정상 패치와 비교해 차이를 점수로 계산합니다."></picture></div><div class="method-card-copy"><span>05</span><div><h3>Find the nearest normal patch</h3><p lang="ko">가장 비슷한 정상 패치와 비교해 차이를 점수로 계산합니다.</p></div></div></article>
-<article class="method-card" data-step="06"><div class="method-animation"><picture><source media="(prefers-reduced-motion: reduce)" srcset="./method/06-poster.png"><img src="./method/06.gif" alt="차이가 큰 위치를 히트맵으로 표시해 먼저 검토할 곳을 안내합니다."></picture></div><div class="method-card-copy"><span>06</span><div><h3>Map anomalies</h3><p lang="ko">차이가 큰 위치를 히트맵으로 표시해 먼저 검토할 곳을 안내합니다.</p></div></div></article>
-<article class="method-card" data-step="07"><div class="method-animation method-studio-animation">
-  <svg class="method-draft" viewBox="0 0 420 245" role="img" aria-labelledby="draft-visual-title"><title id="draft-visual-title">Illustration: anomaly highlights become editable region proposals on a metal surface photo.</title>
-    <defs><clipPath id="draft-photo-clip"><rect x="34" y="51" width="352" height="138" rx="4"/></clipPath></defs>
-    <rect x="22" y="39" width="376" height="162" rx="7" fill="#e7ebf4"/>
-    <g clip-path="url(#draft-photo-clip)"><image href="./landscape/sample-01.jpg" x="34" y="51" width="352" height="138" preserveAspectRatio="none"/><image class="draft-heat" href="./samples/sample-01-heat.png" x="34" y="51" width="352" height="138" preserveAspectRatio="none"/>
-      <rect class="draft-scan" x="34" y="51" width="2" height="138" fill="#f5f7ff"/>
-      <g class="draft-boxes" fill="none" stroke="#697ebd" stroke-width="1.8"><rect x="249" y="132" width="17" height="57"/><rect x="216" y="51" width="20" height="12"/></g>
-      <g class="draft-handles" fill="#f7f8ff" stroke="#697ebd"><rect x="246" y="129" width="6" height="6"/><rect x="263" y="129" width="6" height="6"/><rect x="246" y="186" width="6" height="6"/><rect x="263" y="186" width="6" height="6"/></g>
-    </g>
-    <path d="M175 221h70" stroke="#e0e5f1" stroke-width="3" stroke-linecap="round"/><path class="draft-progress" d="M175 221h70" pathLength="1" stroke="#9cadd8" stroke-width="3" stroke-linecap="round"/>
-  </svg>
-</div><div class="method-card-copy"><span>07</span><div><h3>Draft the labels</h3><p lang="ko">점수가 높은 인접 영역을 박스 초안으로 만듭니다. 검수자는 이 초안에서 작업을 시작합니다.</p></div></div></article>
-<article class="method-card" data-step="08"><div class="method-animation method-studio-animation">
-  <svg class="method-review" viewBox="0 0 420 245" role="img" aria-labelledby="review-visual-title"><title id="review-visual-title">Illustration: a reviewer adjusts a proposed box, selects a label, and confirms the annotation.</title>
-    <defs><clipPath id="review-photo-clip"><rect x="34" y="39" width="352" height="138" rx="4"/></clipPath></defs>
-    <rect x="22" y="27" width="376" height="162" rx="7" fill="#e7ebf4"/>
-    <g clip-path="url(#review-photo-clip)"><image href="./landscape/sample-01.jpg" x="34" y="39" width="352" height="138" preserveAspectRatio="none"/>
-      <rect class="review-original" x="249" y="120" width="17" height="57" fill="none" stroke="#b1bdda" stroke-width="1.4" stroke-dasharray="3 3"/>
-      <g class="review-box"><rect x="249" y="120" width="17" height="57" fill="#8d9fd41a" stroke="#697ebd" stroke-width="1.8"/><g fill="#f7f8ff" stroke="#697ebd"><rect x="246" y="117" width="6" height="6"/><rect x="263" y="117" width="6" height="6"/><rect x="246" y="174" width="6" height="6"/><rect x="263" y="174" width="6" height="6"/></g></g>
-    </g>
-    <g class="review-cursor"><path d="M0 0v22l6-6 5 10 5-3-5-9 9-1Z" fill="#46547d" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/></g>
-    <rect x="129" y="202" width="99" height="22" rx="4" fill="#fff" stroke="#d8e0f0"/><path d="M140 213h52m22-2 3 3 3-3" fill="none" stroke="#abb8d8" stroke-width="2" stroke-linecap="round"/>
-    <g class="review-label"><rect x="136" y="207" width="54" height="12" rx="3" fill="#cdd7ee"/></g>
-    <rect class="review-confirm-button" x="238" y="202" width="52" height="22" rx="4" fill="#e1e7f4"/>
-    <path class="review-check" d="m257 213 5 5 9-10" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-  </svg>
-</div><div class="method-card-copy"><span>08</span><div><h3>Review and confirm</h3><p lang="ko">검수자가 박스를 수정·추가하고 결함 유형을 확정합니다. AI의 오탐과 누락을 사람이 보완합니다.</p></div></div></article>
-<article class="method-card" data-step="09"><div class="method-animation method-studio-animation">
-  <svg class="method-report" viewBox="0 0 420 245" role="img" aria-labelledby="report-visual-title"><title id="report-visual-title">Illustration: confirmed labels populate a daily summary, defect breakdown, and review history.</title>
-    <rect x="40" y="24" width="340" height="197" rx="7" fill="#fff" stroke="#dce3f0"/>
-    <path d="M40 57h340" stroke="#e5eaf4"/><rect x="58" y="39" width="84" height="5" rx="2.5" fill="#bbc7e1"/><rect x="327" y="36" width="34" height="11" rx="3" fill="#e9edf8"/>
-    <g fill="#f4f6fb" stroke="#e8ecf5"><rect x="58" y="71" width="91" height="38" rx="4"/><rect x="164" y="71" width="91" height="38" rx="4"/><rect x="270" y="71" width="91" height="38" rx="4"/></g>
-    <g class="report-metrics" fill="#a5b4d8"><rect x="69" y="85" width="24" height="9" rx="2"/><rect x="175" y="85" width="19" height="9" rx="2"/><rect x="281" y="85" width="32" height="9" rx="2"/></g>
-    <circle cx="101" cy="153" r="26" fill="none" stroke="#edf0f8" stroke-width="8"/>
-    <circle class="report-ring" cx="101" cy="153" r="26" fill="none" stroke="#94a6d1" stroke-width="8" pathLength="100" stroke-dasharray="68 100" transform="rotate(-90 101 153)"/>
-    <path d="m92 153 6 6 12-13" class="report-check" fill="none" stroke="#8da5a0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-    <g fill="#f0f3fa"><rect x="163" y="131" width="194" height="7" rx="3"/><rect x="163" y="150" width="194" height="7" rx="3"/><rect x="163" y="169" width="194" height="7" rx="3"/></g>
-    <g class="report-bars"><rect x="163" y="131" width="153" height="7" rx="3" fill="#a1b2d8"/><rect x="163" y="150" width="91" height="7" rx="3" fill="#bbc7e3"/><rect x="163" y="169" width="54" height="7" rx="3" fill="#d7aaa0"/></g>
-    <g class="report-history" fill="#dfe5f1"><rect x="58" y="195" width="46" height="4" rx="2"/><rect x="116" y="195" width="126" height="4" rx="2"/><rect x="317" y="191" width="40" height="12" rx="3" fill="#e8f0eb"/></g>
-  </svg>
-</div><div class="method-card-copy"><span>09</span><div><h3>Summarize the day</h3><p lang="ko">확정 라벨을 일일 보고서로 집계하고, 다음 학습에 쓸 데이터로 내보냅니다.</p></div></div></article>
+        <article class="method-card"><div class="method-animation"><img src="./method/01.gif" alt="" loading="lazy"></div><div class="method-card-copy"><span>01</span><div><h3>Build the reference</h3><p>Collect normal patches.</p></div></div></article>
+        <article class="method-card"><div class="method-animation"><img src="./method/02.gif" alt="" loading="lazy"></div><div class="method-card-copy"><span>02</span><div><h3>Prepare the photo</h3><p>Align size and brightness.</p></div></div></article>
+        <article class="method-card"><div class="method-animation"><img src="./method/03.gif" alt="" loading="lazy"></div><div class="method-card-copy"><span>03</span><div><h3>Split into patches</h3><p>Inspect the surface area by area.</p></div></div></article>
+        <article class="method-card"><div class="method-animation"><img src="./method/04.gif" alt="" loading="lazy"></div><div class="method-card-copy"><span>04</span><div><h3>Measure features</h3><p>Capture local texture and edges.</p></div></div></article>
+        <article class="method-card"><div class="method-animation"><img src="./method/05.gif" alt="" loading="lazy"></div><div class="method-card-copy"><span>05</span><div><h3>Compare patches</h3><p>Find the closest normal match.</p></div></div></article>
+        <article class="method-card"><div class="method-animation"><img src="./method/06.gif" alt="" loading="lazy"></div><div class="method-card-copy"><span>06</span><div><h3>Map unusual areas</h3><p>Highlight regions for review.</p></div></div></article>
       </div>
-      <div class="evaluation-summary"><div><p class="section-kicker">HELD-OUT TEST</p><h3>KolektorSDD · metal surface photos</h3><p lang="ko">제품 그룹을 분리한 시험 이미지 64장</p></div><div class="evaluation-metrics"><div><span>0.879</span><small lang="ko">이미지 AUROC</small></div><div><span>5 / 8</span><small lang="ko">불량 이미지 검출</small></div><div><span>7 / 56</span><small lang="ko">정상 이미지의 오탐</small></div></div></div>
-      <div class="method-foot"><p lang="ko">이상 점수는 정상 기준과의 차이입니다. 사람이 초안을 확인하고 수정한 뒤, 확정 라벨을 보고서와 데이터로 활용합니다.</p><a class="button button-dark" href="./workspace.html">Try the labeling workflow <span aria-hidden="true">↗</span></a></div>
+      <div class="evaluation-summary"><div><p class="section-kicker">HELD-OUT TEST</p><h3>KolektorSDD</h3><p>64 photos · custom item-group split</p></div><div class="evaluation-metrics"><div><span>0.879</span><small>Image AUROC</small></div><div><span>5 / 8</span><small>Defect photos flagged</small></div><div><span>7 / 56</span><small>Normal photos flagged</small></div></div></div>
+      <div class="method-foot"><a class="button button-dark" href="./inspect.html">Open baseline samples <span aria-hidden="true">→</span></a></div>
+    </div></section>
+
+    <section class="feedback-section" id="feedback"><div class="section feedback-inner">
+      <div class="feedback-heading"><p class="section-kicker">FIELD FEEDBACK</p><h2>The discussion changed the design.</h2></div>
+      <figure class="feedback-photo"><img src="./feedback/meeting-illustration.png" alt="Illustration of the ISM and Dongil Rubber Belt teams discussing SurfaceTrace in a meeting room" width="1672" height="941" loading="lazy"><figcaption>Illustration of ISM's advisory meeting with Dongil Rubber Belt.</figcaption></figure>
+      <ul class="feedback-points" aria-label="Meeting feedback and corresponding experiments"><li><a href="#next-data"><span class="feedback-index">01</span>Variable production imagery <span class="feedback-arrow" aria-hidden="true">↘</span></a></li><li><a href="#foundation"><span class="feedback-index">02</span>Few defect labels <span class="feedback-arrow" aria-hidden="true">↘</span></a></li><li><a href="#change"><span class="feedback-index">03</span>Changes reported late <span class="feedback-arrow" aria-hidden="true">↘</span></a></li><li><a href="#review"><span class="feedback-index">04</span>Limited review time <span class="feedback-arrow" aria-hidden="true">↘</span></a></li></ul>
+    </div></section>
+
+    <section class="method-section next-section" id="next"><div class="section method-inner">
+      <div class="method-heading improvement-heading"><div><p class="section-kicker">02 / CHANGE-AWARE EXPERIMENT</p><h2>From feedback to tested changes.</h2></div></div>
+      <div class="dataset-note" id="next-data"><span>TSFabrics</span><p>93,196 time-ordered knitting-line frames across 22 production scenarios.</p></div>
+
+      <article class="improvement" id="foundation" aria-labelledby="foundation-title">
+        <div class="improvement-copy">
+          <p class="improvement-kicker">FOUNDATION FEATURES</p>
+          <p class="improvement-input">Few labeled defects</p>
+          <h3 id="foundation-title">Use frozen DINOv2 features.</h3>
+          <p>Frozen DINOv2-S/14 features describe each patch. Selected startup photos form the reference for localized anomaly maps.</p>
+          <div class="improvement-measure"><span>COMPLETE METHOD COMPARISON · 4 DEFECT RUNS</span><div><small>Handcrafted</small><strong>66.4%</strong><i aria-hidden="true">→</i><small>DINOv2 + selection</small><strong>85.4%</strong></div><p>Macro frame AP · handcrafted uses all startup frames; DINOv2 selects its reference. The combined method leads in 2 of 4 runs.</p></div>
+        </div>
+        <div class="improvement-display">
+          <div class="ablation-gallery" aria-label="Handcrafted and DINOv2 heatmaps on the same recorded frames">
+            <div class="ablation-gallery-head"><div><p class="section-kicker">RECORDED EXAMPLES</p><h4>Same photo, two heatmaps.</h4></div><div class="ablation-gallery-controls"><span id="pairedCounter">01 / 16</span><button type="button" id="pairedPrev" aria-label="Previous photo">←</button><button type="button" id="pairedNext" aria-label="Next photo">→</button></div></div>
+            <div class="ablation-case" id="pairedCase">
+              <div class="ablation-case-label"><span id="pairedLabel">Normal · changed run</span><small id="pairedFrame">Frame 1,264</small></div>
+              <div class="ablation-pair">
+                <figure><div class="ablation-heat"><img id="pairedClassicPhoto" src="./next-samples/sample-06.jpg" alt="Normal textile frame with the handcrafted anomaly map" loading="lazy"><img id="pairedClassicMap" src="./ablation/sample-06-classic.png" alt="" loading="lazy"></div><figcaption><span>Handcrafted</span><strong id="pairedClassicResult" class="ablation-review">False alarm</strong></figcaption></figure>
+                <figure><div class="ablation-heat"><img id="pairedSelectedPhoto" src="./next-samples/sample-06.jpg" alt="Same normal textile frame with the DINOv2 anomaly map" loading="lazy"><img id="pairedSelectedMap" src="./next-samples/sample-06-current.png" alt="" loading="lazy"></div><figcaption><span>DINOv2 + selection</span><strong id="pairedSelectedResult" class="ablation-clear">No false alarm</strong></figcaption></figure>
+              </div>
+            </div>
+          </div>
+          <div class="run-ap-panel" aria-label="Frame average precision on each of four final defect runs">
+            <div class="run-ap-head"><span>FRAME AP (%) BY RUN</span><div><span><i class="is-classic"></i>Handcrafted</span><span><i class="is-dino"></i>DINOv2 + selection</span></div></div>
+            <div class="run-ap-row" data-run="T1_S148_I108_1" style="--classic:93.9%;--dino:85.8%"><span>Run 01</span><div><div class="run-ap-track"><i class="is-classic"></i></div><div class="run-ap-track"><i class="is-dino"></i></div></div><strong>93.9 <small>/</small> 85.8</strong></div>
+            <div class="run-ap-row" data-run="T1_S174_I108_1" style="--classic:98.5%;--dino:85.8%"><span>Run 02</span><div><div class="run-ap-track"><i class="is-classic"></i></div><div class="run-ap-track"><i class="is-dino"></i></div></div><strong>98.5 <small>/</small> 85.8</strong></div>
+            <div class="run-ap-row" data-run="T1_S478_I118_2" style="--classic:62.0%;--dino:87.4%"><span>Run 03</span><div><div class="run-ap-track"><i class="is-classic"></i></div><div class="run-ap-track"><i class="is-dino"></i></div></div><strong>62.0 <small>/</small> 87.4</strong></div>
+            <div class="run-ap-row" data-run="T2_S287_I185_1" style="--classic:11.1%;--dino:82.3%"><span>Run 04</span><div><div class="run-ap-track"><i class="is-classic"></i></div><div class="run-ap-track"><i class="is-dino"></i></div></div><strong>11.1 <small>/</small> 82.3</strong></div>
+            <details class="evidence-details"><summary>AP and AUROC</summary><p>Macro frame AUROC: 0.884 → 0.965 across the same four defect runs. AP summarizes precision across recall levels; AUROC measures how often a defect frame scores above a normal frame. Neither measures alert workload at a fixed limit.</p></details>
+            <details class="evidence-details setting-check"><summary>Different-setting check</summary><div class="setting-check-panel">
+              <div class="setting-check-row"><span>Complete method<small>Handcrafted → DINOv2 + selection</small></span><div><small>All 4 defect runs</small><strong>66.4% → 85.4%</strong></div><div><small>Different settings · 2</small><strong>54.8% → 84.1%</strong></div></div>
+              <div class="setting-check-row"><span>Reference choice<small>All startup → selected DINOv2</small></span><div><small>All 4 defect runs</small><strong>70.3% → 85.4%</strong></div><div><small>Different settings · 2</small><strong>89.0% → 84.1%</strong></div></div>
+              <p>The different-setting subset has 14 recordings, including 2 with defects. It excludes settings shared with development and is a post-hoc sensitivity check.</p><a class="evidence-link" href="https://github.com/gohyunsu/surface-trace/blob/main/experiments/unsupervised/SETTING_DISJOINT_RESULTS.md">Split details ↗</a>
+            </div></details>
+          </div>
+        </div>
+        <details class="score-distribution" id="score-distribution">
+          <summary><span>Full-run score distributions</span><small>4 defect runs</small></summary>
+          <div class="score-distribution-content">
+            <div class="score-distribution-tabs" role="group" aria-label="Choose a recorded run">
+              <button type="button" data-score-run="01" aria-pressed="true">Run 01</button>
+              <button type="button" data-score-run="02" aria-pressed="false">Run 02</button>
+              <button type="button" data-score-run="03" aria-pressed="false">Run 03</button>
+              <button type="button" data-score-run="04" aria-pressed="false">Run 04</button>
+            </div>
+            <div class="score-distribution-scroller"><picture><source id="scoreDistributionMobile" media="(max-width:900px)" srcset="./ablation/score_distribution_run_01_mobile.svg"><img id="scoreDistributionFigure" src="./ablation/score_distribution_run_01.svg" alt="Run 01: normal and defect frame score distributions for the handcrafted and DINOv2 plus selected-reference methods" loading="lazy"></picture></div>
+          </div>
+        </details>
+      </article>
+
+      <article class="improvement" id="change" aria-labelledby="change-title">
+        <div class="improvement-copy">
+          <p class="improvement-kicker">VISUAL CHANGE</p>
+          <p class="improvement-input">Process changes may not be shared</p>
+          <h3 id="change-title">Detect the shift separately.</h3>
+          <p>Compare global image features across time, independently of the patch anomaly score.</p>
+          <div class="improvement-measure"><span>16 FINAL RUNS · KNOWN SWITCH</span><div><strong>15 / 16</strong><small>runs alerted</small></div><p>No alert across 16,518 later frames of the same reference recording.</p></div>
+        </div>
+        <div class="improvement-display change-display">
+          <div class="change-frames" aria-label="Reference frames followed by a separate changed run">
+            <div><span>REFERENCE RUN</span><figure><img src="./scenario/source-4095.jpg" alt="Reference run frame 4095" loading="lazy"><figcaption>4095</figcaption></figure><figure><img src="./scenario/source-4096.jpg" alt="Reference run frame 4096" loading="lazy"><figcaption>4096</figcaption></figure></div>
+            <b aria-hidden="true">→</b>
+            <div><span>CHANGED RUN</span><figure><img src="./scenario/target-001.jpg" alt="Changed run frame 1" loading="lazy"><figcaption>1</figcaption></figure><figure><img src="./scenario/target-064.jpg" alt="Changed run frame 64" loading="lazy"><figcaption>64</figcaption></figure><figure><img src="./scenario/target-128.jpg" alt="Changed run frame 128" loading="lazy"><figcaption>128</figcaption></figure><figure><img src="./scenario/target-192.jpg" alt="Changed run frame 192, first sustained alert" loading="lazy"><figcaption>192 <em>ALERT</em></figcaption></figure></div>
+          </div>
+          <figure class="change-graph"><picture><source media="(max-width:700px)" srcset="./ablation/change-figure-mobile.svg"><img src="./ablation/change-figure.svg" alt="Global-feature change scores stay low on the reference run and cross the alert limit after the switch, with a sustained alert at target frame 192" width="600" height="238" loading="lazy"></picture><figcaption>Development example · alert at new-run frame 192.</figcaption></figure>
+          <details class="evidence-details"><summary>Compare change signals</summary><div class="change-control" aria-label="Visual-change comparison with a brightness histogram">
+            <div class="change-control-head"><span>CHANGE SIGNAL</span><span>KNOWN SWITCHES <small>/ 16 runs</small></span><span>SAME RECORDING <small>/ 513 windows above limit</small></span></div>
+            <div class="change-control-row is-dino"><span>DINOv2 · current</span><strong>15 / 16</strong><div><i style="--extent:0%" aria-hidden="true"></i><strong>0 / 513</strong></div></div>
+            <div class="change-control-row is-trial"><span>DINOv2 · lower limit trial</span><strong>16 / 16</strong><div><i style="--extent:0.4%" aria-hidden="true"></i><strong>2 / 513</strong></div></div>
+            <div class="change-control-row"><span>Brightness histogram</span><strong>16 / 16</strong><div><i style="--extent:65.5%" aria-hidden="true"></i><strong>336 / 513</strong></div></div>
+          </div>
+          <p class="change-control-note">The lower limit caught one more known switch. In two additional defect-label-free recordings, one had an unexplained within-run alert under both limits; the trial remains inactive.</p>
+          <a class="evidence-link" href="https://github.com/gohyunsu/surface-trace/blob/main/experiments/unsupervised/CHANGE_REPRESENTATION_RESULTS.md">Change signals ↗</a><a class="evidence-link" href="https://github.com/gohyunsu/surface-trace/blob/main/experiments/unsupervised/CHANGE_LIMIT_RESULTS.md">Limit trial ↗</a><a class="evidence-link" href="https://github.com/gohyunsu/surface-trace/blob/main/experiments/unsupervised/CHANGE_STABILITY_RESULTS.md">Stability check ↗</a></details>
+          <a class="evidence-link" href="https://github.com/gohyunsu/surface-trace/blob/main/experiments/unsupervised/SOURCE_CONTINUATION_FULL_RESULTS.md">Full source-run audit ↗</a>
+        </div>
+      </article>
+
+      <article class="improvement" id="review" aria-labelledby="review-title">
+        <div class="improvement-copy">
+          <p class="improvement-kicker">REVIEW COVERAGE</p>
+          <p class="improvement-input">Review time is limited</p>
+          <h3 id="review-title">Spread checks across the run.</h3>
+          <p>Rank frames by anomaly score, then keep selected photos at least 16 frames apart to avoid repeated checks of one event.</p>
+          <div class="improvement-measure"><span>NEW EPISODES FOUND · 4 DEFECT RUNS</span><div><small>Top 8</small><strong>15</strong><i aria-hidden="true">→</i><small>Spaced 8</small><strong>26</strong></div><p>Of 90 new episodes · all four runs improved with the same eight checks per run.</p></div>
+          <a class="button button-dark improvement-action" href="./interval.html">Open interval summary <span aria-hidden="true">→</span></a>
+        </div>
+        <div class="improvement-display review-display">
+          <div class="review-coverage" aria-label="New defect episodes found with eight checks in each final defect run">
+            <div class="review-coverage-head"><span>FOUR DEFECT RUNS · EIGHT CHECKS EACH</span><div><span><i class="is-top"></i>Top 8</span><span><i class="is-spaced"></i>Spaced 8</span></div></div>
+            <div class="review-coverage-row" data-run="T1_S148_I108_1" style="--top:4.3%;--spaced:11.6%" title="T1_S148_I108_1"><div><span>Run 01</span><small>69 episodes</small></div><div class="review-coverage-bars"><span><i class="is-top"></i></span><span><i class="is-spaced"></i></span></div><strong>3 <small>→</small> 8</strong></div>
+            <div class="review-coverage-row" data-run="T1_S174_I108_1" style="--top:54.5%;--spaced:72.7%" title="T1_S174_I108_1"><div><span>Run 02</span><small>11 episodes</small></div><div class="review-coverage-bars"><span><i class="is-top"></i></span><span><i class="is-spaced"></i></span></div><strong>6 <small>→</small> 8</strong></div>
+            <div class="review-coverage-row" data-run="T1_S478_I118_2" style="--top:83.3%;--spaced:100%" title="T1_S478_I118_2"><div><span>Run 03</span><small>6 episodes</small></div><div class="review-coverage-bars"><span><i class="is-top"></i></span><span><i class="is-spaced"></i></span></div><strong>5 <small>→</small> 6</strong></div>
+            <div class="review-coverage-row" data-run="T2_S287_I185_1" style="--top:25%;--spaced:100%" title="T2_S287_I185_1"><div><span>Run 04</span><small>4 episodes</small></div><div class="review-coverage-bars"><span><i class="is-top"></i></span><span><i class="is-spaced"></i></span></div><strong>1 <small>→</small> 4</strong></div>
+          </div>
+          <p class="review-coverage-note">Different-setting subset (2 defect runs): 7 → 12 of 15 episodes · post-hoc</p>
+          <details class="evidence-details review-example"><summary>Why spacing helps</summary><div class="review-timeline">
+            <div class="review-timeline-head"><span>ONE RECORDED RUN · 6 DEFECT EPISODES</span><strong>8 checks per rule</strong></div>
+            <div class="review-timeline-row"><span>Top 8</span><div class="review-timeline-track is-top" data-queue="top8" role="img" aria-label="Eight highest-score reviews include adjacent frames 536 and 538, 1506 and 1509, and 1984 and 1986"><i data-frame="536" style="left:7.5%;--rise:-5px"></i><i data-frame="538" style="left:7.5%;--rise:5px"></i><i data-frame="1026" style="left:24.5%"></i><i data-frame="1506" style="left:41.1%;--rise:-5px"></i><i data-frame="1509" style="left:41.2%;--rise:5px"></i><i data-frame="1984" style="left:57.7%;--rise:-5px"></i><i data-frame="1986" style="left:57.8%;--rise:5px"></i><i data-frame="2473" style="left:74.6%"></i></div><strong>5 found</strong></div>
+            <div class="review-timeline-row"><span>Spaced 8</span><div class="review-timeline-track is-spaced" data-queue="spaced8" role="img" aria-label="Eight time-spaced reviews at frames 405, 538, 1026, 1380, 1506, 1984, 2473, and 2967"><i data-frame="405" style="left:2.9%"></i><i data-frame="538" style="left:7.5%"></i><i data-frame="1026" style="left:24.5%"></i><i data-frame="1380" style="left:36.7%"></i><i data-frame="1506" style="left:41.1%"></i><i data-frame="1984" style="left:57.7%"></i><i data-frame="2473" style="left:74.6%"></i><i data-frame="2967" style="left:91.8%"></i></div><strong>6 found</strong></div>
+            <div class="review-timeline-ends"><span>START</span><span>END</span></div>
+          </div></details>
+          <details class="evidence-details spacing-details"><summary>Spacing sensitivity</summary><div class="spacing-panel" aria-label="Distinct new defect episodes found with eight reviews per run across 16 final runs">
+            <div class="spacing-head"><span>MINIMUM GAP · FRAMES</span><span>EPISODES / 90</span></div>
+            <div class="spacing-row" data-spacing="1" data-episodes="15" style="--extent:57.7%"><span>No gap</span><i aria-hidden="true"></i><strong>15</strong></div>
+            <div class="spacing-row" data-spacing="4" data-episodes="24" style="--extent:92.3%"><span>4</span><i aria-hidden="true"></i><strong>24</strong></div>
+            <div class="spacing-row" data-spacing="8" data-episodes="25" style="--extent:96.2%"><span>8</span><i aria-hidden="true"></i><strong>25</strong></div>
+            <div class="spacing-row" data-spacing="12" data-episodes="26" style="--extent:100%"><span>12</span><i aria-hidden="true"></i><strong>26</strong></div>
+            <div class="spacing-row is-current" data-spacing="16" data-episodes="26" style="--extent:100%"><span>16</span><i aria-hidden="true"></i><strong>26</strong></div>
+            <p>12 and 16 frames also tied on development: 20 / 43 episodes. Same eight checks per run.</p>
+            <a class="evidence-link" href="https://github.com/gohyunsu/surface-trace/blob/main/experiments/unsupervised/REVIEW_SPACING_RESULTS.md">Spacing audit ↗</a>
+          </div></details>
+
+        </div>
+      </article>
+
+      <article class="improvement" id="handoff" aria-labelledby="handoff-title">
+        <div class="improvement-copy">
+          <p class="improvement-kicker">REVIEW WORKLOAD</p>
+          <p class="improvement-input">Individual alerts burden staff</p>
+          <h3 id="handoff-title">Start with two checks.</h3>
+          <p>Check two high-ranked, time-spaced photos first. A defect or uncertain result opens six more; reviewers can request them too.</p>
+          <div class="improvement-measure"><span>FINAL 16 RUNS · REVIEW REQUESTS</span><div><small>Fixed eight</small><strong>128</strong><i aria-hidden="true">→</i><small>Two first</small><strong>56</strong></div><p>All four defect runs opened six more checks. Both rules found 26 / 90 episodes.</p></div>
+          <a class="evidence-link" href="https://github.com/gohyunsu/surface-trace/blob/main/experiments/unsupervised/SEQUENTIAL_REVIEW_RESULTS.md">Review-budget results ↗</a>
+        </div>
+        <div class="improvement-display handoff-display">
+          <div class="allocation-panel" id="reviewAllocation" aria-label="Three review schedules within a 128-check budget">
+            <div class="allocation-head"><span>128-CHECK BUDGET</span><span>EPISODES / 90</span></div>
+            <div class="allocation-row">
+              <span>Fixed eight<small>128 checks</small></span>
+              <div class="allocation-track" role="img" aria-label="96 checks in runs with no issue in the first two reviews, 32 in runs with an early issue"><i class="is-quiet" style="width:75%"></i><i class="is-active" style="width:25%"></i></div>
+              <strong>26</strong>
+            </div>
+            <div class="allocation-row is-stop">
+              <span>Two first<small>56 checks</small></span>
+              <div class="allocation-track" role="img" aria-label="24 checks in runs with no issue in the first two reviews, 32 in runs with an early issue, 72 checks unused"><i class="is-quiet" style="width:18.75%"></i><i class="is-active" style="width:25%"></i><i class="is-unspent" style="width:56.25%"></i></div>
+              <strong>26</strong>
+            </div>
+            <div class="allocation-key"><span><i class="is-quiet"></i>No issue in first two</span><span><i class="is-active"></i>Issue in first two</span><span><i class="is-unspent"></i>Unused</span></div>
+            <details class="evidence-details allocation-trial"><summary>Explore budget reallocation</summary><div class="allocation-row is-guided">
+              <span>Reallocated<small>128 checks</small></span>
+              <div class="allocation-track" role="img" aria-label="36 checks in runs with no issue in the first two reviews, 92 in runs with an early issue"><i class="is-quiet" style="width:28.125%"></i><i class="is-active" style="width:71.875%"></i></div>
+              <strong>50</strong>
+            </div>
+            <p>Post-hoc exploratory replay · 12 quiet runs received one audit check each. All 24 additional episodes came from one run.</p>
+            <a class="evidence-link" href="https://github.com/gohyunsu/surface-trace/blob/main/experiments/unsupervised/ADAPTIVE_BUDGET_RESULTS.md">Review-allocation results ↗</a></details>
+          </div>
+          <details class="evidence-details"><summary>Requests by run</summary><div class="handoff-head"><span>16 RECORDED RUNS</span><strong>12 stopped at 2 <i>·</i> 4 continued to 8</strong></div>
+          <div id="reviewRouting" class="handoff-bars" role="group" aria-label="Requests by recorded run"></div>
+          <div class="handoff-key"><span><i class="is-first"></i>First two checks</span><span><i class="is-extra"></i>Additional checks</span><span><i class="is-idle"></i>Not requested</span></div></details>
+        </div>
+      </article>
+
+      <article class="improvement improvement-adaptation" id="reference" aria-labelledby="reference-title">
+        <div class="improvement-copy">
+          <p class="improvement-kicker">REFERENCE CHOICE + UPDATE</p>
+          <p class="improvement-input">A new appearance can trigger false alerts</p>
+          <h3 id="reference-title">Choose the reference. Test updates.</h3>
+          <p>Select less unusual startup photos without labels. This cuts normal alerts but also misses more defect frames; reviewed-photo updates remain on hold.</p>
+          <div class="reference-factorial"><p>REFERENCE × REVIEW RULE · 16 RECORDED RUNS</p><span>New defect episodes found / 90 · eight checks per run</span><table aria-label="New defect episodes found by source reference and review rule"><thead><tr><th scope="col">Reference</th><th scope="col">Top 8</th><th scope="col">Spaced 8</th></tr></thead><tbody><tr><th scope="row">All startup</th><td data-reference="all" data-queue="top8">8</td><td data-reference="all" data-queue="spaced8">19</td></tr><tr><th scope="row">Selected</th><td data-reference="selected" data-queue="top8">15</td><td class="is-current" data-reference="selected" data-queue="spaced8">26</td></tr></tbody></table></div>
+        </div>
+        <div class="improvement-display reference-display">
+          <p class="reference-example-label">DEVELOPMENT EXAMPLE · ONE NORMAL PHOTO</p>
+          <div class="reference-maps">
+            <figure><div class="reference-map"><img src="./next-samples/sample-06.jpg" alt="Normal textile frame from a changed run" loading="lazy"></div><figcaption>Recorded photo</figcaption></figure>
+            <figure><div class="reference-map"><img src="./next-samples/sample-06.jpg" alt="" loading="lazy"><img src="./ablation/sample-06-all.png" alt="False alert heatmap with an all-frame DINOv2 reference" loading="lazy"></div><figcaption>All startup frames <span>Flagged</span></figcaption></figure>
+            <figure><div class="reference-map"><img src="./next-samples/sample-06.jpg" alt="" loading="lazy"><img src="./next-samples/sample-06-current.png" alt="Heatmap with a selected DINOv2 reference" loading="lazy"></div><figcaption>Selected frames <span>Clear</span></figcaption></figure>
+          </div>
+          <div class="reference-audit" aria-label="Reference selection comparison across 16 recorded runs">
+            <div class="reference-audit-head"><span>FINAL 16 RUNS · EQUAL-SIZE BANKS</span><div><span><i class="is-all"></i>All startup</span><span><i class="is-selected"></i>Selected</span></div></div>
+            <div class="reference-audit-row" data-metric="normal"><div><span>Normal frames flagged</span><strong>19,153 <i>→</i> 1,449</strong></div><div class="reference-audit-pair" aria-hidden="true"><span><i class="is-all" style="width:100%"></i></span><span><i class="is-selected" style="width:7.6%"></i></span></div><small>/ 26,088 normal frames</small></div>
+            <div class="reference-audit-row" data-metric="defect"><div><span>Defect frames flagged</span><strong>851 <i>→</i> 313</strong></div><div class="reference-audit-pair" aria-hidden="true"><span><i class="is-all" style="width:100%"></i></span><span><i class="is-selected" style="width:36.8%"></i></span></div><small>/ 883 defect frames</small></div>
+            <p class="reference-audit-note">Macro frame AP: 70.3% → 85.4%; selection leads in 1 of 4 defect runs. Each bank has its own source-calibrated alert limit.</p>
+          </div>
+          <a class="evidence-link" href="https://github.com/gohyunsu/surface-trace/blob/main/experiments/unsupervised/REFERENCE_SELECTION_RESULTS_VERIFIED.md">Full reference audit ↗</a>
+          <a class="evidence-link" href="https://github.com/gohyunsu/surface-trace/blob/main/experiments/unsupervised/SOURCE_THRESHOLD_RESULTS.md">Alert-limit audit ↗</a>
+        </div>
+        <div class="adaptation-outcome">
+          <div><span>REVIEWED-PATCH ADDITION · 15 RUNS</span><strong>Keep the frozen reference.</strong><p>Adding reviewed normal patches removed false alerts but also hid defects on later frames.</p></div>
+          <div class="decision-metrics">
+            <div class="decision-metrics-key"><span><i class="is-frozen"></i>Frozen</span><span><i class="is-candidate"></i>Candidate</span></div>
+            <div class="decision-metric"><div><span>Normal-frame alerts</span><strong>1,050 <i>→</i> 0</strong></div><div class="decision-pair" aria-hidden="true"><span><i style="width:100%"></i></span><span><i style="width:0%"></i></span></div></div>
+            <div class="decision-metric"><div><span>Defect frames flagged</span><strong>202 <i>→</i> 153</strong></div><div class="decision-pair" aria-hidden="true"><span><i style="width:100%"></i></span><span><i style="width:75.7%"></i></span></div></div>
+            <div class="decision-metric"><div><span>New defect episodes found</span><strong>48 <i>→</i> 40</strong></div><div class="decision-pair" aria-hidden="true"><span><i style="width:100%"></i></span><span><i style="width:83.3%"></i></span></div></div>
+            <p class="decision-scope">Same later frames · 20,273 normal · 642 defect</p>
+          </div>
+          <a class="evidence-link" href="https://github.com/gohyunsu/surface-trace/blob/main/experiments/unsupervised/FEEDBACK_VALIDATION_RESULTS.md">Full validation ↗</a>
+        </div>
+      </article>
+
+      <div class="improvement-links"><a class="button button-dark" href="./demo.html?play=1">Watch the replay <span aria-hidden="true">→</span></a><a href="./next-inspect.html">Explore recorded samples →</a><a href="https://github.com/gohyunsu/surface-trace/blob/main/experiments/unsupervised/README.md">All results ↗</a></div>
     </div></section>
   </main>
-  <footer class="site-footer"><div class="footer-top"><a class="footer-brand" href="./index.html">SurfaceTrace</a><span>ISM × RIKU</span></div><div class="footer-bottom"><p>© 2026 Hyunsu Go</p><p>Images: <a href="https://www.vicos.si/resources/kolektorsdd/" target="_blank" rel="noopener noreferrer">KolektorSDD · ViCoS Lab</a> · <a href="https://doi.org/10.1007/s10845-019-01476-x" target="_blank" rel="noopener noreferrer">Tabernik et al. (2019)</a> · <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener noreferrer">CC BY-NC-SA 4.0</a></p></div></footer>
+  <footer class="site-footer"><div class="footer-top"><a class="footer-brand" href="./index.html">SurfaceTrace</a><span>ISM × RIKU</span></div><div class="footer-bottom"><p>© 2026 Hyunsu Go · <a href="https://github.com/gohyunsu/surface-trace" target="_blank" rel="noopener noreferrer">GitHub</a></p><p>Images: <a href="https://www.vicos.si/resources/kolektorsdd/" target="_blank" rel="noopener noreferrer">KolektorSDD</a> · <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener noreferrer">CC BY-NC-SA 4.0</a> / <a href="https://doi.org/10.6084/m9.figshare.29573381" target="_blank" rel="noopener noreferrer">TSFabrics</a> · <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer">CC BY 4.0</a></p></div></footer>
 </body>
 </html>

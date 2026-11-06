@@ -1,0 +1,145 @@
+{
+  "grouping": "same T, S, and I; recording index may differ",
+  "development_settings": [
+    "T1_S148_I108",
+    "T1_S164_I36",
+    "T1_S478_I118",
+    "T1_S555_I117",
+    "T2_S262_I52"
+  ],
+  "repeated_setting_runs": [
+    "T1_S148_I108_1",
+    "T1_S478_I118_2"
+  ],
+  "all_final": {
+    "runs": [
+      "T1_S148_I108_1",
+      "T1_S164_I192_1",
+      "T1_S164_I193_1",
+      "T1_S164_I199_1",
+      "T1_S174_I108_1",
+      "T1_S177_I108_1",
+      "T1_S179_I35_1",
+      "T1_S478_I118_2",
+      "T2_S262_I45_1",
+      "T2_S287_I184_1",
+      "T2_S287_I185_1",
+      "T2_S303_I44_1",
+      "T2_S466_I39_1",
+      "T3_S165_I175_1",
+      "T3_S165_I178_1",
+      "T3_S165_I178_2"
+    ],
+    "defect_runs": [
+      "T1_S148_I108_1",
+      "T1_S174_I108_1",
+      "T1_S478_I118_2",
+      "T2_S287_I185_1"
+    ],
+    "new_episodes": 90,
+    "methods": {
+      "handcrafted_source": {
+        "macro_ap": 0.6637830522900225,
+        "per_run_ap": {
+          "T1_S148_I108_1": 0.9392211562728464,
+          "T1_S174_I108_1": 0.9853518849351952,
+          "T1_S478_I118_2": 0.6200490651355244,
+          "T2_S287_I185_1": 0.11051010281652415
+        }
+      },
+      "source_knn": {
+        "macro_ap": 0.8535883115497416,
+        "per_run_ap": {
+          "T1_S148_I108_1": 0.8584813393664285,
+          "T1_S174_I108_1": 0.8582865280310139,
+          "T1_S478_I118_2": 0.8744561063742237,
+          "T2_S287_I185_1": 0.8231292724273004
+        }
+      }
+    },
+    "reference": {
+      "all": {
+        "macro_ap": 0.7034582291441001,
+        "normal_flags": 19153,
+        "normal_frames": 26088,
+        "defect_flags": 851,
+        "defect_frames": 883,
+        "episodes_in_eight_reviews": 19
+      },
+      "selected": {
+        "macro_ap": 0.853637682541243,
+        "normal_flags": 1449,
+        "normal_frames": 26088,
+        "defect_flags": 313,
+        "defect_frames": 883,
+        "episodes_in_eight_reviews": 26
+      }
+    },
+    "review_episodes": {
+      "top8": 15,
+      "spaced8": 26
+    }
+  },
+  "different_setting_subset": {
+    "runs": [
+      "T1_S164_I192_1",
+      "T1_S164_I193_1",
+      "T1_S164_I199_1",
+      "T1_S174_I108_1",
+      "T1_S177_I108_1",
+      "T1_S179_I35_1",
+      "T2_S262_I45_1",
+      "T2_S287_I184_1",
+      "T2_S287_I185_1",
+      "T2_S303_I44_1",
+      "T2_S466_I39_1",
+      "T3_S165_I175_1",
+      "T3_S165_I178_1",
+      "T3_S165_I178_2"
+    ],
+    "defect_runs": [
+      "T1_S174_I108_1",
+      "T2_S287_I185_1"
+    ],
+    "new_episodes": 15,
+    "methods": {
+      "handcrafted_source": {
+        "macro_ap": 0.5479309938758596,
+        "per_run_ap": {
+          "T1_S174_I108_1": 0.9853518849351952,
+          "T2_S287_I185_1": 0.11051010281652415
+        }
+      },
+      "source_knn": {
+        "macro_ap": 0.8407079002291571,
+        "per_run_ap": {
+          "T1_S174_I108_1": 0.8582865280310139,
+          "T2_S287_I185_1": 0.8231292724273004
+        }
+      }
+    },
+    "reference": {
+      "all": {
+        "macro_ap": 0.8901493050029153,
+        "normal_flags": 16620,
+        "normal_frames": 21000,
+        "defect_flags": 116,
+        "defect_frames": 145,
+        "episodes_in_eight_reviews": 11
+      },
+      "selected": {
+        "macro_ap": 0.84080510319932,
+        "normal_flags": 1442,
+        "normal_frames": 21000,
+        "defect_flags": 88,
+        "defect_frames": 145,
+        "episodes_in_eight_reviews": 12
+      }
+    },
+    "review_episodes": {
+      "top8": 7,
+      "spaced8": 12
+    }
+  },
+  "interpretation": "Post-hoc subset of previously inspected runs; not a new independent benchmark"
+}

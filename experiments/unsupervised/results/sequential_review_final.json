@@ -1,0 +1,773 @@
+{
+  "protocol": {
+    "phase": "final",
+    "queue": "frozen source DINO, score-ranked, 16-frame-spaced eight",
+    "pilot_sizes": [
+      2,
+      3
+    ],
+    "stop": "pilot outcomes all confirmed normal; otherwise inspect eight",
+    "label_use": "only selected review outcomes before stop; other labels for audit"
+  },
+  "summary": {
+    "runs": 16,
+    "defect_runs": 4,
+    "methods": {
+      "fixed8": {
+        "requests": 128,
+        "normal_reviews": 101,
+        "episodes_found": 26,
+        "macro_episode_coverage": 0.7108036890645586,
+        "runs_losing_episodes": []
+      },
+      "pilot2": {
+        "requests": 56,
+        "normal_reviews": 29,
+        "episodes_found": 26,
+        "macro_episode_coverage": 0.7108036890645586,
+        "runs_losing_episodes": []
+      },
+      "pilot3": {
+        "requests": 68,
+        "normal_reviews": 41,
+        "episodes_found": 26,
+        "macro_episode_coverage": 0.7108036890645586,
+        "runs_losing_episodes": []
+      }
+    }
+  },
+  "runs": {
+    "T1_S148_I108_1": {
+      "total_new_episodes": 69,
+      "fixed8": {
+        "frames": [
+          2936,
+          2820,
+          3087,
+          1339,
+          1471,
+          2558,
+          741,
+          2452
+        ],
+        "requests": 8,
+        "normal_reviews": 0,
+        "defect_reviews": 8,
+        "uncertain_reviews": 0,
+        "new_episodes": 8
+      },
+      "pilot2": {
+        "frames": [
+          2936,
+          2820,
+          3087,
+          1339,
+          1471,
+          2558,
+          741,
+          2452
+        ],
+        "requests": 8,
+        "normal_reviews": 0,
+        "defect_reviews": 8,
+        "uncertain_reviews": 0,
+        "new_episodes": 8
+      },
+      "pilot3": {
+        "frames": [
+          2936,
+          2820,
+          3087,
+          1339,
+          1471,
+          2558,
+          741,
+          2452
+        ],
+        "requests": 8,
+        "normal_reviews": 0,
+        "defect_reviews": 8,
+        "uncertain_reviews": 0,
+        "new_episodes": 8
+      }
+    },
+    "T1_S164_I192_1": {
+      "total_new_episodes": 0,
+      "fixed8": {
+        "frames": [
+          474,
+          979,
+          724,
+          671,
+          912,
+          795,
+          522,
+          415
+        ],
+        "requests": 8,
+        "normal_reviews": 8,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "new_episodes": 0
+      },
+      "pilot2": {
+        "frames": [
+          474,
+          979
+        ],
+        "requests": 2,
+        "normal_reviews": 2,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "new_episodes": 0
+      },
+      "pilot3": {
+        "frames": [
+          474,
+          979,
+          724
+        ],
+        "requests": 3,
+        "normal_reviews": 3,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "new_episodes": 0
+      }
+    },
+    "T1_S164_I193_1": {
+      "total_new_episodes": 0,
+      "fixed8": {
+        "frames": [
+          547,
+          802,
+          615,
+          490,
+          735,
+          999,
+          343,
+          877
+        ],
+        "requests": 8,
+        "normal_reviews": 8,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "new_episodes": 0
+      },
+      "pilot2": {
+        "frames": [
+          547,
+          802
+        ],
+        "requests": 2,
+        "normal_reviews": 2,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "new_episodes": 0
+      },
+      "pilot3": {
+        "frames": [
+          547,
+          802,
+          615
+        ],
+        "requests": 3,
+        "normal_reviews": 3,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "new_episodes": 0
+      }
+    },
+    "T1_S164_I199_1": {
+      "total_new_episodes": 0,
+      "fixed8": {
+        "frames": [
+          1143,
+          971,
+          632,
+          462,
+          798,
+          604,
+          1023,
+          502
+        ],
+        "requests": 8,
+        "normal_reviews": 8,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "new_episodes": 0
+      },
+      "pilot2": {
+        "frames": [
+          1143,
+          971
+        ],
+        "requests": 2,
+        "normal_reviews": 2,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "new_episodes": 0
+      },
+      "pilot3": {
+        "frames": [
+          1143,
+          971,
+          632
+        ],
+        "requests": 3,
+        "normal_reviews": 3,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "new_episodes": 0
+      }
+    },
+    "T1_S174_I108_1": {
+      "total_new_episodes": 11,
+      "fixed8": {
+        "frames": [
+          517,
+          431,
+          334,
+          478,
+          371,
+          576,
+          452,
+          394
+        ],
+        "requests": 8,
+        "normal_reviews": 0,
+        "defect_reviews": 8,
+        "uncertain_reviews": 0,
+        "new_episodes": 8
+      },
+      "pilot2": {
+        "frames": [
+          517,
+          431,
+          334,
+          478,
+          371,
+          576,
+          452,
+          394
+        ],
+        "requests": 8,
+        "normal_reviews": 0,
+        "defect_reviews": 8,
+        "uncertain_reviews": 0,
+        "new_episodes": 8
+      },
+      "pilot3": {
+        "frames": [
+          517,
+          431,
+          334,
+          478,
+          371,
+          576,
+          452,
+          394
+        ],
+        "requests": 8,
+        "normal_reviews": 0,
+        "defect_reviews": 8,
+        "uncertain_reviews": 0,
+        "new_episodes": 8
+      }
+    },
+    "T1_S177_I108_1": {
+      "total_new_episodes": 0,
+      "fixed8": {
+        "frames": [
+          1707,
+          649,
+          1178,
+          2235,
+          1530,
+          1001,
+          823,
+          2587
+        ],
+        "requests": 8,
+        "normal_reviews": 8,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "new_episodes": 0
+      },
+      "pilot2": {
+        "frames": [
+          1707,
+          649
+        ],
+        "requests": 2,
+        "normal_reviews": 2,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "new_episodes": 0
+      },
+      "pilot3": {
+        "frames": [
+          1707,
+          649,
+          1178
+        ],
+        "requests": 3,
+        "normal_reviews": 3,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "new_episodes": 0
+      }
+    },
+    "T1_S179_I35_1": {
+      "total_new_episodes": 0,
+      "fixed8": {
+        "frames": [
+          1586,
+          327,
+          866,
+          1046,
+          686,
+          1406,
+          1226,
+          507
+        ],
+        "requests": 8,
+        "normal_reviews": 8,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "new_episodes": 0
+      },
+      "pilot2": {
+        "frames": [
+          1586,
+          327
+        ],
+        "requests": 2,
+        "normal_reviews": 2,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "new_episodes": 0
+      },
+      "pilot3": {
+        "frames": [
+          1586,
+          327,
+          866
+        ],
+        "requests": 3,
+        "normal_reviews": 3,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "new_episodes": 0
+      }
+    },
+    "T1_S478_I118_2": {
+      "total_new_episodes": 6,
+      "fixed8": {
+        "frames": [
+          1506,
+          2473,
+          538,
+          1984,
+          1026,
+          2967,
+          405,
+          1380
+        ],
+        "requests": 8,
+        "normal_reviews": 2,
+        "defect_reviews": 6,
+        "uncertain_reviews": 0,
+        "new_episodes": 6
+      },
+      "pilot2": {
+        "frames": [
+          1506,
+          2473,
+          538,
+          1984,
+          1026,
+          2967,
+          405,
+          1380
+        ],
+        "requests": 8,
+        "normal_reviews": 2,
+        "defect_reviews": 6,
+        "uncertain_reviews": 0,
+        "new_episodes": 6
+      },
+      "pilot3": {
+        "frames": [
+          1506,
+          2473,
+          538,
+          1984,
+          1026,
+          2967,
+          405,
+          1380
+        ],
+        "requests": 8,
+        "normal_reviews": 2,
+        "defect_reviews": 6,
+        "uncertain_reviews": 0,
+        "new_episodes": 6
+      }
+    },
+    "T2_S262_I45_1": {
+      "total_new_episodes": 0,
+      "fixed8": {
+        "frames": [
+          389,
+          1162,
+          1032,
+          454,
+          642,
+          777,
+          901,
+          1411
+        ],
+        "requests": 8,
+        "normal_reviews": 8,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "new_episodes": 0
+      },
+      "pilot2": {
+        "frames": [
+          389,
+          1162
+        ],
+        "requests": 2,
+        "normal_reviews": 2,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "new_episodes": 0
+      },
+      "pilot3": {
+        "frames": [
+          389,
+          1162,
+          1032
+        ],
+        "requests": 3,
+        "normal_reviews": 3,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "new_episodes": 0
+      }
+    },
+    "T2_S287_I184_1": {
+      "total_new_episodes": 0,
+      "fixed8": {
+        "frames": [
+          1091,
+          488,
+          1292,
+          1492,
+          891,
+          689,
+          1694,
+          1712
+        ],
+        "requests": 8,
+        "normal_reviews": 8,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "new_episodes": 0
+      },
+      "pilot2": {
+        "frames": [
+          1091,
+          488
+        ],
+        "requests": 2,
+        "normal_reviews": 2,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "new_episodes": 0
+      },
+      "pilot3": {
+        "frames": [
+          1091,
+          488,
+          1292
+        ],
+        "requests": 3,
+        "normal_reviews": 3,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "new_episodes": 0
+      }
+    },
+    "T2_S287_I185_1": {
+      "total_new_episodes": 4,
+      "fixed8": {
+        "frames": [
+          690,
+          710,
+          406,
+          641,
+          756,
+          1053,
+          363,
+          456
+        ],
+        "requests": 8,
+        "normal_reviews": 3,
+        "defect_reviews": 5,
+        "uncertain_reviews": 0,
+        "new_episodes": 4
+      },
+      "pilot2": {
+        "frames": [
+          690,
+          710,
+          406,
+          641,
+          756,
+          1053,
+          363,
+          456
+        ],
+        "requests": 8,
+        "normal_reviews": 3,
+        "defect_reviews": 5,
+        "uncertain_reviews": 0,
+        "new_episodes": 4
+      },
+      "pilot3": {
+        "frames": [
+          690,
+          710,
+          406,
+          641,
+          756,
+          1053,
+          363,
+          456
+        ],
+        "requests": 8,
+        "normal_reviews": 3,
+        "defect_reviews": 5,
+        "uncertain_reviews": 0,
+        "new_episodes": 4
+      }
+    },
+    "T2_S303_I44_1": {
+      "total_new_episodes": 0,
+      "fixed8": {
+        "frames": [
+          1182,
+          467,
+          1245,
+          1637,
+          1374,
+          924,
+          1708,
+          340
+        ],
+        "requests": 8,
+        "normal_reviews": 8,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "new_episodes": 0
+      },
+      "pilot2": {
+        "frames": [
+          1182,
+          467
+        ],
+        "requests": 2,
+        "normal_reviews": 2,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "new_episodes": 0
+      },
+      "pilot3": {
+        "frames": [
+          1182,
+          467,
+          1245
+        ],
+        "requests": 3,
+        "normal_reviews": 3,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "new_episodes": 0
+      }
+    },
+    "T2_S466_I39_1": {
+      "total_new_episodes": 0,
+      "fixed8": {
+        "frames": [
+          1024,
+          3732,
+          1167,
+          2741,
+          3591,
+          1738,
+          3162,
+          3025
+        ],
+        "requests": 8,
+        "normal_reviews": 8,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "new_episodes": 0
+      },
+      "pilot2": {
+        "frames": [
+          1024,
+          3732
+        ],
+        "requests": 2,
+        "normal_reviews": 2,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "new_episodes": 0
+      },
+      "pilot3": {
+        "frames": [
+          1024,
+          3732,
+          1167
+        ],
+        "requests": 3,
+        "normal_reviews": 3,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "new_episodes": 0
+      }
+    },
+    "T3_S165_I175_1": {
+      "total_new_episodes": 0,
+      "fixed8": {
+        "frames": [
+          1376,
+          690,
+          1551,
+          1035,
+          1721,
+          346,
+          865,
+          1207
+        ],
+        "requests": 8,
+        "normal_reviews": 8,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "new_episodes": 0
+      },
+      "pilot2": {
+        "frames": [
+          1376,
+          690
+        ],
+        "requests": 2,
+        "normal_reviews": 2,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "new_episodes": 0
+      },
+      "pilot3": {
+        "frames": [
+          1376,
+          690,
+          1551
+        ],
+        "requests": 3,
+        "normal_reviews": 3,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "new_episodes": 0
+      }
+    },
+    "T3_S165_I178_1": {
+      "total_new_episodes": 0,
+      "fixed8": {
+        "frames": [
+          1760,
+          378,
+          721,
+          896,
+          1584,
+          551,
+          1411,
+          1071
+        ],
+        "requests": 8,
+        "normal_reviews": 8,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "new_episodes": 0
+      },
+      "pilot2": {
+        "frames": [
+          1760,
+          378
+        ],
+        "requests": 2,
+        "normal_reviews": 2,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "new_episodes": 0
+      },
+      "pilot3": {
+        "frames": [
+          1760,
+          378,
+          721
+        ],
+        "requests": 3,
+        "normal_reviews": 3,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "new_episodes": 0
+      }
+    },
+    "T3_S165_I178_2": {
+      "total_new_episodes": 0,
+      "fixed8": {
+        "frames": [
+          1697,
+          1007,
+          1182,
+          836,
+          1351,
+          492,
+          1526,
+          665
+        ],
+        "requests": 8,
+        "normal_reviews": 8,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "new_episodes": 0
+      },
+      "pilot2": {
+        "frames": [
+          1697,
+          1007
+        ],
+        "requests": 2,
+        "normal_reviews": 2,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "new_episodes": 0
+      },
+      "pilot3": {
+        "frames": [
+          1697,
+          1007,
+          1182
+        ],
+        "requests": 3,
+        "normal_reviews": 3,
+        "defect_reviews": 0,
+        "uncertain_reviews": 0,
+        "new_episodes": 0
+      }
+    }
+  }
+}

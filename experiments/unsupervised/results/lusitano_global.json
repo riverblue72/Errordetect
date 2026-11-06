@@ -1,0 +1,59 @@
+{
+  "dataset": "LUSITANOv2",
+  "mode": "global",
+  "seed": 42,
+  "split": {
+    "val_total": 5012,
+    "val_normal_available": 2494,
+    "val_defect_available": 2518,
+    "startup": 510,
+    "startup_defects": 3,
+    "calibration": 510,
+    "calibration_defects": 3
+  },
+  "test_count": 2511,
+  "excluded_empty_test_files": [
+    "20240724_225529_420.tif"
+  ],
+  "reference_selected": 308,
+  "reference_vectors_per_method": 3696,
+  "reference_selected_actual_defects": 0,
+  "reference_seconds": 21.905755281972233,
+  "evaluation_seconds": 105.79142945015337,
+  "mean_test_seconds_per_image": 0.04213119452415507,
+  "methods": {
+    "all_unlabeled": {
+      "threshold": 0.42825909003615303,
+      "tp": 564,
+      "fp": 2,
+      "fn": 684,
+      "tn": 1261,
+      "recall": 0.4519230769230769,
+      "precision": 0.9964664310954063,
+      "false_alarms_per_10000_normals": 15.835312747426762,
+      "count": 2511,
+      "anomalies": 1248,
+      "auroc": 0.9764957264957265,
+      "average_precision": 0.9781237587229796,
+      "single_hottest_patch_box_hit": 0.624198717948718,
+      "top_1pct_patch_box_hit": 0.7483974358974359
+    },
+    "mutual_selected": {
+      "threshold": 0.5636518198251722,
+      "tp": 447,
+      "fp": 4,
+      "fn": 801,
+      "tn": 1259,
+      "recall": 0.3581730769230769,
+      "precision": 0.991130820399113,
+      "false_alarms_per_10000_normals": 31.670625494853525,
+      "count": 2511,
+      "anomalies": 1248,
+      "auroc": 0.9723878078242686,
+      "average_precision": 0.9721829839160429,
+      "single_hottest_patch_box_hit": 0.6754807692307693,
+      "top_1pct_patch_box_hit": 0.7652243589743589
+    }
+  },
+  "protocol": "Validation labels construct a 0.59% defect startup/calibration scenario only; model and thresholds use unlabeled images. Official test held out. q99.5 calibration. Frozen DINOv2-S/14, k=3 patch cosine distance, top 1% image score. This is a public-dataset simulation, not factory validation."
+}
