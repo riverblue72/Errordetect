@@ -128,7 +128,7 @@ function fakeVoice() {
           assert.equal(await page.locator(".episode-result, [data-distribution], #distributionFigure, #distributionMobile").count(), 0);
           assert(!/22\s*→\s*26|Run 03|Run 04/.test(await page.locator('[data-scene="7"]').innerText()));
           assert.equal(await page.locator('[data-scene="7"] .demo-copy .small-note').count(), 0);
-          assert.equal(await page.locator(".pipeline-closing h3").innerText(), "AI-assisted inspection with human feedback and validated reference updates");
+          assert.equal(await page.locator(".pipeline-closing h3").count(), 0);
           if (language === "ko") assert.equal(await page.locator(".pipeline-closing p").innerText(), "AI가 이상을 분석하고, 사람이 확인하며, 검수 결과를 바탕으로 검사 기준의 개선 가능성을 검증하는 품질 관리 파이프라인입니다.");
           assert.equal(await page.locator(".strength-card").count(), 2);
           assert.equal(await page.locator(".strength-subsection").count(), 2);

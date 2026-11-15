@@ -16,7 +16,7 @@
       "view": "data",
       "label": "데이터·기준",
       "scope": "DATA & REFERENCE · 고정된 DINOv2와 PCA 기반 선별",
-      "narration": "TSFabrics는 스물두 개 녹화, 구만 삼천백아흔여섯 장입니다. 초기 오백열두 장의 코사인 유사도 기반 이례성 점수를 계산하고, 전체 이미지 특징을 PCA 첫 주성분의 사분위수로 네 그룹으로 나눕니다. 그룹별 이례성 하위 육십 퍼센트인 삼백여덟 장에서 칠천삼백아흔두 개 기준 특징을 구성합니다. DINOv2는 재학습하지 않습니다.",
+      "narration": "초기 오백열두 장의 DINOv2 패치 특징을 다른 사진들의 패치와 코사인 유사도로 비교합니다. 자기 사진의 패치는 제외하고, 그룹을 나누기 전 전체 사진에서 이례성 점수를 계산합니다. PCA는 이례성이 아니라 외관 다양성을 유지할 네 그룹을 나누는 데 씁니다. 그룹별 하위 육십 퍼센트인 삼백여덟 장에서 칠천삼백아흔두 개 기준 특징을 구성합니다. 가중치 재학습이나 정답 라벨을 이용한 선별은 하지 않습니다.",
       "durationMs": 31000,
       "ticks": 2,
       "delay": 15500
@@ -90,7 +90,7 @@
       "view": "data",
       "label": "Data & reference",
       "scope": "DATA & REFERENCE · Frozen DINOv2 and PCA-based selection",
-      "narration": "TSFabrics contains 22 recordings and 93,196 photos. Compute cosine-similarity-based unusualness scores for the first 512 photos. Project global DINOv2 features onto the first PCA component and use quartiles to form four groups. Retain the lowest-scoring 60 percent in each group: 308 photos providing 7,392 reference patch features. DINOv2 remains a frozen feature extractor.",
+      "narration": "Extract DINOv2 patch features from the first 512 photos. Compare against other photos’ patches using cosine similarity, excluding the query photo itself. Compute unusualness across all 512 photos before grouping. Separately, PCA quartiles define four groups to preserve appearance diversity. Select each group’s lowest-scoring 60 percent: 308 photos providing 7,392 reference patch features. DINOv2 stays frozen; selection uses no ground-truth labels.",
       "durationMs": 31000,
       "ticks": 2,
       "delay": 15500
