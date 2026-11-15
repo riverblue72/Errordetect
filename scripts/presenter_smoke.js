@@ -6,7 +6,7 @@ const { chromium } = require("playwright");
 
 const durations = [24000, 31000, 32000, 25000, 26000, 38000, 38000, 26000];
 const base = process.env.SITE_URL || "http://127.0.0.1:8879/";
-const output = process.env.QA_OUTPUT || "/private/tmp/surfacetrace-presenter-final-20261115";
+const output = process.env.QA_OUTPUT || "/private/tmp/surfacetrace-presenter-final-20261116";
 
 function fakeVoice() {
   window.__narrationCalls = [];
@@ -47,6 +47,8 @@ function fakeVoice() {
       assert.equal(await page.locator(".data-split").count(), 0);
       assert.equal(await page.locator(".demo-steps button").count(), 8);
       assert.equal(await page.locator("#notesToggle, #speakerNotes, #speakerText, #tourNarration").count(), 0);
+      assert.equal(await page.locator("#narrationToggle, .candidate-hold, .allocation-trial, .is-guided, .supplementary-results").count(), 0);
+      assert(!/결함 검출률|defect detection rate|ADAPTIVE_BUDGET_RESULTS|26\s*→\s*50/.test(visibleText));
       assert(await page.evaluate(() => window.SURFACETRACE_PRESENTER_COPY[document.documentElement.lang].every(chapter => !("note" in chapter))));
       for (let index = 0; index < 8; index++) {
         await scene(index);
@@ -77,12 +79,16 @@ function fakeVoice() {
           assert.equal((await state()).photo, 1);
         }
         if (index === 3) {
+          const purpose = await page.locator(".independent-note").innerText();
+          assert.match(purpose, language === "ko" ? /자동으로 정상 판정.*기존 결함 경보를 취소하지/ : /does not automatically label.*cancel existing defect alerts/);
           await page.locator("#shiftSlider").evaluate(element => { element.value = "4"; });
           await page.locator("#shiftSlider").dispatchEvent("input");
           assert.equal((await state()).shift, 4);
           assert.equal((await page.locator("#shiftStreak").innerText()).replace(/\s/g, ""), "3/3");
         }
         if (index === 4) {
+          assert.equal(await page.locator(".review-coverage-row > div:first-child small").count(), 0);
+          assert.match(await page.locator('[data-scene="4"] .reason-copy').innerText(), language === "ko" ? /같은 결함을 반복 검수하지/ : /same defect is not reviewed repeatedly/);
           assert.equal(await page.locator("#top8Track i").count(), 8);
           assert.equal(await page.locator("#spaced8Track i").count(), 8);
           assert.equal(await page.locator("#intervalPhotos .film-frame").count(), 8);
@@ -115,9 +121,13 @@ function fakeVoice() {
           assert.match(await page.locator(".decision-conclusion").innerText(), language === "ko" ? /기존 기준 유지/ : /Current reference retained/);
           const numbers = await page.locator(".decision-visual").innerText();
           for (const value of ["1,050", "202", "153", "48", "40"]) assert(numbers.includes(value));
+          assert.match(numbers, language === "ko" ? /서로 다른 신규 결함 사건 경보/ : /Alerts on distinct new defect episodes/);
         }
         if (index === 7) {
-          assert.equal(await page.locator(".results-metric-grid article").count(), 3);
+          assert.equal(await page.locator(".results-metric-grid article").count(), 2);
+          assert.match(await page.locator(".episode-result").innerText(), /22 → 26/);
+          assert.equal(await page.locator('[data-scene="7"] .demo-copy .small-note').count(), 0);
+          assert.equal(await page.locator('[data-scene="7"] .visual-heading > span').innerText(), language === "ko" ? "실제 개별 사례" : "Actual individual examples");
           assert.equal(await page.locator(".pipeline-closing h3").innerText(), "AI-assisted inspection with human feedback and validated reference updates");
           if (language === "ko") assert.equal(await page.locator(".pipeline-closing p").innerText(), "AI가 이상을 분석하고, 사람이 검수하며, 검수 결과를 바탕으로 기준 후보를 검증하는 품질 관리 파이프라인입니다.");
           await page.locator('[data-distribution="04"]').click();
@@ -146,9 +156,7 @@ function fakeVoice() {
       await replay.goto(new URL(file, base).href);
       await replay.waitForFunction(() => !!window.surfaceTracePresenter);
       await replay.clock.pauseAt(await replay.evaluate(() => new Date()));
-      await replay.locator("#narrationToggle").click();
-      assert.equal(await replay.locator("#narrationToggle").getAttribute("aria-pressed"), "false");
-      await replay.locator("#narrationToggle").click();
+      assert.equal(await replay.locator("#narrationToggle").count(), 0);
       await replay.locator("#playTour").click();
       assert.equal(await replay.evaluate(() => window.__narrationCalls.length), 1);
       for (let i = 0; i < durations.length; i++) {

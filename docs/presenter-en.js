@@ -22,7 +22,7 @@
   };
   let toastTimer;
   let tourTimer;
-  let narrationEnabled = "speechSynthesis" in window && "SpeechSynthesisUtterance" in window;
+  const narrationEnabled = "speechSynthesis" in window && "SpeechSynthesisUtterance" in window;
   let activeNarration;
 
   function cancelNarration() {
@@ -241,11 +241,6 @@
   function updateTourControls(message) {
     setText("chapterProgress", `${String(state.scene + 1).padStart(2, "0")} / ${String(chapters.length).padStart(2, "0")}`);
     setText("sceneScope", chapters[state.scene].scope);
-    if ($("narrationToggle")) {
-      $("narrationToggle").setAttribute("aria-pressed", String(narrationEnabled));
-      setText("narrationToggle", narrationEnabled ? "Voice on" : "Voice off");
-      $("narrationToggle").disabled = !("speechSynthesis" in window && "SpeechSynthesisUtterance" in window);
-    }
     setText("playTour", state.playing ? "Ⅱ Pause replay" : "▶ Play replay");
     if ($("playTour")) $("playTour").setAttribute("aria-pressed", String(state.playing));
     if ($("previousStep")) $("previousStep").disabled = state.scene === 0;
@@ -836,12 +831,6 @@
     bindManual("compareRaw", "click", () => { state.compareRaw = !state.compareRaw; renderComparison(); });
     bindManual("shiftSlider", "input", event => { state.shift = Math.max(0, Math.min(data.visualShift.photos.length - 1, Number(event.target.value))); renderShift(); });
     bindManual("shiftNext", "click", () => { state.shift = Math.min(state.shift + 1, data.visualShift.photos.length - 1); renderShift(); });
-    bind("narrationToggle", "click", () => {
-      narrationEnabled = !narrationEnabled;
-      if (narrationEnabled && state.playing) narrateChapter();
-      else cancelNarration();
-      updateTourControls();
-    });
     bind("fullscreen", "click", async () => {
       try {
         if (document.fullscreenElement) await document.exitFullscreen();
