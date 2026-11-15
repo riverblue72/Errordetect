@@ -53,7 +53,7 @@
       "view": "results",
       "label": "최종 결과",
       "durationMs": 26000,
-      "note": "검수 효율 128 → 56건, AUROC 0.884 → 0.965, AP 66.4% → 85.4%, 동일 검수 예산의 신규 결함 사건 22 → 26건을 정리합니다. 실제 개별 사례 그래프는 Run 03과 Run 04만 유지합니다. 사람의 판단과 검증을 거친 안전한 기준 후보 관리로 마무리합니다."
+      "note": "검수 효율 128 → 56건, AUROC 0.884 → 0.965, AP 66.4% → 85.4%를 정리합니다. 사람의 판단과 검증을 거친 안전한 기준 후보 관리로 마무리합니다."
     }
   ],
   "en": [
@@ -103,7 +103,7 @@
       "view": "results",
       "label": "Results",
       "durationMs": 26000,
-      "note": "Summarize 128 → 56 review requests, AUROC 0.884 → 0.965, AP 66.4% → 85.4%, and 22 → 26 new defect episodes under the same review budget. Show only the existing Run 03 and Run 04 individual examples. Close with human decisions and safely validated reference candidates."
+      "note": "Summarize 128 → 56 review requests, AUROC 0.884 → 0.965, and AP 66.4% → 85.4%. Close with human decisions and safely validated reference candidates."
     }
   ]
 }

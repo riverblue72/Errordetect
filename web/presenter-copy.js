@@ -70,7 +70,7 @@
       "view": "results",
       "label": "최종 결과",
       "scope": "RESULTS · 검수 효율 + AI 성능 + 검증된 기준 관리",
-      "narration": "검수 효율과 AUROC, AP를 함께 봅니다. 같은 예산에서 발견한 신규 사건은 스물두 건에서 스물여섯 건으로 늘었습니다. AI가 이상을 분석하고, 사람이 검수하며, 검수 결과를 바탕으로 기준 후보를 검증하는 품질 관리 파이프라인입니다.",
+      "narration": "검수 요청은 백스물여덟 건에서 쉰여섯 건으로 줄었습니다. AUROC는 영 점 팔팔사에서 영 점 구육오로, AP는 육십육 점 사 퍼센트에서 팔십오 점 사 퍼센트로 바뀌었습니다. AI가 이상을 분석하고, 사람이 판단하며, 검수 결과를 바탕으로 기준 후보를 검증합니다. 현장 검수의 부담을 줄이고 검증 후 기준의 적용 여부를 결정하는 품질 관리 파이프라인입니다.",
       "durationMs": 26000,
       "ticks": 2,
       "delay": 13000
@@ -144,7 +144,7 @@
       "view": "results",
       "label": "Results",
       "scope": "RESULTS · Review efficiency + AI performance + reference management",
-      "narration": "Review requests fall from 128 to 56. AUROC and AP summarize four defect-containing runs. In a model comparison with the same review budget, newly found episodes increase from 22 to 26. AI-assisted inspection with human feedback and validated reference updates.",
+      "narration": "Review requests fall from 128 to 56. AUROC changes from 0.884 to 0.965, and AP from 66.4 to 85.4 percent. AI analyzes anomalies, people make review decisions, and review results support reference-candidate validation. The pipeline reduces review effort and checks a candidate before deciding whether to adopt it. AI-assisted inspection with human feedback and validated reference updates.",
       "durationMs": 26000,
       "ticks": 2,
       "delay": 13000

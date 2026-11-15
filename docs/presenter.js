@@ -388,7 +388,6 @@
     renderComparison();
     renderShift();
     renderInterval();
-    selectDistribution("03");
     showScene(0);
     updateTourControls("처음부터 시연할 준비가 되었습니다.");
   }
@@ -754,13 +753,6 @@
     document.querySelectorAll("[data-photo]").forEach(button => button.setAttribute("aria-pressed", String(Number(button.dataset.photo) === state.photo)));
   }
 
-  function selectDistribution(run) {
-    if (!["03", "04"].includes(run)) return;
-    imageSource("distributionFigure", `./ablation/score_distribution_run_${run}.svg`, `원본 Run ${run}: 수작업 특징과 DINOv2의 정상·결함 사진 점수 분포`);
-    if ($("distributionMobile")) $("distributionMobile").srcset = `./ablation/score_distribution_run_${run}_mobile.svg`;
-    document.querySelectorAll("[data-distribution]").forEach(button => button.setAttribute("aria-pressed", String(button.dataset.distribution === run)));
-  }
-
   function validateData() {
     if (!data || data.metadata.recordedReplay !== true) throw new Error("저장된 실험 자료가 없습니다.");
     if (data.cases.normal.review.length !== 2 || data.cases.defect.review.length !== 8) throw new Error("검수 사진 수가 기록과 다릅니다.");
@@ -811,7 +803,6 @@
       state.photo = index;
       renderComparison();
     })));
-    document.querySelectorAll("[data-distribution]").forEach(button => button.addEventListener("click", manually(() => selectDistribution(button.dataset.distribution))));
     bindManual("previousStep", "click", () => showScene(state.scene - 1));
     bindManual("nextStep", "click", () => showScene(state.scene + 1));
     bind("playTour", "click", toggleTour);

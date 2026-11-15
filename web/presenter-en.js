@@ -388,7 +388,6 @@
     renderComparison();
     renderShift();
     renderInterval();
-    selectDistribution("03");
     showScene(0);
     updateTourControls("Ready to replay from the beginning.");
   }
@@ -754,13 +753,6 @@
     document.querySelectorAll("[data-photo]").forEach(button => button.setAttribute("aria-pressed", String(Number(button.dataset.photo) === state.photo)));
   }
 
-  function selectDistribution(run) {
-    if (!["03", "04"].includes(run)) return;
-    imageSource("distributionFigure", `./ablation/score_distribution_run_${run}.svg`, `Original Run ${run}: normal and defect score distributions for handcrafted features and DINOv2`);
-    if ($("distributionMobile")) $("distributionMobile").srcset = `./ablation/score_distribution_run_${run}_mobile.svg`;
-    document.querySelectorAll("[data-distribution]").forEach(button => button.setAttribute("aria-pressed", String(button.dataset.distribution === run)));
-  }
-
   function validateData() {
     if (!data || data.metadata.recordedReplay !== true) throw new Error("Recorded experiment data is missing.");
     if (data.cases.normal.review.length !== 2 || data.cases.defect.review.length !== 8) throw new Error("The number of review photos differs from the record.");
@@ -811,7 +803,6 @@
       state.photo = index;
       renderComparison();
     })));
-    document.querySelectorAll("[data-distribution]").forEach(button => button.addEventListener("click", manually(() => selectDistribution(button.dataset.distribution))));
     bindManual("previousStep", "click", () => showScene(state.scene - 1));
     bindManual("nextStep", "click", () => showScene(state.scene + 1));
     bind("playTour", "click", toggleTour);
