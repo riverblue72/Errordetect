@@ -17,20 +17,38 @@
     method: "features",
     overview: "flow",
     compareRaw: false,
-    shift: 0
+    shift: 0,
+    resultsClosing: false
   };
   let toastTimer;
   let tourTimer;
-  const chapters = [
-    {view:"overview", label:"전체 흐름", scope:"OVERVIEW · 사진에서 기준 검증까지", delay:6000, note:"시간 순서의 사진을 입력으로 받습니다. 여기서 사진별 이상 분석과 구간 외관 변화 분석이 병렬로 진행됩니다. 한 장 안의 이상 위치와 여러 장에 걸친 전체 모습의 변화를 각각 살펴본 뒤, 구간 요약에서 확인할 사진을 제시합니다. 담당자는 우선 두 건을 확인하고, 필요하면 총 여덟 건까지 검수합니다. 판단 기록은 이후 기준 후보의 평가로 연결됩니다."},
-    {view:"data", label:"데이터·기준", scope:"TSFABRICS · 22개 녹화 · 93,196장", delay:4000, note:"TSFabrics의 22개 녹화를 프로젝트에서 기준 구축 1개, 방법 비교 5개, 최종 평가 16개로 나눴습니다. DINOv2 ViT-S/14는 재학습하지 않습니다. 기준 녹화의 초기 512장 중 308장을 라벨 없이 선별해 사진당 24개, 총 7,392개 패치 특징을 저장합니다. 다음 1,536장의 점수로 경보선 0.47077을 보정했습니다."},
-    {view:"compare", label:"이상 위치", scope:"PHOTO ANOMALY · 같은 사진의 두 방식 비교", delay:5000, note:"사진 한 장을 832개 패치로 표현해 기준과 차이가 큰 위치를 보여줍니다. 여기서는 원본 시연의 정상 사진에서 오경보가 줄어든 사례와 DINOv2가 찾은 결함 사례를 비교합니다. 수작업은 사람이 매번 판단한다는 뜻이 아니라 사람이 설계한 영상 특징을 쓰는 비교 알고리즘입니다."},
-    {view:"shift", label:"외관 변화", scope:"VISUAL SHIFT · 두 녹화를 이어 붙인 별도 시험", delay:2200, note:"이 화면은 한 장의 결함 위치가 아니라 연속 사진의 전체 특징 분포가 기준과 달라졌는지 봅니다. 128장 묶음을 32장마다 비교하고 3회 연속 경보선을 넘으면 변화 신호를 냅니다. 서로 다른 두 녹화를 이어 붙인 시험에서 새 녹화의 96번째 사진 시점에 신호가 확인됩니다. 이 신호는 사진의 이상 경보를 취소하거나 결함을 정상으로 바꾸지 않습니다."},
-    {view:"interval", label:"구간 요약", scope:"RECORDED INTERVAL · T1_S478_I118_2", delay:6000, note:"원본 시연의 321번째부터 3,204번째까지 2,884장 전체 점수를 표시합니다. 점수 상위 사진이 같은 사건에 몰리지 않도록 간격을 둡니다. 12프레임과16프레임 간격은 같은26개 신규 사건을 찾았고, 인접 검수 사진을 조금 더 떨어뜨리는16프레임을 유지했습니다. 모든 사진은 점수를 계산하며 검수 후보는 별도의 순위 기반 절차로 고릅니다."},
-    {view:"inspect", label:"검수", scope:"LIMITED REVIEW · 우선 2건, 필요하면 8건", delay:3000, note:"원본 사례는 첫 두 건에서 결함을 확인해 총 여덟 건으로 확대하고, 추가 개발 사례는 정상 두 건으로 요청을 끝냅니다. 1·2·3건 우선 검수는 최종16개 녹화에서 각각44·56·68건을 요청해 같은26개 사건을 찾았습니다. 1건 규칙은 첫 사진이 정상인데 결함이 존재하는 어려운 구간의 검증 조건을 충족하지 못해 채택하지 않았습니다. 2건이 최적이거나 더 안전하다고 입증한 것은 아닙니다. 공개 정답을 재생하는 시연이며 종료가 전체 구간의 정상 보장은 아닙니다."},
-    {view:"candidate", label:"후보 평가", scope:"SEPARATE VALIDATION · 검수 기반 후보의 후속 평가", delay:8000, note:"정상으로 확인한 특징을 추가해 기준 후보를 만들고 기존 기준과 비교합니다. 별도의 15개 녹화, 8건 고정 검수 실험에서는 정상 오경보가 1,050장에서 0장으로 줄었지만 결함 사진 탐지는 202장에서 153장, 신규 사건 탐지는 48건에서 40건으로 줄어 후보를 보류했습니다. 원본의 초기 512장으로 만든 후보 설명 그림을 함께 사용할 경우, 이 그림과 검수 기반 후보의 집계는 서로 다른 실험입니다."},
-    {view:"results", label:"결과", scope:"RESULTS · 방법 비교와 처리 성능", delay:8000, note:"같은 128건 검수에서 수작업 특징은 신규 사건 22건과 결함 사진 23장을, DINOv2와 기준 선별은 사건 26건과 결함 사진 27장을 확인했습니다. 결함 포함 네 녹화의 평균 AP는 66.4%에서 85.4%로 바뀌었습니다. 아래 표는 DINOv2 안에서 기준 선별과 간격 적용을 각각 바꾼 별도 비교입니다. RTX 3090에서는 배치 8의 사진 읽기·전처리·특징 추출·점수 계산이 초당 105.48장이었고 단일 사진의 중앙 지연은 13.95ms였습니다. 카메라, 별도 변화 감지, 화면 처리 시간은 이 속도에서 제외했습니다."}
-  ];
+  let narrationEnabled = "speechSynthesis" in window && "SpeechSynthesisUtterance" in window;
+  let activeNarration;
+
+  function cancelNarration() {
+    if (!activeNarration) return;
+    try { window.speechSynthesis.cancel(); } catch { /* Captions remain available. */ }
+    activeNarration = null;
+  }
+
+  function narrateChapter() {
+    cancelNarration();
+    if (!state.playing || !narrationEnabled) return;
+    try {
+      const utterance = new SpeechSynthesisUtterance(chapters[state.scene].narration);
+      utterance.lang = "ko-KR";
+      utterance.rate = 1.15;
+      const voices = window.speechSynthesis.getVoices();
+      const voice = voices.find(item => item.lang.startsWith("ko") && item.localService)
+        || voices.find(item => item.lang.startsWith("ko"));
+      if (voice) utterance.voice = voice;
+      utterance.onerror = () => { /* Browser audio availability never blocks the visual replay. */ };
+      activeNarration = utterance;
+      window.speechSynthesis.speak(utterance);
+    } catch { activeNarration = null; }
+  }
+
+  const chapters = window.SURFACETRACE_PRESENTER_COPY.ko;
 
   // Exact rows from web/ablation/review-routing.json; inline for offline replay.
   const routingRuns = [
@@ -224,6 +242,13 @@
     setText("chapterProgress", `${String(state.scene + 1).padStart(2, "0")} / ${String(chapters.length).padStart(2, "0")}`);
     setText("sceneScope", chapters[state.scene].scope);
     setText("speakerText", chapters[state.scene].note);
+    setText("narrationText", chapters[state.scene].narration);
+    if ($("tourNarration")) $("tourNarration").hidden = !state.playing;
+    if ($("narrationToggle")) {
+      $("narrationToggle").setAttribute("aria-pressed", String(narrationEnabled));
+      setText("narrationToggle", narrationEnabled ? "음성 해설 켜짐" : "음성 해설 꺼짐");
+      $("narrationToggle").disabled = !("speechSynthesis" in window && "SpeechSynthesisUtterance" in window);
+    }
     setText("playTour", state.playing ? "Ⅱ 일시정지" : "▶ 자동 시연");
     if ($("playTour")) $("playTour").setAttribute("aria-pressed", String(state.playing));
     if ($("previousStep")) $("previousStep").disabled = state.scene === 0;
@@ -255,6 +280,7 @@
     if (view === "shift") renderShift();
     if (view === "compare") renderComparison();
     updateTourControls();
+    if (state.playing) narrateChapter();
     const nav = document.querySelector(".demo-steps"), active = nav?.querySelector('[aria-current="step"]');
     if (nav && active && nav.scrollWidth > nav.clientWidth) nav.scrollLeft = Math.max(0, active.offsetLeft - nav.offsetLeft - 16);
     window.scrollTo({ top: 0, behavior: "instant" });
@@ -266,6 +292,7 @@
   }
 
   function stopTour(message) {
+    cancelNarration();
     clearTimeout(tourTimer);
     tourTimer = null;
     state.playing = false;
@@ -277,7 +304,7 @@
     if (!state.playing) return;
     tourTimer = setTimeout(() => {
       try { advanceTour(); } catch (error) { fail(error); }
-    }, state.scene === 0 && state.overview === "animation" ? 12000 : chapters[state.scene].delay);
+    }, chapters[state.scene].delay);
   }
 
   function autoNextScene() {
@@ -286,6 +313,7 @@
     if (next === 1) state.method = "features";
     if (next === 2) { state.photo = 0; state.compareRaw = false; }
     if (next === 3) state.shift = 0;
+    if (next === chapters.length - 1) state.resultsClosing = false;
     if (next === 5) {
       // Entering this chapter during a new tour replays both recorded review routes from their first photo.
       // Pausing and resuming inside this chapter does not reset the current review.
@@ -325,6 +353,9 @@
       } else {
         autoNextScene();
       }
+    } else if (state.scene === chapters.length - 1 && !state.resultsClosing) {
+      state.resultsClosing = true;
+      document.querySelector(".pipeline-closing")?.scrollIntoView({ block: "center", behavior: "instant" });
     } else if (state.scene === chapters.length - 1) {
       stopTour("시연 완료 · 처음부터 다시 볼 수 있습니다.");
       return;
@@ -338,6 +369,7 @@
   function startTour() {
     if (state.scene === chapters.length - 1) resetTour();
     state.playing = true;
+    narrateChapter();
     updateTourControls();
     queueTourTick();
   }
@@ -356,6 +388,7 @@
     state.overview = "flow";
     state.compareRaw = false;
     state.shift = 0;
+    state.resultsClosing = false;
     if ($("caseSelect")) $("caseSelect").value = state.caseId;
     renderOverview();
     renderMethod();
@@ -462,7 +495,7 @@
     setText("inspectRun", c.run);
     setText("inspectQueueLabel", `검수 후보 ${r.index + 1}`);
     setText("inspectScore", item.score.toFixed(3));
-    setText("inspectThreshold", threshold.toFixed(3));
+    setText("inspectThreshold", threshold.toFixed(4));
     setText("inspectStatus", alarm ? "사진 이상 경보" : "사진 경보 없음");
     if ($("inspectStatus")) $("inspectStatus").className = `status-pill ${alarm ? "alert" : "normal"}`;
     if (!item.heatmap) r.heat = false;
@@ -482,7 +515,7 @@
     }
     if ($("scoreNeedle")) $("scoreNeedle").style.left = `${Math.min(item.score / 0.65, 1) * 100}%`;
     if ($("thresholdMarker")) $("thresholdMarker").style.left = `${threshold / 0.65 * 100}%`;
-    if ($("scoreMeter")) $("scoreMeter").setAttribute("aria-label", `이상 점수 ${item.score.toFixed(3)}, 경보선 ${threshold.toFixed(3)}. 결함 확률이 아닙니다.`);
+    if ($("scoreMeter")) $("scoreMeter").setAttribute("aria-label", `이상 점수 ${item.score.toFixed(3)}, 경보선 ${threshold.toFixed(4)}. 결함 확률이 아닙니다.`);
 
     setText("reviewCount", String(s.count));
     setText("reviewBudget", String(s.budget));
@@ -806,6 +839,12 @@
     bindManual("compareRaw", "click", () => { state.compareRaw = !state.compareRaw; renderComparison(); });
     bindManual("shiftSlider", "input", event => { state.shift = Math.max(0, Math.min(data.visualShift.photos.length - 1, Number(event.target.value))); renderShift(); });
     bindManual("shiftNext", "click", () => { state.shift = Math.min(state.shift + 1, data.visualShift.photos.length - 1); renderShift(); });
+    bind("narrationToggle", "click", () => {
+      narrationEnabled = !narrationEnabled;
+      if (narrationEnabled && state.playing) narrateChapter();
+      else cancelNarration();
+      updateTourControls();
+    });
     bind("notesToggle", "click", () => {
       const notes = $("speakerNotes");
       if (!notes) return;

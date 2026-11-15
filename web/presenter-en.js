@@ -17,70 +17,40 @@
     method: "features",
     overview: "flow",
     compareRaw: false,
-    shift: 0
+    shift: 0,
+    resultsClosing: false
   };
   let toastTimer;
   let tourTimer;
-  const chapters = [
-  {
-    "view": "overview",
-    "label": "Overview",
-    "scope": "OVERVIEW · From photos to reference validation",
-    "delay": 6000,
-    "note": "Time-ordered fabric photos enter two parallel analyses: per-photo anomaly localization and visual shift across consecutive photos. The interval summary combines the evidence and proposes photos to review. A reviewer starts with two checks and can continue to eight. Recorded decisions then support evaluation of a reference candidate."
-  },
-  {
-    "view": "data",
-    "label": "Data & reference",
-    "scope": "TSFABRICS · 22 runs · 93,196 photos",
-    "delay": 4000,
-    "note": "The project divides 22 TSFabrics runs into one for reference construction, five for method selection, and sixteen for final evaluation. DINOv2 ViT-S/14 is frozen. Of the first 512 photos in the reference run, 308 are selected without labels. Storing 24 patch features per selected photo gives 7,392 reference features. Scores from the next 1,536 photos calibrate the alert limit to 0.47077."
-  },
-  {
-    "view": "compare",
-    "label": "Anomaly maps",
-    "scope": "PHOTO ANOMALY · Two methods, the same photo",
-    "delay": 5000,
-    "note": "Each photo is represented by 832 patches. Patches that differ from the reference receive higher anomaly scores. These original demo examples show fewer false alarms on a normal photo and a defect detected by DINOv2. Handcrafted means an algorithm using human-designed image features; it does not mean a person manually reviews every photo."
-  },
-  {
-    "view": "shift",
-    "label": "Visual shift",
-    "scope": "VISUAL SHIFT · Separate test joining two runs",
-    "delay": 2200,
-    "note": "This signal tracks changes in the overall feature distribution across consecutive photos. It compares a 128-photo window every 32 frames and requires three consecutive threshold exceedances. In this test joining two different recorded runs, the shift is confirmed at frame 96 of the new run. This separate signal does not cancel photo-level anomaly alerts or relabel defects as normal."
-  },
-  {
-    "view": "interval",
-    "label": "Interval summary",
-    "scope": "RECORDED INTERVAL · T1_S478_I118_2",
-    "delay": 6000,
-    "note": "The chart includes all 2,884 photo scores from frames 321 to 3,204 in the original demo. Spacing avoids spending several checks on nearby photos of the same event. Gaps of 12 and 16 frames both found 26 new episodes; 16 was retained for wider separation. Every photo receives a score, while review candidates are selected through a separate ranking rule."
-  },
-  {
-    "view": "inspect",
-    "label": "Review",
-    "scope": "LIMITED REVIEW · Two first, up to eight",
-    "delay": 3000,
-    "note": "The original case expands to eight reviews after defects appear in the first two checks. A separate development case stops after two normal results. Starting with one, two, or three checks required 44, 56, or 68 reviews across the final sixteen runs, respectively; each found 26 episodes. The one-check rule was not adopted because the validation did not cover difficult mixed runs whose first result is normal. This does not establish that two is optimal or safer. The demo replays public labels, and stopping is not a guarantee that the whole interval is normal."
-  },
-  {
-    "view": "candidate",
-    "label": "Candidate test",
-    "scope": "SEPARATE VALIDATION · Follow-up candidate evaluation",
-    "delay": 8000,
-    "note": "Features confirmed as normal form a new reference candidate, which is compared with the existing reference. In a separate fixed-eight-review experiment across fifteen runs, normal false alarms fell from 1,050 to zero. However, alerted defect photos fell from 202 to 153 and detected new episodes from 48 to 40, so the candidate was withheld. The original illustration of a candidate made from the first 512 photos describes a different experiment from these review-based candidate totals."
-  },
-  {
-    "view": "results",
-    "label": "Results",
-    "scope": "RESULTS · Method comparison and processing speed",
-    "delay": 8000,
-    "note": "With the same 128 reviews, handcrafted features found 22 new episodes and 23 defect photos; DINOv2 with reference selection found 26 episodes and 27 defect photos. Mean frame AP across the four defect runs changed from 66.4% to 85.4%. The table separately varies reference selection and review spacing within DINOv2. On an RTX 3090, batch-eight processing reached 105.48 photos per second, including reading, preprocessing, feature extraction, scoring and heatmaps. Single-photo median latency was 13.95 milliseconds. Camera capture, the separate shift detector and the user interface are excluded."
-  }
-];
+  let narrationEnabled = "speechSynthesis" in window && "SpeechSynthesisUtterance" in window;
+  let activeNarration;
 
-  // Exact rows from web/ablation/review-routing.json; inline for offline replay.
+  function cancelNarration() {
+    if (!activeNarration) return;
+    try { window.speechSynthesis.cancel(); } catch { /* Captions remain available. */ }
+    activeNarration = null;
+  }
+
+  function narrateChapter() {
+    cancelNarration();
+    if (!state.playing || !narrationEnabled) return;
+    try {
+      const utterance = new SpeechSynthesisUtterance(chapters[state.scene].narration);
+      utterance.lang = "en-US";
+      utterance.rate = 1.15;
+      const voices = window.speechSynthesis.getVoices();
+      const voice = voices.find(item => item.lang.startsWith("en") && item.localService)
+        || voices.find(item => item.lang.startsWith("en"));
+      if (voice) utterance.voice = voice;
+      utterance.onerror = () => { /* Browser audio availability never blocks the visual replay. */ };
+      activeNarration = utterance;
+      window.speechSynthesis.speak(utterance);
+    } catch { activeNarration = null; }
+  }
+
+  const chapters = window.SURFACETRACE_PRESENTER_COPY.en;
+
+  // Unchanged recorded review allocations, shared with the Korean presentation.
   const routingRuns = [
     {
       "run": "T1_S148_I108_1",
@@ -272,6 +242,13 @@
     setText("chapterProgress", `${String(state.scene + 1).padStart(2, "0")} / ${String(chapters.length).padStart(2, "0")}`);
     setText("sceneScope", chapters[state.scene].scope);
     setText("speakerText", chapters[state.scene].note);
+    setText("narrationText", chapters[state.scene].narration);
+    if ($("tourNarration")) $("tourNarration").hidden = !state.playing;
+    if ($("narrationToggle")) {
+      $("narrationToggle").setAttribute("aria-pressed", String(narrationEnabled));
+      setText("narrationToggle", narrationEnabled ? "Voice on" : "Voice off");
+      $("narrationToggle").disabled = !("speechSynthesis" in window && "SpeechSynthesisUtterance" in window);
+    }
     setText("playTour", state.playing ? "Ⅱ Pause replay" : "▶ Play replay");
     if ($("playTour")) $("playTour").setAttribute("aria-pressed", String(state.playing));
     if ($("previousStep")) $("previousStep").disabled = state.scene === 0;
@@ -303,6 +280,7 @@
     if (view === "shift") renderShift();
     if (view === "compare") renderComparison();
     updateTourControls();
+    if (state.playing) narrateChapter();
     const nav = document.querySelector(".demo-steps"), active = nav?.querySelector('[aria-current="step"]');
     if (nav && active && nav.scrollWidth > nav.clientWidth) nav.scrollLeft = Math.max(0, active.offsetLeft - nav.offsetLeft - 16);
     window.scrollTo({ top: 0, behavior: "instant" });
@@ -314,6 +292,7 @@
   }
 
   function stopTour(message) {
+    cancelNarration();
     clearTimeout(tourTimer);
     tourTimer = null;
     state.playing = false;
@@ -325,7 +304,7 @@
     if (!state.playing) return;
     tourTimer = setTimeout(() => {
       try { advanceTour(); } catch (error) { fail(error); }
-    }, state.scene === 0 && state.overview === "animation" ? 12000 : chapters[state.scene].delay);
+    }, chapters[state.scene].delay);
   }
 
   function autoNextScene() {
@@ -334,6 +313,7 @@
     if (next === 1) state.method = "features";
     if (next === 2) { state.photo = 0; state.compareRaw = false; }
     if (next === 3) state.shift = 0;
+    if (next === chapters.length - 1) state.resultsClosing = false;
     if (next === 5) {
       // Entering this chapter during a new tour replays both recorded review routes from their first photo.
       // Pausing and resuming inside this chapter does not reset the current review.
@@ -373,6 +353,9 @@
       } else {
         autoNextScene();
       }
+    } else if (state.scene === chapters.length - 1 && !state.resultsClosing) {
+      state.resultsClosing = true;
+      document.querySelector(".pipeline-closing")?.scrollIntoView({ block: "center", behavior: "instant" });
     } else if (state.scene === chapters.length - 1) {
       stopTour("Replay complete · You can start again.");
       return;
@@ -386,6 +369,7 @@
   function startTour() {
     if (state.scene === chapters.length - 1) resetTour();
     state.playing = true;
+    narrateChapter();
     updateTourControls();
     queueTourTick();
   }
@@ -404,6 +388,7 @@
     state.overview = "flow";
     state.compareRaw = false;
     state.shift = 0;
+    state.resultsClosing = false;
     if ($("caseSelect")) $("caseSelect").value = state.caseId;
     renderOverview();
     renderMethod();
@@ -510,7 +495,7 @@
     setText("inspectRun", c.run);
     setText("inspectQueueLabel", `Review candidate ${r.index + 1}`);
     setText("inspectScore", item.score.toFixed(3));
-    setText("inspectThreshold", threshold.toFixed(3));
+    setText("inspectThreshold", threshold.toFixed(4));
     setText("inspectStatus", alarm ? "Anomaly alert" : "No photo alert");
     if ($("inspectStatus")) $("inspectStatus").className = `status-pill ${alarm ? "alert" : "normal"}`;
     if (!item.heatmap) r.heat = false;
@@ -530,7 +515,7 @@
     }
     if ($("scoreNeedle")) $("scoreNeedle").style.left = `${Math.min(item.score / 0.65, 1) * 100}%`;
     if ($("thresholdMarker")) $("thresholdMarker").style.left = `${threshold / 0.65 * 100}%`;
-    if ($("scoreMeter")) $("scoreMeter").setAttribute("aria-label", `Anomaly score ${item.score.toFixed(3)}, alert limit ${threshold.toFixed(3)}. The score is not a defect probability.`);
+    if ($("scoreMeter")) $("scoreMeter").setAttribute("aria-label", `Anomaly score ${item.score.toFixed(3)}, alert limit ${threshold.toFixed(4)}. The score is not a defect probability.`);
 
     setText("reviewCount", String(s.count));
     setText("reviewBudget", String(s.budget));
@@ -854,6 +839,12 @@
     bindManual("compareRaw", "click", () => { state.compareRaw = !state.compareRaw; renderComparison(); });
     bindManual("shiftSlider", "input", event => { state.shift = Math.max(0, Math.min(data.visualShift.photos.length - 1, Number(event.target.value))); renderShift(); });
     bindManual("shiftNext", "click", () => { state.shift = Math.min(state.shift + 1, data.visualShift.photos.length - 1); renderShift(); });
+    bind("narrationToggle", "click", () => {
+      narrationEnabled = !narrationEnabled;
+      if (narrationEnabled && state.playing) narrateChapter();
+      else cancelNarration();
+      updateTourControls();
+    });
     bind("notesToggle", "click", () => {
       const notes = $("speakerNotes");
       if (!notes) return;

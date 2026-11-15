@@ -6,6 +6,7 @@
   "scripts": {
     "smoke": "node scripts/smoke.js",
     "smoke:workspace": "node scripts/workspace_smoke.js && node scripts/smoke.js",
+    "smoke:presenter": "node scripts/presenter_smoke.js",
     "visual": "node scripts/visual.js",
     "calibrate": "node scripts/calibrate.js",
     "heatmaps": "node scripts/generate_demo_assets.js"
