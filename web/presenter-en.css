@@ -14,7 +14,7 @@
 .presenter-en .demo-kicker{color:#6479a4}.presenter-en .demo-callout strong{color:#3b628a}
 .presenter-en .demo-copy>p.small-note{font-size:11px;line-height:1.7}
 .presenter-en .overview-heading h2{word-break:normal;line-height:1.18}
-.presenter-en .overview-heading>p,.presenter-en .pipeline-card p,.presenter-en .pipeline-card h3,.presenter-en .step-evidence p,.presenter-en .evidence-heading h3,.presenter-en .speaker-notes p{word-break:normal}
+.presenter-en .overview-heading>p,.presenter-en .pipeline-card p,.presenter-en .pipeline-card h3,.presenter-en .step-evidence p,.presenter-en .evidence-heading h3{word-break:normal}
 .presenter-en .pipeline-card h3{letter-spacing:-.045em;font-size:20px}.presenter-en .analysis-card h3{font-size:18px}
 .presenter-en .pipeline-card{min-height:340px}.presenter-en .analysis-card{min-height:177px}
 .presenter-en .flow-tag{word-break:normal;line-height:1.5}

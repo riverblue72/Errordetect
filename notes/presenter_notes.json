@@ -1,0 +1,109 @@
+{
+  "description": "Offline presentation notes; not included in the website bundle.",
+  "durationMs": 240000,
+  "evidence": {
+    "scoreComparison": "experiments/unsupervised/results/unlabeled_review_final.json",
+    "sequentialReview": "experiments/unsupervised/results/sequential_review_final.json",
+    "referenceValidation": "experiments/unsupervised/FEEDBACK_VALIDATION_RESULTS.md"
+  },
+  "ko": [
+    {
+      "view": "overview",
+      "label": "전체 흐름",
+      "durationMs": 24000,
+      "note": "Overview 메인 흐름도 안에서 입력 → 독립된 두 분석 → 구간 요약 → 담당자 확인 → 기준 후보 검증을 보여줍니다. 마지막 단계는 기존 기준 변경 설명 그림을 재사용한 후보 원리 설명입니다. 현재 실험의 자동 갱신 동작이 아닙니다. 검수 결과 기반 후보 생성 → 후속 데이터 검증 → 적용 또는 보류를 강조합니다."
+    },
+    {
+      "view": "data",
+      "label": "데이터·기준",
+      "durationMs": 31000,
+      "note": "TSFabrics 총 22개 녹화·93,196장. 초기 512장의 DINOv2 전체 이미지 특징을 PCA 첫 번째 주성분에 투영하고 사분위수 기준으로 4개 그룹을 구성합니다. 각 그룹에서 코사인 유사도 기반 이례성 점수가 낮은 60%를 선별합니다. 308장 × 사진당 24개 패치 = 7,392개 기준 특징입니다. DINOv2 ViT-S/14 가중치는 고정합니다. 경보선은 별도 보정 사진의 점수로 정한 0.4708입니다."
+    },
+    {
+      "view": "compare",
+      "label": "이상 위치·성능",
+      "durationMs": 32000,
+      "note": "수작업 특징은 사람이 설계한 영상 특징을 쓰는 비교 알고리즘입니다. AUROC 0.884 → 0.965, Average Precision 66.4% → 85.4%는 모두 결함 포함 4개 Run의 Macro 평균이며 평가 범위를 확대하지 않습니다. AUROC는 경보선에서의 결함 검출률이 아닙니다. 0.4708은 보정 점수의 99.5백분위수로 정한 현재 경보선입니다. 원본·히트맵과 정상·결함 사례 전환을 유지합니다."
+    },
+    {
+      "view": "shift",
+      "label": "외관 변화",
+      "durationMs": 25000,
+      "note": "128장 Window, 32장 이동, 3회 연속 경보선 초과 규칙과 실제 사진의 시간순 전환을 유지합니다. 서로 다른 녹화를 이어 붙인 시험에서 새 녹화 96번째 프레임에 신호가 확인됩니다. 외관 변화는 개별 결함 탐지와 독립적이며 소재나 촬영 조건 변화에 대한 담당자 확인 신호입니다. 현장 공정 이상이 자동 확정됐다는 의미는 아닙니다."
+    },
+    {
+      "view": "interval",
+      "label": "구간 요약",
+      "durationMs": 26000,
+      "note": "2,884장 → 8장은 원본 시연 한 구간의 요약입니다. 두 점 배열과 실제 사진에서 단순 Top 8과 최소 16프레임 간격의 Spaced 8을 비교합니다. 15 → 26건은 결함 포함 4개 Run, 구간당 8건의 같은 검수 예산에서 후보 선정 규칙을 비교한 결과입니다. 모든 사진은 점수를 계산하지만 사람이 확인할 후보는 순위와 간격으로 따로 정합니다."
+    },
+    {
+      "view": "inspect",
+      "label": "사람의 검수",
+      "durationMs": 38000,
+      "note": "최종 16개 Run의 순차 검수 평가: 항상 8건씩 요청한 128건 → 우선 2건, 필요하면 8건인 56건. 감소율 56.25%를 소수 첫째 자리로 반올림하면 56.3%이며 발견한 신규 결함 사건 26건은 유지됐습니다. 공개 정답을 이용한 검수 재현으로 실제 현장 작업자 기록이 아닙니다. 정상 2건으로 종료해도 전체 구간이 정상이라는 보장은 아닙니다. 확인·기록된 정상 특징만 향후 후보 검증의 근거가 될 수 있습니다."
+    },
+    {
+      "view": "candidate",
+      "label": "기준 갱신 후보 검증",
+      "durationMs": 38000,
+      "note": "후보 생성 → 같은 후속 데이터에서 검증 → 적용 또는 보류의 흐름입니다. 기존 기준은 보존하고 복사본에 검수된 정상 특징을 추가합니다. 별도 15개 Run·구간당 8건 고정 검수 실험에서 정상 오경보 1,050 → 0, 결함 사진 탐지 202 → 153, 신규 결함 사건 탐지 48 → 40입니다. 오경보만 줄어도 적용하지 않습니다. 결론은 후보 적용 보류 / 기존 기준 유지입니다. 데이터가 쌓이면 무조건 좋아진다는 결과나 실제 자동 승인·실시간 재학습 기능을 주장하지 않습니다. 자동 업데이트가 아니라 검증 기반 적용 판단입니다."
+    },
+    {
+      "view": "results",
+      "label": "최종 결과",
+      "durationMs": 26000,
+      "note": "서로 다른 평가 범위를 구분합니다. 검수 효율 128 → 56건은 순차 검수 평가입니다. AUROC 0.884 → 0.965와 AP 66.4% → 85.4%는 결함 포함 4개 Run의 Macro 평균입니다. 신규 사건 22 → 26건은 동일한 128건 예산의 모델 비교입니다. 기준 후보 실험에서는 결함 탐지가 감소해 적용을 보류했습니다. 최종 메시지: AI-assisted inspection with human feedback and validated reference updates. AI가 이상을 분석하고, 사람이 검수하며, 검수 결과를 바탕으로 기준 후보를 검증하는 품질 관리 파이프라인입니다."
+    }
+  ],
+  "en": [
+    {
+      "view": "overview",
+      "label": "Overview",
+      "durationMs": 24000,
+      "note": "The main diagram connects input, independent anomaly and shift analyses, interval summary, human review and reference-candidate validation. The last card reuses an existing illustration of candidate principles; it is not an automatic-update demonstration. Emphasize candidate formation from review results, later-data validation, and adoption or hold."
+    },
+    {
+      "view": "data",
+      "label": "Data & reference",
+      "durationMs": 31000,
+      "note": "Project global DINOv2 image features from the first 512 photos onto the first principal component of PCA. Use quartiles for four groups, then retain the lowest-scoring 60% by cosine-similarity-based unusualness within each group. The 308 selected photos supply 24 patch features each: 7,392 in total. DINOv2 ViT-S/14 stays frozen. Calibration photos define the current 0.4708 alert limit."
+    },
+    {
+      "view": "compare",
+      "label": "Anomaly detection",
+      "durationMs": 32000,
+      "note": "Handcrafted means an algorithm with human-designed image features. AUROC 0.884 → 0.965 and AP 66.4% → 85.4% are both macro averages over the four defect-containing runs. AUROC is not a defect detection rate. The current alert limit, 0.4708, is calibrated from the 99.5th percentile of reference-run calibration scores. Preserve raw/heatmap and normal/defect photo comparisons."
+    },
+    {
+      "view": "shift",
+      "label": "Visual shift",
+      "durationMs": 25000,
+      "note": "Keep the 128-photo window, 32-frame step, three consecutive exceedances and time-ordered photos. The joined-run test confirms a signal at frame 96 of the new run. Treat this as a request for operator confirmation of material or imaging-condition changes, independently of individual defects."
+    },
+    {
+      "view": "interval",
+      "label": "Interval review",
+      "durationMs": 26000,
+      "note": "2,884 → 8 summarizes one recorded interval. The two marker tracks contrast plain Top 8 with a minimum 16-frame spacing rule. The 15 → 26 result compares selection rules on four defect-containing runs, with eight checks per run in both cases. Scores are calculated for every photo, but review candidates are selected separately by ranking and spacing."
+    },
+    {
+      "view": "inspect",
+      "label": "Human review",
+      "durationMs": 38000,
+      "note": "Final 16-run staged-review evaluation: fixed eight per run gives 128 requests; two-first review gives 56. The reduction is 56.25%, displayed as 56.3%, with 26 newly found episodes retained in this evaluation. This replay uses published ground truth, not real worker records. Two normal checks do not establish whole-interval safety. Confirmed normal features may support future reference candidates."
+    },
+    {
+      "view": "candidate",
+      "label": "Reference validation",
+      "durationMs": 38000,
+      "note": "Build a candidate → validate on the same later photos → consider adoption or hold. Preserve the current reference and add reviewed normal features to a copy. Separate 15-run experiment, eight fixed checks per run: normal false alarms 1,050 → 0; defect photos detected 202 → 153; newly detected defect episodes 48 → 40. Decision: candidate held / current reference retained. Do not imply implemented automatic approval, model retraining or guaranteed improvement from accumulating data. This is a validation-based adoption decision, not an automatic update."
+    },
+    {
+      "view": "results",
+      "label": "Results",
+      "durationMs": 26000,
+      "note": "Keep the evaluation scopes distinct: 128 → 56 requests comes from staged review. AUROC 0.884 → 0.965 and AP 66.4% → 85.4% are macro means over four defect-containing runs. Newly found episodes 22 → 26 compare models under the same 128-check budget. The reference candidate was held because detection declined. Final message: AI-assisted inspection with human feedback and validated reference updates. A quality-management pipeline where AI analyzes anomalies, people review them, and review results support validation of reference candidates."
+    }
+  ]
+}

@@ -6,7 +6,7 @@ const { chromium } = require("playwright");
 
 const durations = [24000, 31000, 32000, 25000, 26000, 38000, 38000, 26000];
 const base = process.env.SITE_URL || "http://127.0.0.1:8879/";
-const output = process.env.QA_OUTPUT || "/private/tmp/surfacetrace-presenter-20261115";
+const output = process.env.QA_OUTPUT || "/private/tmp/surfacetrace-presenter-final-20261115";
 
 function fakeVoice() {
   window.__narrationCalls = [];
@@ -46,11 +46,19 @@ function fakeVoice() {
       assert(!/0\.4284|1,449|6,053|313\s*→\s*505/.test(visibleText));
       assert.equal(await page.locator(".data-split").count(), 0);
       assert.equal(await page.locator(".demo-steps button").count(), 8);
+      assert.equal(await page.locator("#notesToggle, #speakerNotes, #speakerText, #tourNarration").count(), 0);
+      assert(await page.evaluate(() => window.SURFACETRACE_PRESENTER_COPY[document.documentElement.lang].every(chapter => !("note" in chapter))));
       for (let index = 0; index < 8; index++) {
         await scene(index);
-        await page.locator("#notesToggle").click();
-        assert(await page.locator("#speakerText").innerText());
-        if (index === 0) assert.equal(await page.locator(".feedback-loop li").count(), 4);
+        if (index === 0) {
+          assert.equal(await page.locator(".feedback-loop").count(), 0);
+          assert.equal(await page.locator(".parallel-flow .pipeline-card").count(), 6);
+          assert.equal(await page.locator(".parallel-flow > .reference-candidate-card").count(), 1);
+          assert.equal(await page.locator(".reference-candidate-card img").getAttribute("src"), "./next-method/06.gif");
+          assert.equal(await page.locator(".reference-candidate-card .candidate-checkpoints li").count(), 3);
+          assert(await page.locator(".reference-candidate-card").evaluate(card => card.previousElementSibling.matches(".validation-connector") && card.previousElementSibling.previousElementSibling.matches(".reviewer-card")));
+          if (language === "ko") assert.equal((await page.locator("#overviewTitle").innerText()).replace(/\s+/g," "), "현장 검수를 지원하는 AI 품질 관리 파이프라인");
+        }
         if (index === 1) {
           assert.match(await page.locator('[data-scene="1"]').innerText(), /PCA/);
           assert.match(await page.locator('[data-scene="1"]').innerText(), /93,196/);
@@ -110,11 +118,11 @@ function fakeVoice() {
         }
         if (index === 7) {
           assert.equal(await page.locator(".results-metric-grid article").count(), 3);
-          assert.match(await page.locator(".pipeline-closing h3").innerText(), /^AI-assisted inspection with human feedback and validated reference updates\.$/);
+          assert.equal(await page.locator(".pipeline-closing h3").innerText(), "AI-assisted inspection with human feedback and validated reference updates");
+          if (language === "ko") assert.equal(await page.locator(".pipeline-closing p").innerText(), "AI가 이상을 분석하고, 사람이 검수하며, 검수 결과를 바탕으로 기준 후보를 검증하는 품질 관리 파이프라인입니다.");
           await page.locator('[data-distribution="04"]').click();
           assert.match(await page.locator("#distributionFigure").getAttribute("src"), /run_04\.svg/);
         }
-        await page.locator("#notesToggle").click();
         await page.evaluate(() => window.scrollTo({ top: 0, behavior: "instant" }));
         await page.waitForTimeout(250);
         await page.screenshot({ path: path.join(output, `${language}-${index+1}.png`), fullPage: true });
@@ -142,7 +150,7 @@ function fakeVoice() {
       assert.equal(await replay.locator("#narrationToggle").getAttribute("aria-pressed"), "false");
       await replay.locator("#narrationToggle").click();
       await replay.locator("#playTour").click();
-      assert(await replay.locator("#tourNarration").isVisible());
+      assert.equal(await replay.evaluate(() => window.__narrationCalls.length), 1);
       for (let i = 0; i < durations.length; i++) {
         await replay.clock.runFor(durations[i]);
         const current = await replay.evaluate(() => window.surfaceTracePresenter.getState());

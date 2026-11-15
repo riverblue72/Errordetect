@@ -241,9 +241,6 @@
   function updateTourControls(message) {
     setText("chapterProgress", `${String(state.scene + 1).padStart(2, "0")} / ${String(chapters.length).padStart(2, "0")}`);
     setText("sceneScope", chapters[state.scene].scope);
-    setText("speakerText", chapters[state.scene].note);
-    setText("narrationText", chapters[state.scene].narration);
-    if ($("tourNarration")) $("tourNarration").hidden = !state.playing;
     if ($("narrationToggle")) {
       $("narrationToggle").setAttribute("aria-pressed", String(narrationEnabled));
       setText("narrationToggle", narrationEnabled ? "Voice on" : "Voice off");
@@ -844,12 +841,6 @@
       if (narrationEnabled && state.playing) narrateChapter();
       else cancelNarration();
       updateTourControls();
-    });
-    bind("notesToggle", "click", () => {
-      const notes = $("speakerNotes");
-      if (!notes) return;
-      notes.hidden = !notes.hidden;
-      $("notesToggle").setAttribute("aria-expanded", String(!notes.hidden));
     });
     bind("fullscreen", "click", async () => {
       try {
