@@ -129,7 +129,17 @@ function fakeVoice() {
           assert(!/22\s*→\s*26|Run 03|Run 04/.test(await page.locator('[data-scene="7"]').innerText()));
           assert.equal(await page.locator('[data-scene="7"] .demo-copy .small-note').count(), 0);
           assert.equal(await page.locator(".pipeline-closing h3").innerText(), "AI-assisted inspection with human feedback and validated reference updates");
-          if (language === "ko") assert.equal(await page.locator(".pipeline-closing p").innerText(), "AI가 이상을 분석하고, 사람이 검수하며, 검수 결과를 바탕으로 기준 후보를 검증하는 품질 관리 파이프라인입니다.");
+          if (language === "ko") assert.equal(await page.locator(".pipeline-closing p").innerText(), "AI가 이상을 분석하고, 사람이 확인하며, 검수 결과를 바탕으로 검사 기준의 개선 가능성을 검증하는 품질 관리 파이프라인입니다.");
+          assert.equal(await page.locator(".strength-card").count(), 2);
+          assert.equal(await page.locator(".strength-subsection").count(), 2);
+          assert.equal(await page.locator(".strength-validation-flow li").count(), 4);
+          const first = await page.locator(".strength-card").nth(0).boundingBox();
+          const second = await page.locator(".strength-card").nth(1).boundingBox();
+          assert(Math.abs(first.y - second.y) < 1 && second.x > first.x + first.width, "Industrial strengths must be side by side on desktop");
+          const strengths = await page.locator(".industrial-strengths").innerText();
+          for (const value of ["DINOv2", "MMD", "128", "56", "56.3%", "26"]) assert(strengths.includes(value));
+          assert.match(strengths, language === "ko" ? /공개 데이터의 정답.*오프라인 실험/ : /Offline experiment.*public dataset ground truth/);
+          assert.match(await page.locator(".strength-outcome").innerText(), language === "ko" ? /후보 적용 보류 \/ 기존 기준 유지/ : /Candidate held \/ current reference retained/);
         }
         await page.evaluate(() => window.scrollTo({ top: 0, behavior: "instant" }));
         await page.waitForTimeout(250);
@@ -139,6 +149,11 @@ function fakeVoice() {
       for (let index = 0; index < 8; index++) {
         await scene(index);
         assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), `${language} chapter ${index+1}: mobile overflow`);
+        if (index === 7) {
+          const first = await page.locator(".strength-card").nth(0).boundingBox();
+          const second = await page.locator(".strength-card").nth(1).boundingBox();
+          assert(second.y > first.y + first.height && Math.abs(first.x - second.x) < 1, "Industrial strengths must stack on mobile");
+        }
       }
       await page.screenshot({ path: path.join(output, `${language}-mobile.png`), fullPage: true });
       assert.deepEqual(errors, []);
@@ -158,7 +173,13 @@ function fakeVoice() {
       await replay.locator("#playTour").click();
       assert.equal(await replay.evaluate(() => window.__narrationCalls.length), 1);
       for (let i = 0; i < durations.length; i++) {
-        await replay.clock.runFor(durations[i]);
+        if (i === 7) {
+          await replay.clock.runFor(6500);
+          const title = await replay.locator("#strengthsTitle").boundingBox();
+          assert(title.y >= 0 && title.y + title.height < 1080, "The tour must show the industrial-strengths heading");
+          assert.equal((await replay.evaluate(() => window.surfaceTracePresenter.getState())).resultsStep, 1);
+          await replay.clock.runFor(durations[i] - 6500);
+        } else await replay.clock.runFor(durations[i]);
         const current = await replay.evaluate(() => window.surfaceTracePresenter.getState());
         assert.equal(current.scene, Math.min(i+1, 7), `${language} replay timing after chapter ${i+1}`);
       }

@@ -18,6 +18,7 @@
     overview: "flow",
     compareRaw: false,
     shift: 0,
+    resultsStep: 0,
     resultsClosing: false
   };
   let toastTimer;
@@ -305,7 +306,7 @@
     if (next === 1) state.method = "features";
     if (next === 2) { state.photo = 0; state.compareRaw = false; }
     if (next === 3) state.shift = 0;
-    if (next === chapters.length - 1) state.resultsClosing = false;
+    if (next === chapters.length - 1) { state.resultsStep = 0; state.resultsClosing = false; }
     if (next === 5) {
       // Entering this chapter during a new tour replays both recorded review routes from their first photo.
       // Pausing and resuming inside this chapter does not reset the current review.
@@ -345,6 +346,11 @@
       } else {
         autoNextScene();
       }
+    } else if (state.scene === chapters.length - 1 && state.resultsStep < 2) {
+      if (state.resultsStep === 0) {
+        document.querySelector(".industrial-strengths")?.scrollIntoView({ block: "start", behavior: "instant" });
+      }
+      state.resultsStep++;
     } else if (state.scene === chapters.length - 1 && !state.resultsClosing) {
       state.resultsClosing = true;
       document.querySelector(".pipeline-closing")?.scrollIntoView({ block: "center", behavior: "instant" });
@@ -380,6 +386,7 @@
     state.overview = "flow";
     state.compareRaw = false;
     state.shift = 0;
+    state.resultsStep = 0;
     state.resultsClosing = false;
     if ($("caseSelect")) $("caseSelect").value = state.caseId;
     renderOverview();

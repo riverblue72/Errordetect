@@ -70,10 +70,10 @@
       "view": "results",
       "label": "최종 결과",
       "scope": "RESULTS · 검수 효율 + AI 성능 + 검증된 기준 관리",
-      "narration": "검수 요청은 백스물여덟 건에서 쉰여섯 건으로 줄었습니다. AUROC는 영 점 팔팔사에서 영 점 구육오로, AP는 육십육 점 사 퍼센트에서 팔십오 점 사 퍼센트로 바뀌었습니다. AI가 이상을 분석하고, 사람이 판단하며, 검수 결과를 바탕으로 기준 후보를 검증합니다. 현장 검수의 부담을 줄이고 검증 후 기준의 적용 여부를 결정하는 품질 관리 파이프라인입니다.",
+      "narration": "두 가지 산업적 강점입니다. 이상 영역과 외관 변화를 분석해 확인할 곳을 제시하고, 두 장부터 필요한 만큼 검수해 요청을 백스물여덟 건에서 쉰여섯 건으로 줄였습니다. 사람이 정상으로 확인한 특징은 기준 후보를 만들고 후속 데이터에서 검증하는 데 활용합니다. 이번 후보는 결함 탐지도 줄어 적용을 보류했습니다. 공개 정답으로 검수를 재현한 오프라인 실험입니다.",
       "durationMs": 26000,
-      "ticks": 2,
-      "delay": 13000
+      "ticks": 4,
+      "delay": 6500
     }
   ],
   "en": [
@@ -144,10 +144,10 @@
       "view": "results",
       "label": "Results",
       "scope": "RESULTS · Review efficiency + AI performance + reference management",
-      "narration": "Review requests fall from 128 to 56. AUROC changes from 0.884 to 0.965, and AP from 66.4 to 85.4 percent. AI analyzes anomalies, people make review decisions, and review results support reference-candidate validation. The pipeline reduces review effort and checks a candidate before deciding whether to adopt it. AI-assisted inspection with human feedback and validated reference updates.",
+      "narration": "Two industrial strengths connect analysis to decisions. Anomaly and shift signals guide attention; two-first review reduces requests from 128 to 56 while retaining 26 newly found episodes. Human-confirmed normal features support reference candidates validated on later data. This candidate was held because defect detection also fell. These are offline experiments replaying public ground truth, not automatic reference updates.",
       "durationMs": 26000,
-      "ticks": 2,
-      "delay": 13000
+      "ticks": 4,
+      "delay": 6500
     }
   ],
   "durationMs": 240000,
