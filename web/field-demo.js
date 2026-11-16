@@ -6,9 +6,37 @@
   const KEY = "surfacetrace-field-demo-v1";
   const verdicts = { normal: "정상", defect: "결함 확인", hold: "판단 보류" };
   const format = value => Number(value).toLocaleString("ko-KR");
-  const fresh = () => ({ version: 1, caseId: null, receivedAt: null, records: [], active: 0,
-    expanded: false, phase: "ready", truthRevealed: false, candidateRequested: false, baselineKept: false });
+  // Original-limit results, not the lower candidate limit, for the normal-shift run.
+  // Source: experiments/unsupervised/results/change_limit_development.json.
+  const normalShift = Object.freeze({ run: "T1_S164_I36_1", window: 128, step: 32, requiredConsecutive: 3,
+    threshold: 0.06392715334892274, alertTargetFrame: 96,
+    points: [{ targetFrame: 32, score: 0.0710906982421875 }, { targetFrame: 64, score: 0.2531893849372864 }, { targetFrame: 96, score: 0.5444892644882202 }],
+    source: "experiments/unsupervised/results/change_limit_development.json · runs.T1_S164_I36_1 · original_limit" });
+  const fresh = () => ({ version: 2, caseId: null, receivedAt: null, records: [], active: 0,
+    expanded: false, phase: "ready", truthRevealed: false, shiftAcknowledgedAt: null,
+    candidateRequested: false, candidateRequest: null, exampleViewedAt: null,
+    referenceDecision: null, baselineKept: false, history: [] });
   let state = fresh(), choice = null, toastTimer, pendingReceive = null, storageAvailable = true;
+
+  function getShift() {
+    if (state.caseId === "normal") return normalShift;
+    const shift = data.visualShift;
+    return { run: shift.targetRun, window: shift.window, step: shift.step,
+      requiredConsecutive: shift.requiredConsecutive, threshold: shift.threshold, alertTargetFrame: shift.alertTargetFrame,
+      points: shift.points.filter(point => [32, 64, 96].includes(point.targetFrame)),
+      source: "web/presenter-data.js · visualShift · recorded joined-run experiment" };
+  }
+  const validTime = value => typeof value === "string" && Number.isFinite(Date.parse(value));
+  const time = value => validTime(value) ? new Date(value).toLocaleString("ko-KR", { month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false }) : "";
+  function addHistory(type, description, at = new Date().toISOString()) {
+    state.history.push({ type, description, at });
+    state.history = state.history.slice(-500);
+  }
+  function referenceStatus() {
+    if (state.referenceDecision?.kind === "hold") return "적용 보류 · 기존 기준 유지";
+    if (state.referenceDecision?.kind === "additional-validation") return "추가 검증 요청 · 기존 기준 유지";
+    return state.candidateRequested ? "후보 검토 요청 · 기존 기준 유지" : "기존 기준 유지";
+  }
 
   function toast(message) {
     clearTimeout(toastTimer);
@@ -24,7 +52,7 @@
   function restore() {
     try {
       const saved = JSON.parse(localStorage.getItem(KEY) || "null");
-      if (!saved || saved.version !== 1 || !["defect", "normal"].includes(saved.caseId)) return;
+      if (!saved || ![1, 2].includes(saved.version) || !["defect", "normal"].includes(saved.caseId)) return;
       const c = data.cases[saved.caseId];
       const records = c.review.map((_, i) => {
         const r = saved.records?.[i];
@@ -35,8 +63,19 @@
         records, active: Number.isInteger(saved.active) ? Math.max(0, Math.min(saved.active, c.review.length - 1)) : 0,
         expanded: !!saved.expanded || records.slice(0, 2).every(Boolean) && records.slice(0, 2).some(r => r.verdict !== "normal"),
         phase: saved.phase === "summary" ? "summary" : "review", truthRevealed: !!saved.truthRevealed,
-        candidateRequested: !!saved.candidateRequested, baselineKept: !!saved.baselineKept };
+        shiftAcknowledgedAt: validTime(saved.shiftAcknowledgedAt) ? saved.shiftAcknowledgedAt : null,
+        candidateRequested: !!saved.candidateRequested, baselineKept: false,
+        history: Array.isArray(saved.history) ? saved.history.filter(event => event && typeof event.type === "string" && typeof event.description === "string" && validTime(event.at)).slice(-500).map(event => ({ type: event.type.slice(0, 60), description: event.description.slice(0, 500), at: event.at })) : [] };
       const status = getStatus();
+      state.candidateRequested = state.candidateRequested && status.complete && status.normals.length >= 2;
+      if (state.candidateRequested) {
+        state.candidateRequest = { photoFrames: status.normals.map(({ photo }) => photo.frame), requestedAt: validTime(saved.candidateRequest?.requestedAt) ? saved.candidateRequest.requestedAt : null };
+        state.exampleViewedAt = validTime(saved.exampleViewedAt) ? saved.exampleViewedAt : null;
+        if (state.exampleViewedAt && ["hold", "additional-validation"].includes(saved.referenceDecision?.kind) && validTime(saved.referenceDecision?.at)) {
+          state.referenceDecision = { kind: saved.referenceDecision.kind, at: saved.referenceDecision.at };
+          state.baselineKept = true;
+        }
+      }
       if (!status.complete) state.phase = "review";
       state.active = Math.min(state.active, status.available - 1);
     } catch { /* Invalid saved records never prevent a fresh demo. */ }
@@ -69,13 +108,15 @@
   function receive(caseId) {
     state = { ...fresh(), caseId, records: Array(data.cases[caseId].review.length).fill(null), receivedAt: new Date().toISOString(), phase: "review" };
     $("scenario").value = caseId;
+    addHistory("segment-received", `생산 구간 수신 · ${data.cases[caseId].run}`, state.receivedAt);
+    addHistory("shift-detected", "저장된 MMD 외관 변화 신호 · 새 녹화 96번째 사진", state.receivedAt);
     choice = null;
-    persist(); render(); focusSection("photoTitle");
-    toast("새 구간이 도착했습니다. AI가 선정한 두 장부터 확인하세요.");
+    persist(); render(); focusSection("shiftTitle");
+    toast("새 생산 구간의 외관 변화 알림과 우선 검수 후보가 준비됐습니다.");
   }
   function requestReceive() {
     const caseId = $("scenario").value;
-    if (state.caseId && state.records.some(Boolean)) {
+    if (state.caseId && (state.records.some(Boolean) || state.shiftAcknowledgedAt)) {
       pendingReceive = caseId;
       $("resetDialog").showModal();
     } else receive(caseId);
@@ -97,18 +138,42 @@
     $("requestCount").textContent = ready ? "—" : `${s.budget}장${s.pending ? " · 일부 대기" : ""}`;
     $("reviewedCount").textContent = `${s.reviewed}장`;
     $("announcement").textContent = routeMessage(s);
-    const stage = ready ? "receive" : summary ? "summary" : s.reviewed ? "decision" : "review";
-    const stages = ["receive", "review", "decision", "summary"];
+    $("shiftPanel").hidden = ready;
+    $("activeReferenceStatus").replaceChildren(node("i"), node("span", referenceStatus()));
+    $("activeReferenceStatus").dataset.status = state.referenceDecision?.kind || (state.candidateRequested ? "requested" : "current");
+    const stage = ready ? "receive" : summary ? "candidate" : !state.shiftAcknowledgedAt ? "shift" : s.reviewed ? "decision" : "review";
+    const stages = ["receive", "shift", "review", "decision", "candidate"];
     document.querySelectorAll("[data-stage]").forEach(element => {
       const active = element.dataset.stage === stage;
       if (active) element.setAttribute("aria-current", "step"); else element.removeAttribute("aria-current");
       element.classList.toggle("is-done", stages.indexOf(element.dataset.stage) < stages.indexOf(stage));
     });
     if (ready) return;
+    renderShift();
     $("queueCount").textContent = `${s.available}장`;
     $("queueHint").textContent = state.expanded ? s.pending ? "추가 여섯 장의 사진을 기다리고 있습니다." : "추가 후보 여섯 장을 포함해 확인합니다." : s.complete ? "추가 여섯 장은 요청하지 않았습니다." : "처음 두 장의 확인 후 추가 요청이 결정됩니다.";
     renderQueue(s);
     if (summary) renderSummary(s); else renderPhoto(s);
+  }
+  function renderShift() {
+    const shift = getShift();
+    $("shiftRun").textContent = `${state.caseId === "defect" ? "시나리오 A" : "시나리오 B"} · ${shift.run}`;
+    $("shiftScore").textContent = shift.points.at(-1).score.toFixed(4);
+    $("shiftLimit").textContent = shift.threshold.toFixed(4);
+    $("shiftPanel").classList.toggle("is-acknowledged", !!state.shiftAcknowledgedAt);
+    $("shiftAcknowledgement").textContent = state.shiftAcknowledgedAt ? "담당자 확인 기록됨" : "담당자 미확인";
+    $("acknowledgeShift").disabled = !!state.shiftAcknowledgedAt;
+    $("acknowledgeShift").textContent = state.shiftAcknowledgedAt ? "외관 변화 알림 확인 완료 ✓" : "외관 변화 알림 확인·기록";
+    $("shiftAcknowledgedAt").textContent = state.shiftAcknowledgedAt ? `${time(state.shiftAcknowledgedAt)} 기록` : "확인 이력을 남겨주세요.";
+    const max = Math.max(...shift.points.map(point => point.score));
+    $("shiftWindows").replaceChildren(...shift.points.map(point => {
+      const bar = node("div", undefined, "shift-window");
+      const track = node("div", undefined, "shift-bar-track"), fill = node("i");
+      fill.style.height = `${Math.max(2, point.score / max * 100)}%`;
+      track.append(fill);
+      bar.append(node("span", `${point.targetFrame}번째`), track, node("strong", point.score.toFixed(4)));
+      return bar;
+    }));
   }
   function renderQueue(s) {
     const fragment = document.createDocumentFragment();
@@ -166,11 +231,17 @@
     const s = getStatus();
     if (!s.c || !Object.hasOwn(verdicts, choice) || state.phase !== "review") return;
     state.records[state.active] = { verdict: choice, note: $("reviewNote").value.trim().slice(0, 240), at: new Date().toISOString() };
-    state.candidateRequested = false; state.baselineKept = false; state.truthRevealed = false;
+    if (state.candidateRequested) addHistory("candidate-review-invalidated", "검수 결과 수정 · 이전 기준 후보 검토 요청과 담당자 결정을 해제했습니다.");
+    state.candidateRequested = false; state.candidateRequest = null; state.exampleViewedAt = null;
+    state.referenceDecision = null; state.baselineKept = false; state.truthRevealed = false;
+    addHistory("photo-reviewed", `${s.c.review[state.active].frame}번째 사진 · ${verdicts[choice]}${state.records[state.active].note ? " · " + state.records[state.active].note : ""}`, state.records[state.active].at);
     const expand = !state.expanded && state.records.slice(0, 2).every(Boolean) && state.records.slice(0, 2).some(record => record.verdict !== "normal");
-    if (expand) state.expanded = true;
+    if (expand) { state.expanded = true; addHistory("additional-reviews-requested", "우선 2장 중 결함 또는 보류 확인 · 추가 6장 요청"); }
     const after = getStatus();
-    if (after.complete) state.phase = "summary";
+    if (after.complete) {
+      state.phase = "summary";
+      addHistory(after.pending ? "additional-photos-pending" : "review-completed", after.pending ? "확인한 사진 기록 완료 · 추가 6장 수신 대기" : state.expanded ? "총 8장 검수 완료" : "정상 2장 확인 · 추가 검수 요청 종료");
+    }
     else state.active = state.records.findIndex((record, i) => i < after.available && !record);
     choice = null; persist(); render();
     if (after.complete) focusSection("summaryTitle");
@@ -183,6 +254,13 @@
     $("unrequestedCount").textContent = `${s.c.maxReviews - s.budget}장`;
     $("summaryTitle").textContent = s.pending ? "추가 검수 사진을 요청했습니다." : "확인 결과가 기록되었습니다.";
     $("summaryDescription").textContent = s.pending ? "확인한 두 장의 기록은 보관하고, 추가 사진의 수신을 기다립니다." : state.expanded ? "담당자가 요청된 여덟 장을 확인했습니다. 정상 확인 사진은 기준 후보 검토용 목록에 모을 수 있습니다." : "두 장을 정상으로 확인해 추가 요청을 종료했습니다. 남은 여섯 장을 정상으로 판정한 것은 아닙니다.";
+    $("additionalRequestStatus").textContent = state.expanded ? s.pending ? "추가 6장 요청 · 사진 수신 대기" : "추가 6장 요청 · 총 8장 검수 완료" : "추가 요청 종료 · 2장 확인";
+    $("shiftHistoryStatus").textContent = state.shiftAcknowledgedAt ? `${time(state.shiftAcknowledgedAt)} 확인·기록` : "미확인 · 위 알림에서 확인 가능";
+    $("referenceDecisionStatus").textContent = referenceStatus();
+    $("inspectionHistory").replaceChildren(...state.history.map(event => {
+      const item = node("li"), date = node("time", time(event.at)); date.dateTime = event.at;
+      item.append(date, node("span", event.description)); return item;
+    }));
     const rows = document.createDocumentFragment();
     s.c.review.forEach((photo, index) => {
       const record = state.records[index];
@@ -201,29 +279,68 @@
       const matches = s.c.review.filter((photo, index) => index < s.available && state.records[index]?.verdict === photo.recordedLabel).length;
       $("truthResult").textContent = `확인한 ${s.reviewed}장 중 ${matches}장 일치 · 사용자 판단과 공개 정답의 비교`;
     } else $("truthResult").textContent = "";
-    $("openCandidate").disabled = s.normals.length === 0;
-    $("candidateDescription").textContent = s.normals.length ? `정상 확인 ${s.normals.length}장을 기준 후보 검토용 목록에 모을 수 있습니다.` : "정상으로 확인한 사진이 있어야 기준 후보 검토용 목록을 만들 수 있습니다.";
+    $("openCandidate").disabled = s.normals.length < 2;
+    $("openCandidate").textContent = state.candidateRequested ? "기준 후보 검토 내역 보기 →" : "기준 후보 검토 요청 →";
+    $("candidateDescription").textContent = s.normals.length >= 2 ? `정상 확인 ${s.normals.length}장을 기준 후보 검증 요청 목록에 추가합니다. 기존 기준은 유지합니다.` : `정상 확인 ${s.normals.length}장 · 최소 2장 이상 확인해야 기준 후보 검토를 요청할 수 있습니다.`;
   }
   function candidateDialog() {
     const s = getStatus();
-    if (!s.complete || !s.normals.length) return;
+    if (!s.complete || s.normals.length < 2) return;
+    if (!state.candidateRequested) {
+      const at = new Date().toISOString();
+      state.candidateRequested = true;
+      state.candidateRequest = { photoFrames: s.normals.map(({ photo }) => photo.frame), requestedAt: at };
+      addHistory("candidate-review-requested", `정상 확인 ${s.normals.length}장 · 기준 후보 검증 검토 요청 · 기존 기준 유지`, at);
+      persist(); render();
+    }
     $("normalPhotos").replaceChildren(...s.normals.map(({ photo }) => {
       const figure = node("figure"), image = node("img"); image.src = photo.image; image.alt = "담당자가 정상으로 확인한 사진";
       figure.append(image, node("figcaption", `${format(photo.frame)}번째 사진`)); return figure;
     }));
-    $("candidateStatus").textContent = state.candidateRequested ? `정상 확인 사진 ${s.normals.length}장의 검증 검토용 목록을 저장했습니다. 기존 기준은 유지합니다.` : "";
-    $("requestValidation").disabled = state.candidateRequested;
-    $("showValidation").disabled = !state.candidateRequested;
-    $("historicalValidation").hidden = true;
+    $("candidateStatus").textContent = `정상 확인 사진 ${s.normals.length}장을 기준 후보 검증 요청 목록에 추가했습니다. 기존 기준은 유지합니다.`;
+    $("showValidation").disabled = false;
+    $("historicalValidation").hidden = !state.exampleViewedAt;
+    if (state.exampleViewedAt) renderValidationExample();
     $("candidateDialog").showModal();
+  }
+  function renderValidationExample() {
+    const labels = ["정상 오경보", "결함 사진 경보", "신규 결함 사건 경보"];
+    const fragment = document.createDocumentFragment();
+    data.updateEvaluation.metrics.forEach((metric, index) => {
+      const row = node("div"), value = node("strong");
+      value.append(document.createTextNode(`${format(metric.before)} → `), node("b", format(metric.after)), node("small", metric.unit));
+      row.append(node("span", labels[index]), value); fragment.append(row);
+    });
+    $("validationMetrics").replaceChildren(fragment);
+    $("historicalValidation").hidden = false;
+    renderReferenceDecision();
+  }
+  function renderReferenceDecision() {
+    $("finishCandidate").disabled = state.referenceDecision?.kind === "hold";
+    $("requestMoreValidation").disabled = state.referenceDecision?.kind === "additional-validation";
+    $("referenceDecisionMessage").textContent = state.referenceDecision ? `${time(state.referenceDecision.at)} · ${referenceStatus()} 기록됨` : "저장된 예시를 확인한 뒤 담당자의 결정을 기록하세요. 실제 모델과 기준 뱅크는 변경되지 않습니다.";
+  }
+  function decideReference(kind) {
+    if (!["hold", "additional-validation"].includes(kind) || !state.candidateRequested || !state.exampleViewedAt || getStatus().normals.length < 2 || state.referenceDecision?.kind === kind) return;
+    const at = new Date().toISOString();
+    state.referenceDecision = { kind, at };
+    state.baselineKept = true;
+    addHistory("reference-decision", `${kind === "hold" ? "적용 보류 · 기존 기준 유지" : "추가 검증 요청 · 기존 기준 유지"} · 별도 저장된 검증 예시 검토`, at);
+    persist(); render(); renderReferenceDecision();
+    toast("담당자의 결정을 검수 이력에 저장했습니다. 기존 검사 기준은 유지합니다.");
   }
   function downloadRecord() {
     const s = getStatus(); if (!s.c) return;
-    const payload = { schemaVersion: 1, demo: true, analysisMode: "recorded-dinov2-scores", run: s.c.run,
+    const payload = { schemaVersion: 2, demo: true, analysisMode: "recorded-dinov2-and-mmd", run: s.c.run,
       receivedAt: state.receivedAt, exportedAt: new Date().toISOString(), sourceFrameCount: s.c.frameCount,
       requested: s.budget, reviewed: s.reviewed, awaitingAdditionalPhotos: s.pending,
       activeReference: "frozen-source", modelWeightsUpdated: false,
-      candidateReviewRequest: state.candidateRequested ? { photoFrames: s.normals.map(({ photo }) => photo.frame), status: "recorded-for-review", liveValidationPerformed: false } : null,
+      appearanceChange: { ...getShift(), acknowledgedAt: state.shiftAcknowledgedAt,
+        scope: "recorded joined-run experiment; the recording boundary is reproduced offline" },
+      candidateReviewRequest: state.candidateRequested ? { ...state.candidateRequest, status: "recorded-for-review", liveValidationPerformed: false } : null,
+      validationExample: state.exampleViewedAt ? { viewedAt: state.exampleViewedAt, source: data.updateEvaluation.source,
+        scope: "separate saved experiment, not a live evaluation of this review selection" } : null,
+      referenceDecision: state.referenceDecision, history: state.history,
       records: s.c.review.flatMap((photo, index) => !state.records[index] || index >= s.available ? [] : [{ frame: photo.frame, rank: photo.rank,
         image: photo.image, recordedAiScore: photo.score, userReview: state.records[index],
         ...(state.truthRevealed ? { publishedDatasetLabel: photo.recordedLabel } : {}) }]) };
@@ -239,6 +356,23 @@
   if (state.caseId) $("scenario").value = state.caseId;
   $("receive").addEventListener("click", requestReceive);
   $("receiveEmpty").addEventListener("click", requestReceive);
+  $("acknowledgeShift").addEventListener("click", () => {
+    if (!state.caseId || state.shiftAcknowledgedAt) return;
+    state.shiftAcknowledgedAt = new Date().toISOString();
+    addHistory("shift-acknowledged", "외관 변화 알림 확인·기록 · 사진별 이상 경보 및 기존 기준 유지", state.shiftAcknowledgedAt);
+    // Updating the alert panel does not reset the current photo choice or draft note.
+    persist(); renderShift();
+    if (state.phase === "summary") renderSummary(getStatus());
+    else {
+      document.querySelectorAll("[data-stage]").forEach(element => {
+        element.removeAttribute("aria-current");
+        element.classList.toggle("is-done", ["receive", "shift"].includes(element.dataset.stage));
+      });
+      document.querySelector(getStatus().reviewed ? '[data-stage="decision"]' : '[data-stage="review"]').setAttribute("aria-current", "step");
+    }
+    if (state.phase === "review") focusSection("photoTitle");
+    toast("외관 변화 알림의 담당자 확인 이력을 남겼습니다.");
+  });
   $("restart").addEventListener("click", () => { pendingReceive = null; $("resetDialog").showModal(); });
   $("cancelReset").addEventListener("click", () => $("resetDialog").close());
   $("confirmReset").addEventListener("click", () => {
@@ -267,20 +401,17 @@
   $("downloadRecord").addEventListener("click", downloadRecord);
   $("openCandidate").addEventListener("click", candidateDialog);
   $("closeCandidate").addEventListener("click", () => $("candidateDialog").close());
-  $("finishCandidate").addEventListener("click", () => { state.baselineKept = true; persist(); $("candidateDialog").close(); toast("검수 기록을 보관하고 기존 검사 기준을 유지합니다."); });
-  $("requestValidation").addEventListener("click", () => {
-    state.candidateRequested = true; persist(); $("requestValidation").disabled = true; $("showValidation").disabled = false;
-    $("candidateStatus").textContent = `정상 확인 사진 ${getStatus().normals.length}장의 검증 검토용 목록을 저장했습니다. 기존 기준은 유지합니다.`;
-  });
+  $("closeCandidateFooter").addEventListener("click", () => $("candidateDialog").close());
+  $("finishCandidate").addEventListener("click", () => decideReference("hold"));
+  $("requestMoreValidation").addEventListener("click", () => decideReference("additional-validation"));
   $("showValidation").addEventListener("click", () => {
-    const fragment = document.createDocumentFragment();
-    for (const metric of data.updateEvaluation.metrics) {
-      const row = node("div"), value = node("strong");
-      value.append(document.createTextNode(`${format(metric.before)} → `), node("b", format(metric.after)), node("small", metric.unit));
-      row.append(node("span", metric.label), value); fragment.append(row);
+    if (!state.candidateRequested || getStatus().normals.length < 2) return;
+    if (!state.exampleViewedAt) {
+      state.exampleViewedAt = new Date().toISOString();
+      addHistory("validation-example-viewed", "별도 저장된 후속 검증 실험 예시 확인 · 이번 검수 사진의 실시간 평가 아님", state.exampleViewedAt);
+      persist();
     }
-    $("validationMetrics").replaceChildren(fragment);
-    $("historicalValidation").hidden = false;
+    renderValidationExample(); renderSummary(getStatus());
     $("historicalValidation").scrollIntoView({ block: "start", behavior: "instant" });
   });
   document.addEventListener("keydown", event => {
