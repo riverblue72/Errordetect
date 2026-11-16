@@ -12,7 +12,7 @@
     reviewing: ["review-summary", "ready"], "review-summary": ["reviewing", "reference-review", "ready"],
     "reference-review": ["completed", "review-summary", "ready"], completed: ["review-summary", "ready"]
   };
-  const caseNames = { defect: "외관 변화 및 결함 확인", normal: "외관 변화 및 정상 확인" };
+  const caseNames = { defect: "외관 변화 및 검수" };
   const format = value => Number(value).toLocaleString("ko-KR");
   const validTime = value => typeof value === "string" && Number.isFinite(Date.parse(value));
   const time = value => validTime(value) ? new Date(value).toLocaleString("ko-KR", { month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false }) : "";
@@ -116,8 +116,9 @@
       const s = status();
       state.active = Math.min(state.active, s.available - 1);
       state.candidateRequested = !!saved.candidateRequested && s.complete && s.normals.length >= 2;
+      state.candidatePreparation = saved.candidatePreparation && typeof saved.candidatePreparation === "object" ? saved.candidatePreparation : null;
       if (state.candidateRequested) {
-        state.candidateRequest = { photoFrames: s.normals.map(({ photo }) => photo.frame), requestedAt: validTime(saved.candidateRequest?.requestedAt) ? saved.candidateRequest.requestedAt : null, liveValidationPerformed: false };
+        state.candidateRequest = { photoFrames: s.normals.map(({ photo }) => photo.frame), requestedAt: validTime(saved.candidateRequest?.requestedAt) ? saved.candidateRequest.requestedAt : null, liveValidationPerformed: false, appearanceChange: { ...getShift(), acknowledgedAt: state.shiftAcknowledgedAt } };
         state.exampleViewedAt = validTime(saved.exampleViewedAt) ? saved.exampleViewedAt : null;
         if (state.exampleViewedAt && ["hold", "additional-validation"].includes(saved.referenceDecision?.kind) && validTime(saved.referenceDecision?.at)) state.referenceDecision = { kind: saved.referenceDecision.kind, at: saved.referenceDecision.at };
       }
@@ -175,15 +176,15 @@
     state.loadingError = null; state.pipelineReady = false; state.loadingStep = 0;
     if (state.phase !== "receiving") transition("receiving"); else { persist(); render(); }
     try {
-      await Promise.all([adapter.receiveProduction(caseId, controller.signal), wait(1000, controller.signal)]);
+      await Promise.all([adapter.receiveProduction(caseId, controller.signal), wait(1800, controller.signal)]);
       if (!current()) return;
       state.receivedAt ||= new Date().toISOString(); historyOnce("segment-received", `생산 구간 수신 · ${data.cases[caseId].run}`);
       state.loadingStep = 1; transition("analyzing");
-      await Promise.all([adapter.savedAnalysis(caseId), wait(1100, controller.signal)]);
+      await Promise.all([adapter.savedAnalysis(caseId), wait(2100, controller.signal)]);
       if (!current()) return;
       historyOnce("analysis-loaded", "저장된 DINOv2 이상 분석 결과 준비");
       state.loadingStep = 2; persist(); renderLoading();
-      await Promise.all([adapter.savedShift(caseId), wait(1100, controller.signal)]);
+      await Promise.all([adapter.savedShift(caseId), wait(1900, controller.signal)]);
       if (!current()) return;
       historyOnce("shift-loaded", "저장된 MMD 외관 변화 신호 확인 · 새 녹화 96번째 사진");
       state.loadingStep = 3; state.pipelineReady = true; persist(); render();
@@ -222,8 +223,6 @@
     if (state.phase === "change-alert") renderChange();
     if (state.phase === "reviewing") renderReview();
     if (state.phase === "review-summary") renderSummary();
-    if (state.phase === "reference-review") renderReference();
-    if (state.phase === "completed") renderCompleted();
   }
   function signalBars(id, shift) {
     const max = Math.max(...shift.points.map(point => point.score));
@@ -272,9 +271,15 @@
       const record = state.records[index], locked = index >= s.available, button = node("button", undefined, `queue-item${record ? " is-reviewed" : ""}${state.expanded && index > 1 ? " is-new" : ""}`);
       button.type = "button"; button.disabled = locked; button.dataset.index = String(index); button.setAttribute("aria-pressed", String(index === state.active));
       button.setAttribute("aria-label", `우선순위 ${index + 1}, ${locked ? "추가 요청 전" : record ? verdicts[record.verdict] : "대기"}`);
-      const image = node("img"); image.src = photo.image; image.alt = "";
+      const pair = node("div", undefined, "queue-pair");
+      for (const mode of ["original", "ai"]) {
+        const frame = node("span", undefined, "queue-preview"), image = node("img"); image.src = photo.image; image.alt = "";
+        frame.append(image);
+        if (mode === "ai" && photo.heatmap) { const overlay = node("img", undefined, "queue-heat"); overlay.src = photo.heatmap; overlay.alt = ""; frame.append(overlay); }
+        frame.append(node("i", mode === "ai" ? "AI" : "원본")); pair.append(frame);
+      }
       const text = node("span"); text.append(node("strong", `후보 ${String(index + 1).padStart(2, "0")}`), node("small", `${photo.score.toFixed(4)} · ${locked ? "추가 요청 전" : record ? "확인 완료" : "대기"}`));
-      button.append(image, text, node("b", record ? "✓" : "→")); button.addEventListener("click", () => selectPhoto(index)); return button;
+      button.append(pair, text, node("b", record ? "✓" : "→")); button.addEventListener("click", () => selectPhoto(index)); return button;
     }));
     const photo = s.c.review[state.active], d = draft();
     $("photoRank").textContent = `REVIEW CANDIDATE ${String(state.active + 1).padStart(2, "0")}`;
@@ -296,30 +301,39 @@
     photoController?.abort(); photoController = new AbortController();
     const token = ++photoJob, photo = status().c.review[state.active]; heatJob++; heatBusy = false; photoReady = false; photoFailed = false;
     $("photoLoading").hidden = false; $("photoError").hidden = true; $("heatError").hidden = true;
-    $("originalPhoto").hidden = true; $("heatPhoto").hidden = true; $("viewLabel").textContent = "ORIGINAL";
-    $("toggleHeat").setAttribute("aria-pressed", "false"); $("toggleHeat").textContent = photo.heatmap ? "이상 영역 표시" : "히트맵 미제공"; $("toggleHeat").disabled = true; renderChoice();
+    $("originalPhoto").hidden = true; $("heatBase").hidden = true; $("heatPhoto").hidden = true;
+    $("heatLoading").hidden = false; $("heatUnavailable").hidden = true; renderChoice();
     try {
       const url = await adapter.asset(photo.image, photoController.signal, retry);
       if (token !== photoJob || state.phase !== "reviewing" || state.reviewGate) return;
-      $("originalPhoto").src = url; $("originalPhoto").hidden = false; photoReady = true;
-      $("photoLoading").hidden = true; $("toggleHeat").disabled = !photo.heatmap; renderChoice();
-    } catch (error) {
+      $("originalPhoto").src = url; $("originalPhoto").hidden = false;
+      $("heatBase").src = url; $("heatBase").hidden = false; photoReady = true;
+      $("photoLoading").hidden = true; renderChoice(); loadHeat();
+    } catch {
       if (token !== photoJob || state.phase !== "reviewing") return;
-      photoFailed = true; $("photoLoading").hidden = true; $("photoError").hidden = false; renderChoice();
+      photoFailed = true; $("photoLoading").hidden = true; $("photoError").hidden = false;
+      $("heatLoading").hidden = true; $("heatUnavailable").hidden = false; renderChoice();
     }
   }
-  async function toggleHeat(retry = false) {
+  async function loadHeat(retry = false) {
     const photo = status().c?.review[state.active];
     if (!photo?.heatmap || !photoReady || heatBusy || state.phase !== "reviewing") return;
-    if (!retry && !$("heatPhoto").hidden) { $("heatPhoto").hidden = true; $("toggleHeat").textContent = "이상 영역 표시"; $("toggleHeat").setAttribute("aria-pressed", "false"); $("viewLabel").textContent = "ORIGINAL"; return; }
-    const token = ++heatJob, imageToken = photoJob; heatBusy = true; $("toggleHeat").disabled = true; $("toggleHeat").textContent = "히트맵 불러오는 중";
+    const token = ++heatJob, imageToken = photoJob; heatBusy = true;
+    $("heatLoading").hidden = false; $("heatUnavailable").hidden = true; $("heatError").hidden = true;
     try {
       const url = await adapter.asset(photo.heatmap, photoController.signal, retry);
       if (token !== heatJob || imageToken !== photoJob) return;
-      $("heatPhoto").src = url; $("heatPhoto").hidden = false; $("heatError").hidden = true;
-      $("toggleHeat").textContent = "원본 사진 보기"; $("toggleHeat").setAttribute("aria-pressed", "true"); $("viewLabel").textContent = "DINOv2 HEATMAP";
-    } catch { if (token === heatJob && imageToken === photoJob) { $("heatError").hidden = false; $("toggleHeat").textContent = "이상 영역 표시"; } }
-    finally { if (token === heatJob && imageToken === photoJob) { heatBusy = false; $("toggleHeat").disabled = false; } }
+      $("heatPhoto").src = url; $("heatPhoto").hidden = false; $("heatLoading").hidden = true;
+    } catch {
+      if (token === heatJob && imageToken === photoJob) { $("heatLoading").hidden = true; $("heatUnavailable").hidden = false; $("heatError").hidden = false; }
+    } finally { if (token === heatJob && imageToken === photoJob) heatBusy = false; }
+  }
+  function zoomPhoto(mode) {
+    if (!photoReady || mode === "heat" && $("heatPhoto").hidden) { toast("사진과 AI 표시를 불러온 뒤 확대할 수 있습니다."); return; }
+    $("photoDialogTitle").textContent = `${format(status().c.review[state.active].frame)}번째 사진 · ${mode === "heat" ? "AI 이상 영역" : "원본"}`;
+    $("zoomOriginal").src = $("originalPhoto").src; $("zoomHeat").hidden = mode !== "heat";
+    if (mode === "heat") $("zoomHeat").src = $("heatPhoto").src;
+    $("photoDialog").showModal();
   }
   function renderChoice() {
     const d = draft(); document.querySelectorAll("[data-verdict]").forEach(button => { button.setAttribute("aria-pressed", String(button.dataset.verdict === d.verdict)); });
@@ -336,7 +350,7 @@
   }
   function invalidateReference() {
     if (state.candidateRequested) history("candidate-review-invalidated", "검수 결과 수정으로 이전 기준 후보 검토 요청과 담당자 결정을 해제했습니다.");
-    state.candidateRequested = false; state.candidateRequest = null; state.exampleViewedAt = null; state.referenceDecision = null; state.truthRevealed = false;
+    state.candidateRequested = false; state.candidateRequest = null; state.exampleViewedAt = null; state.referenceDecision = null; state.candidatePreparation = null; state.truthRevealed = false;
   }
   function saveDecision() {
     const s = status(), d = draft();
@@ -418,42 +432,12 @@
       if (!state.candidateRequested) {
         const request = await adapter.requestReference(s.normals.map(({ photo }) => photo.frame));
         if (token !== job || state.phase !== "review-summary") return;
-        state.candidateRequest = request; state.candidateRequested = true;
+        state.candidateRequest = { ...request, appearanceChange: { ...getShift(), acknowledgedAt: state.shiftAcknowledgedAt } }; state.candidateRequested = true;
         history("candidate-review-requested", `정상 확인 ${s.normals.length}장 · 기준 후보 검증 검토 요청 · 기존 기준 보존`, state.candidateRequest.requestedAt);
       }
-      transition("reference-review");
+      state.phase = "reference-review"; persist();
+      window.location.assign("./field-reference.html");
     } finally { referenceBusy = false; }
-  }
-  function renderReference() {
-    const s = status(); normalPhotos("normalPhotos", s.normals);
-    $("candidateStatus").textContent = `정상 확인 ${s.normals.length}장을 검증 요청 목록에 저장했습니다. 실시간 후보 학습이나 성능 재계산은 수행하지 않습니다.`;
-    $("validationIntro").hidden = !!state.exampleViewedAt; $("historicalValidation").hidden = !state.exampleViewedAt;
-    if (state.exampleViewedAt) renderValidation();
-  }
-  function renderValidation() {
-    const labels = ["정상 사진 오경보", "결함 사진 경보", "신규 결함 사건 경보"];
-    $("validationMetrics").replaceChildren(...data.updateEvaluation.metrics.map((metric, i) => { const row = node("tr"); row.append(node("td", labels[i]), node("td", format(metric.before)), node("td", format(metric.after))); return row; }));
-  }
-  async function showValidation() {
-    if (state.phase !== "reference-review" || referenceBusy) return;
-    const token = job;
-    referenceBusy = true; $("showValidation").disabled = true; $("showValidation").textContent = "저장된 예시 불러오는 중";
-    try { await adapter.savedValidation(); if (token !== job || state.phase !== "reference-review") return;
-      if (!state.exampleViewedAt) { state.exampleViewedAt = new Date().toISOString(); history("validation-example-viewed", "별도 저장된 후속 검증 예시 확인 · 이번 검수 사진의 실시간 평가 아님", state.exampleViewedAt); }
-      persist(); renderReference();
-    } finally { referenceBusy = false; $("showValidation").disabled = false; $("showValidation").textContent = "저장된 검증 예시 확인 →"; }
-  }
-  function decideReference(kind) {
-    if (state.phase !== "reference-review" || !state.exampleViewedAt || !["hold", "additional-validation"].includes(kind) || referenceBusy) return;
-    state.referenceDecision = { kind, at: new Date().toISOString() };
-    history("reference-decision", `${kind === "hold" ? "적용 보류 · 기존 기준 유지" : "추가 검증 요청 · 기존 기준 유지"} · 별도 저장된 검증 예시 검토`, state.referenceDecision.at);
-    transition("completed"); toast("담당자의 결정을 저장했습니다.");
-  }
-  function renderCompleted() {
-    $("completedView").dataset.decision = state.referenceDecision.kind;
-    $("completedDecision").textContent = referenceLabel();
-    $("completedDescription").textContent = state.referenceDecision.kind === "hold" ? "결함 탐지 감소를 확인해 이번 후보의 적용을 보류했습니다. 정상 확인 사진과 검수 기록은 다음 검토를 위해 보관합니다." : "추가 검증 요청을 기록했습니다. 후속 검증이 끝나기 전까지 기존 검사 기준을 유지합니다.";
-    $("completedAt").textContent = time(state.referenceDecision.at);
   }
   function goRecords() {
     if (!status().reviewed || busy()) return;
@@ -468,6 +452,7 @@
       appearanceChange: { ...getShift(), acknowledgedAt: state.shiftAcknowledgedAt, scope: "recorded joined-run experiment" },
       candidateReviewRequest: state.candidateRequested ? state.candidateRequest : null,
       validationExample: state.exampleViewedAt ? { viewedAt: state.exampleViewedAt, source: data.updateEvaluation.source, scope: "separate saved experiment, not a live evaluation of this review selection" } : null,
+      candidatePreparation: state.candidatePreparation || null,
       referenceDecision: state.referenceDecision, history: state.history,
       records: s.c.review.flatMap((photo, i) => i < s.available && state.records[i] ? [{ frame: photo.frame, rank: photo.rank, image: photo.image, recordedAiScore: photo.score, userReview: state.records[i], ...(state.truthRevealed ? { publishedDatasetLabel: photo.recordedLabel } : {}) }] : []) };
     const url = URL.createObjectURL(new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" }));
@@ -480,8 +465,7 @@
   $("cancelReset").addEventListener("click", () => $("resetDialog").close());
   $("confirmReset").addEventListener("click", () => { $("resetDialog").close(); const next = resetCase; resetCase = null; reset(next); });
   $("dashboardNav").addEventListener("click", () => { if (!busy()) transition("ready"); });
-  $("newSegment").addEventListener("click", () => transition("ready"));
-  ["recordsNav", "resumeRecords", "completedRecords", "backToRecords"].forEach(id => $(id).addEventListener("click", goRecords));
+  ["recordsNav", "resumeRecords"].forEach(id => $(id).addEventListener("click", goRecords));
   $("retryLoading").addEventListener("click", () => { if (state.loadingError && busy()) pipeline(); });
   $("startReviewFlow").addEventListener("click", () => { if (state.pipelineReady && busy()) transition("change-alert"); });
   $("acknowledgeShift").addEventListener("click", () => {
@@ -494,19 +478,23 @@
   $("reviewNote").addEventListener("input", () => { if (state.phase !== "reviewing" || state.reviewGate) return; state.drafts[state.active] = { ...draft(), note: $("reviewNote").value.slice(0, 240) }; persist(); });
   $("saveDecision").addEventListener("click", saveDecision);
   $("previousPhoto").addEventListener("click", () => selectPhoto(state.active - 1)); $("nextPhoto").addEventListener("click", () => selectPhoto(state.active + 1));
-  $("toggleHeat").addEventListener("click", () => toggleHeat()); $("retryHeat").addEventListener("click", () => toggleHeat(true)); $("retryPhoto").addEventListener("click", () => loadPhoto(true));
+  $("retryHeat").addEventListener("click", () => loadHeat(true)); $("retryHeatInPanel").addEventListener("click", () => loadHeat(true)); $("retryPhoto").addEventListener("click", () => loadPhoto(true));
+  document.querySelectorAll("[data-zoom]").forEach(button => button.addEventListener("click", () => zoomPhoto(button.dataset.zoom)));
+  $("closePhotoDialog").addEventListener("click", () => $("photoDialog").close());
   $("originalPhoto").addEventListener("error", () => { if (state.phase === "reviewing" && !$("originalPhoto").hidden) { photoReady = false; photoFailed = true; $("photoError").hidden = false; renderChoice(); } });
   $("compareTruth").addEventListener("click", () => { state.truthRevealed = true; persist(); renderSummary(); });
-  ["downloadRecord", "completedDownload"].forEach(id => $(id).addEventListener("click", downloadRecord));
+  ["downloadRecord"].forEach(id => $(id).addEventListener("click", downloadRecord));
   $("continueReview").addEventListener("click", () => {
     if (state.phase !== "review-summary") return;
     if (!state.reviewGate) { const next = state.records.findIndex((record, index) => index < status().available && !record); if (next >= 0) state.active = next; }
     transition("reviewing");
   });
-  $("openCandidate").addEventListener("click", requestReference); $("showValidation").addEventListener("click", showValidation);
-  $("finishCandidate").addEventListener("click", () => decideReference("hold")); $("requestMoreValidation").addEventListener("click", () => decideReference("additional-validation"));
+  $("openCandidate").addEventListener("click", requestReference);
   document.addEventListener("keydown", event => { if (event.ctrlKey || event.metaKey || event.altKey || event.target.closest("textarea,input,select") || document.querySelector("dialog[open]")) return; const v = { "1": "normal", "2": "defect", "3": "hold" }[event.key]; if (v && state.phase === "reviewing" && !state.reviewGate) { event.preventDefault(); choose(v); } });
-  restore(); render();
+  restore();
+  if (["reference-review", "completed"].includes(state.phase)) { state.phase = "review-summary"; persist(); }
+  render();
+  window.addEventListener("pageshow", event => { if (event.persisted) { restore(); if (["reference-review", "completed"].includes(state.phase)) state.phase = "review-summary"; persist(); render(); } });
   if (busy() && !state.pipelineReady && !state.loadingError) pipeline();
   window.surfaceTraceFieldDemo = Object.freeze({ getState: () => JSON.parse(JSON.stringify(state)), getStatus: () => { const { budget, available, reviewed, pending, complete } = status(); return { budget, available, reviewed, pending, complete }; } });
 })();
