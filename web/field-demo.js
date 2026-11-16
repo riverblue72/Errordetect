@@ -10,7 +10,7 @@
     ready: ["receiving", "review-summary"], receiving: ["analyzing", "ready"],
     analyzing: ["receiving", "change-alert", "ready"], "change-alert": ["reviewing", "review-summary", "ready"],
     reviewing: ["review-summary", "ready"], "review-summary": ["reviewing", "reference-review", "ready"],
-    "reference-review": ["completed", "review-summary", "ready"], completed: ["review-summary", "ready"]
+    "reference-review": ["completed", "review-summary", "ready"], completed: ["review-summary", "reference-review", "ready"]
   };
   const caseNames = { defect: "외관 변화 및 검수" };
   const format = value => Number(value).toLocaleString("ko-KR");
@@ -147,9 +147,10 @@
   }
   function transition(phase, focus = true) {
     if (phase !== state.phase && !transitions[state.phase]?.includes(phase)) throw new Error(`Invalid workflow transition: ${state.phase} → ${phase}`);
+    if (state.phase === "reference-review" && phase !== "reference-review") referenceController?.cancel();
     state.phase = phase; persist(); render(); if (focus) focusView();
   }
-  function cancelJobs() { job++; pipelineController?.abort(); photoJob++; photoController?.abort(); heatJob++; }
+  function cancelJobs() { referenceController?.cancel(); job++; pipelineController?.abort(); photoJob++; photoController?.abort(); heatJob++; }
   function reset(caseId = null) {
     cancelJobs(); state = fresh(); photoReady = false; photoFailed = false; heatBusy = false;
     persist(); render(); focusView(); if (caseId) startReceiving(caseId);
@@ -223,6 +224,7 @@
     if (state.phase === "change-alert") renderChange();
     if (state.phase === "reviewing") renderReview();
     if (state.phase === "review-summary") renderSummary();
+    if (["reference-review", "completed"].includes(state.phase)) referenceController?.render();
   }
   function signalBars(id, shift) {
     const max = Math.max(...shift.points.map(point => point.score));
@@ -424,6 +426,7 @@
     state.active = index; state.editing = true; state.reviewGate = null; transition("reviewing");
   }
   let referenceBusy = false;
+  let referenceController;
   async function requestReference() {
     const s = status(); if (state.phase !== "review-summary" || !s.complete || s.normals.length < 2 || referenceBusy) return;
     const token = job;
@@ -435,8 +438,7 @@
         state.candidateRequest = { ...request, appearanceChange: { ...getShift(), acknowledgedAt: state.shiftAcknowledgedAt } }; state.candidateRequested = true;
         history("candidate-review-requested", `정상 확인 ${s.normals.length}장 · 기준 후보 검증 검토 요청 · 기존 기준 보존`, state.candidateRequest.requestedAt);
       }
-      state.phase = "reference-review"; persist();
-      window.location.assign("./field-reference.html");
+      transition("reference-review");
     } finally { referenceBusy = false; }
   }
   function goRecords() {
@@ -492,9 +494,21 @@
   $("openCandidate").addEventListener("click", requestReference);
   document.addEventListener("keydown", event => { if (event.ctrlKey || event.metaKey || event.altKey || event.target.closest("textarea,input,select") || document.querySelector("dialog[open]")) return; const v = { "1": "normal", "2": "defect", "3": "hold" }[event.key]; if (v && state.phase === "reviewing" && !state.reviewGate) { event.preventDefault(); choose(v); } });
   restore();
-  if (["reference-review", "completed"].includes(state.phase)) { state.phase = "review-summary"; persist(); }
+  if (state.candidatePreparation?.running) {
+    state.candidatePreparation.running = false;
+    state.candidatePreparation.error = "새로고침으로 중단된 준비 작업을 다시 시작해 주세요.";
+  }
+  if (location.hash === "#reference") {
+    if (state.candidateRequested && status().complete && status().normals.length >= 2) state.phase = state.referenceDecision ? "completed" : "reference-review";
+    window.history.replaceState(null, "", location.pathname + location.search);
+  }
+  referenceController = window.createSurfaceTraceReference({ getState: () => state, persist, navigate: transition, notify: toast, onDownload: downloadRecord });
   render();
-  window.addEventListener("pageshow", event => { if (event.persisted) { restore(); if (["reference-review", "completed"].includes(state.phase)) state.phase = "review-summary"; persist(); render(); } });
+  window.addEventListener("pageshow", event => { if (event.persisted) {
+    referenceController?.cancel(); restore();
+    if (state.candidatePreparation?.running) { state.candidatePreparation.running = false; state.candidatePreparation.error = "중단된 준비 작업을 다시 시작해 주세요."; }
+    persist(); render();
+  } });
   if (busy() && !state.pipelineReady && !state.loadingError) pipeline();
   window.surfaceTraceFieldDemo = Object.freeze({ getState: () => JSON.parse(JSON.stringify(state)), getStatus: () => { const { budget, available, reviewed, pending, complete } = status(); return { budget, available, reviewed, pending, complete }; } });
 })();
