@@ -179,3 +179,125 @@
 .presenter-en .industrial-strengths>h3,.presenter-en .strength-card>header h4,.presenter-en .strength-card p,.presenter-en .strength-card li,.presenter-en .strength-outcome strong{word-break:normal}
 @media(max-width:850px){.industrial-strengths{padding:28px}.strength-card-grid{grid-template-columns:1fr}.strength-card{padding:24px}}
 @media(max-width:560px){.industrial-strengths{padding:25px 22px}.industrial-strengths>h3{font-size:23px}.strength-card{padding:20px}.strength-card>header{gap:10px}.strength-card>header h4{font-size:17px}.strength-icon{width:32px;height:32px}.strength-icon svg{width:22px;height:22px}.strength-result strong{font-size:25px}}
+
+/* Original SurfaceTrace styles load first. These rules only fit the edited content to the presentation viewport. */
+.presenter-page.present-compact [hidden] { display: none !important; }
+.present-compact .visually-muted-status {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.present-compact .data-choice { margin-top: 18px; }
+.present-compact .data-choice h3 { font-size: 16px; margin: 0 0 6px; }
+.present-compact .data-choice p { color: var(--ink); line-height: 1.6; margin: 0 0 8px; word-break: keep-all; }
+.present-compact .data-choice a { color: var(--accent); font-size: 12px; text-decoration: underline; }
+.present-compact .method-facts { margin-top: 10px; }
+.present-compact .method-facts p, .present-compact .compact-facts p {
+  margin: 4px 0;
+  color: var(--ink);
+  font-size: 14px;
+  line-height: 1.55;
+  word-break: keep-all;
+}
+.present-compact .compact-facts { margin-top: 14px; }
+.present-compact .compact-facts strong, .present-compact .demo-callout span b { color: var(--accent); }
+.present-compact .demo-callout span b { font-size: 19px; }
+.present-compact [data-scene="1"] .demo-callout span { color: var(--ink); font-size: 14px; }
+.present-compact .method-visual .visual-heading { justify-content: flex-end; }
+.present-compact .conclusion-heading h2 { margin-bottom: 14px; }
+.present-compact .results-stage .results-metric-grid { grid-template-columns: 1fr; width: 100%; margin: 0; }
+.present-compact .results-stage .results-metric-grid article { padding: 9px 14px; }
+.present-compact .results-stage .results-metric-grid article > span { min-height: 0; font-size: 13px; color: var(--ink); }
+.present-compact .results-stage .results-metric-grid article > strong { font-size: clamp(25px, 2.5vw, 38px); margin: 1px 0 0; }
+.present-compact .results-stage .strength-card-grid { grid-template-columns: 1fr; }
+.present-compact .results-stage .strength-card { min-width: 0; padding: 18px; }
+.present-compact .results-stage .strength-card header { margin: 0; }
+.present-compact .results-stage .strength-card h4 { margin: 0; }
+
+@media (min-width: 1000px) {
+  .presenter-page.present-compact .site-header { height: 57px; }
+  .presenter-page.present-compact .demo-main { padding-top: 12px; padding-bottom: 8px; }
+  .presenter-page.present-compact .demo-steps { margin-bottom: 10px; }
+  .presenter-page.present-compact .demo-steps button { min-height: 39px; padding-block: 7px; }
+  .presenter-page.present-compact .demo-stage { min-height: min(492px, calc(100svh - 165px)); }
+  .presenter-page.present-compact .demo-copy,
+  .presenter-page.present-compact .demo-visual { padding: 20px 23px; min-height: 0; }
+  .present-compact .demo-kicker { margin-bottom: 9px; }
+  .present-compact .demo-callout { margin-top: 14px; padding-top: 12px; }
+  .present-compact .visual-heading { margin-bottom: 10px; }
+  .present-compact .demo-controls { margin-top: 8px; padding-block: 0; }
+  .present-compact .demo-controls button { height: 34px; }
+
+  .presenter-page.present-compact .overview-stage { padding: 22px 25px 16px; }
+  .present-compact .overview-heading { min-width: 0; gap: 12px; margin-bottom: 16px; }
+  .present-compact .overview-modes { min-width: 0; margin: 0; }
+  .present-compact .parallel-flow { min-width: 0; align-items: stretch; }
+  .present-compact .pipeline-card { min-height: 0; padding: 13px; }
+  .present-compact .pipeline-card h3 { margin: 8px 0 0; }
+  .present-compact .analysis-column { min-width: 0; }
+  .present-compact .pipeline-card.analysis-card { grid-template-columns: minmax(0, 1fr) clamp(90px, 8.3vw, 120px); }
+  .present-compact .pipeline-card .input-photo-stack { height: clamp(125px, 23vh, 175px); }
+  .present-compact .pipeline-card .analysis-picture { width: min(100%, 125px); }
+  .present-compact .pipeline-card .analysis-change { width: 100%; }
+  .present-compact .pipeline-card .analysis-change img { width: min(100%, 70px); height: auto; }
+  .present-compact .pipeline-card .summary-photo-row img { width: min(28%, 47px); }
+  .present-compact .pipeline-card .review-photo-row img { width: min(44%, 72px); }
+  .present-compact .pipeline-card .reference-candidate-art img { width: 100%; max-width: 205px; }
+  .present-compact .overview-bottom { min-width: 0; justify-content: flex-end; margin-top: 14px; padding-top: 8px; }
+  .present-compact .original-overview { min-width: 0; min-height: 0; }
+  .present-compact .original-overview .pipeline-hero-motion img { max-height: calc(100svh - 241px); object-fit: contain; }
+
+  .present-compact .method-visual article picture { display: block; }
+  .present-compact .method-visual article img { display: block; width: 100%; max-height: clamp(195px, 38vh, 350px); object-fit: contain; }
+  .present-compact .method-visual article h3 { margin-top: 7px; margin-bottom: 0; }
+  .present-compact .feature-pair .feature-photo, .present-compact .shift-photos .photo-frame, .present-compact .demo-check-photo {
+    margin-inline: auto;
+    width: min(100%, calc(var(--compact-photo-height) * 1.25));
+    height: var(--compact-photo-height);
+  }
+  .present-compact .feature-pair .feature-photo { --compact-photo-height: clamp(125px, 32vh, 310px); }
+  .present-compact .shift-photos .photo-frame { --compact-photo-height: clamp(86px, 21vh, 170px); }
+  .present-compact .demo-check-photo { --compact-photo-height: clamp(120px, 26vh, 265px); }
+  .present-compact :is(.feature-photo, .shift-photos .photo-frame, .demo-check-photo) img { object-fit: contain; }
+  .present-compact #shiftChart { max-height: 125px; }
+  .present-compact #intervalChart { max-height: 156px; }
+  .present-compact .score-contrast-row { grid-template-columns: 107px minmax(0, 1fr); }
+  .present-compact .score-contrast { padding: 6px 8px; margin: 8px 0; }
+  .present-compact .queue-label { margin-bottom: 6px; }
+  .present-compact .filmstrip .thumb img { max-height: 52px; }
+  .present-compact .review-stage .demo-copy h2 { margin: 0 0 8px; }
+  .present-compact .review-stage .efficiency-callout {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: baseline;
+    gap: 2px 12px;
+    margin: 0 0 4px;
+    padding: 7px 9px;
+  }
+  .present-compact .review-stage .efficiency-callout strong { font-size: 25px; margin: 0; }
+  .present-compact .review-stage .efficiency-callout b { margin: 0; }
+  .present-compact .review-stage .efficiency-callout span { grid-column: 1 / -1; margin: 0; }
+  .present-compact .review-stage .case-label { margin-top: 6px; }
+  .present-compact .review-stage .review-callout { margin: 4px 0 0; padding: 2px 0; }
+  .present-compact .review-stage .review-callout strong { font-size: 27px; }
+  .present-compact .review-stage .demo-copy > p.route-message { margin-top: 4px; }
+  .present-compact .review-stage .review-outcome { margin-top: 4px; }
+  .present-compact .review-stage .primary-action { margin-top: 5px; min-height: 32px; padding-block: 6px; }
+  .present-compact .review-record-title { margin-top: 7px; }
+  .present-compact .review-log { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 3px; max-height: 44px; overflow: auto; }
+  .present-compact .review-log .empty-log { grid-column: 1 / -1; }
+  .present-compact .review-log li { padding: 2px 3px; font-size: 10px; }
+  .present-compact .review-summary { margin-top: 5px; padding: 4px 7px; }
+  .present-compact #resetCase { margin-top: 5px; }
+  .present-compact .validation-flow { padding: 10px 18px; }
+  .present-compact .validation-flow li { padding: 7px 10px; }
+  .present-compact .validation-flow li > span { margin-bottom: 3px; }
+  .present-compact .validation-flow li:not(:last-child)::after { top: 16px; }
+  .present-compact .decision-row { padding-block: 10px; }
+  .present-compact .original-illustration { margin-top: 8px; }
+  .present-compact .original-illustration picture img { max-height: 125px; object-fit: contain; }
+  .present-compact .results-stage .demo-visual { display: flex; flex-direction: column; justify-content: flex-start; padding-top: 52px; }
+}
