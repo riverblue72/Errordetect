@@ -82,6 +82,7 @@ window.createSurfaceTraceReference = ({ getState, persist, navigate, notify, onD
     $("normalPhotos").replaceChildren(...selected.map(({ photo }) => { const f = node("figure"), img = node("img"); img.src = photo.image; img.alt = "담당자가 정상으로 확인한 사진"; f.append(img, node("figcaption", `${format(photo.frame)}번째 사진`)); return f; }));
     $("referenceState").textContent = done ? "후속 검증 실행 대기" : prep?.running ? "후보 요청 준비 중" : "후보 검증 요청 준비";
     $("referencePreparation").hidden = done;
+    $("repeatPreparation").hidden = !done;
     $("preparedRequest").hidden = !done || !!getState().exampleViewedAt;
     $("validationHistory").hidden = !done || !getState().exampleViewedAt;
     const stage = prep?.stage || 0;
@@ -116,7 +117,7 @@ window.createSurfaceTraceReference = ({ getState, persist, navigate, notify, onD
     history("reference-decision", `${kind === "hold" ? "적용 보류" : "추가 검증 요청"} · 기존 기준 유지`, getState().referenceDecision.at);
     try { navigate("completed"); notify("담당자의 결정을 기록했습니다."); } catch (error) { notify(error.message); }
   }
-  $("prepareCandidate").addEventListener("click", prepare); $("retryPreparation").addEventListener("click", prepare);
+  $("prepareCandidate").addEventListener("click", prepare); $("repeatPreparation").addEventListener("click", prepare); $("retryPreparation").addEventListener("click", prepare);
   $("showValidation").addEventListener("click", showHistory);
   $("finishCandidate").addEventListener("click", () => decide("hold")); $("requestMoreValidation").addEventListener("click", () => decide("additional-validation"));
   ["backToRecords", "completedRecords"].forEach(id => $(id).addEventListener("click", backToRecords));

@@ -8,7 +8,7 @@
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="./field-demo.css?v=213f4dbc4a03">
   <script src="./presenter-data.js?v=bb469f121335" defer></script>
-  <script src="./field-reference.js?v=0189e7f202a3" defer></script>
+  <script src="./field-reference.js?v=f2e070347c2f" defer></script>
   <script src="./field-demo.js?v=e0ee5f22f911" defer></script>
 </head>
 <body>
@@ -67,7 +67,7 @@
 
 
 <section data-view="reference-review" id="referenceWorkspace" class="surface reference-view" hidden>
-      <div class="section-heading"><div><span class="pill purple" id="referenceState">후보 검증 요청 준비</span><h2 id="candidateTitle">정상 확인 데이터를 다음 검사 기준으로.</h2><p id="candidateStatus"></p></div><button id="backToRecords" class="secondary" type="button">검수 기록 보기 ↗</button></div>
+      <div class="section-heading"><div><span class="pill purple" id="referenceState">후보 검증 요청 준비</span><h2 id="candidateTitle">정상 확인 데이터를 다음 검사 기준으로.</h2><p id="candidateStatus"></p></div><div class="view-actions"><button id="repeatPreparation" class="primary" type="button" hidden>검증 준비 다시 시작 ↻</button><button id="backToRecords" class="secondary" type="button">검수 기록 보기 ↗</button></div></div>
       <div class="reference-request"><div><h3>이번 후보 검토에 포함할 정상 확인 사진</h3><p>적용 중인 검사 기준을 보존하고, 담당자가 정상으로 확인한 사진을 후보 입력 목록에 포함합니다.</p></div><div id="normalPhotos" class="normal-photos"></div></div>
       <ol class="candidate-steps reference-processing"><li data-reference-step="0"><b>01</b><strong>기존 기준 보존</strong><span>기존 기준의 식별 정보 유지</span></li><li data-reference-step="1"><b>02</b><strong>정상 사진 반영 준비</strong><span>후보 입력 사진 목록 구성</span></li><li data-reference-step="2"><b>03</b><strong>이상 검출 검증 준비</strong><span>새 기준 후보의 검증 요청 구성</span></li><li data-reference-step="3"><b>04</b><strong>담당자 검토</strong><span>검증 이력 확인 및 결정</span></li></ol>
       <div id="referencePreparation" class="reference-preparation"><span id="preparationIcon" class="preparation-icon">⌁</span><h3 id="preparationTitle" role="status" aria-live="polite">새 기준 후보의 이상 검출 검증을 준비합니다.</h3><p id="preparationDescription">정상 확인 사진을 포함해 기준 후보와 후속 검증에 필요한 입력 목록을 구성합니다.</p><div class="progress-track" id="referenceProgress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="후보 요청 준비 진행"><i></i></div><button id="prepareCandidate" class="primary" type="button">정상 사진 반영 및 검증 요청 준비 →</button><button id="retryPreparation" class="secondary" type="button" hidden>준비 다시 시작 ↻</button></div>
