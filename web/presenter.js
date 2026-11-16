@@ -518,16 +518,16 @@
     setText("reviewCount", String(s.count));
     setText("reviewBudget", String(s.budget));
     setText("reviewPhase", s.complete ? "검수 종료" : s.expanded ? "추가 확인" : "우선 확인");
-    let route = "먼저 두 사진의 결과를 확인합니다.";
+    let route = "우선 검수 2건";
     if (s.stopped) route = "두 건 모두 정상 → 추가 요청 종료";
     else if (s.complete) route = "총 8건 확인 완료";
     else if (s.expanded) route = "처음 두 건에 결함 포함 → 추가 6건 요청";
-    else if (s.count) route = "첫 결과를 기록했습니다. 나머지 한 건을 확인해 주세요.";
+    else if (s.count) route = "1건 기록 · 1건 남음";
     setText("reviewRoute", route);
     if ($("reviewRoute")) $("reviewRoute").className = `route-message${s.stopped ? " stopped" : s.expanded ? " expanded" : ""}`;
 
     const label = r.records[r.index];
-    setText("reviewOutcome", label ? `${labelText(label)}으로 확인됨 · 공개 정답` : "확인 전 · 사진과 이상 위치를 살펴보세요.");
+    setText("reviewOutcome", label ? `${labelText(label)} · 공개 정답` : "확인 전");
     if ($("reviewOutcome")) $("reviewOutcome").className = `review-outcome ${label || "pending"}`;
     if ($("reviewAction")) {
       $("reviewAction").disabled = s.revealed;
@@ -542,8 +542,8 @@
     if ($("reviewSummary")) {
       $("reviewSummary").hidden = !s.complete;
       setText("reviewSummary", s.stopped
-        ? "정상 2건을 확인해 추가 6건을 요청하지 않았습니다. 전체 구간이 정상이라는 판정은 아닙니다."
-        : "결함 사진 6장과 정상 사진 2장을 확인했습니다. 이 녹화에서는 서로 다른 결함 사건 6건을 확인했습니다.");
+        ? "정상 2건 · 추가 요청 종료"
+        : "결함 6장 · 정상 2장 · 결함 사건 6건");
     }
     setText("reviewProvenance", state.caseId === "defect"
       ? "원본 시연의 사진·검수 순서입니다. 공개 데이터의 정답을 확인 결과로 재생합니다."
