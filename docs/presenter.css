@@ -427,3 +427,9 @@
 .presenter-page #playTour:disabled{opacity:.65;cursor:default}
 @media(max-width:999px){.presenter-page .demo-stage.pdf-closing-stage{height:calc(100svh - 210px);min-height:250px}}
 .presenter-page .pdf-closing-stage:focus{outline:none}
+@media(min-width:1000px){
+ .presenter-page.is-closing-slide .demo-main{display:grid;grid-template-rows:auto minmax(0,1fr) auto;gap:10px;height:calc(100svh - 57px);padding-top:12px;padding-bottom:8px;box-sizing:border-box}
+ .presenter-page.is-closing-slide .demo-steps,.presenter-page.is-closing-slide .demo-controls{margin-top:0;margin-bottom:0}
+ .presenter-page.is-closing-slide .demo-stage-wrap{height:100%;min-height:0}
+ .presenter-page.is-closing-slide .pdf-closing-stage{height:100%;min-height:0}
+}
