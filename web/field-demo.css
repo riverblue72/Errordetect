@@ -123,3 +123,5 @@ main{max-width:1380px;margin:0 auto;padding:30px 28px 20px}.page-heading{display
 @keyframes signal-rise{from{transform:scaleY(.03)}to{transform:scaleY(1)}}
 @media(max-width:650px){.reference-operation{gap:18px;padding:20px}.reference-operation p{font-size:12px}.operation-spinner{width:48px;height:48px}}
 @media(prefers-reduced-motion:reduce){.operation-spinner,.loading-shift .signal-bar i{animation:none}}
+.paged-workspace .loading-shift .signal-bars{height:auto;margin:8px 0 0}
+@media(max-width:650px){.paged-workspace .loading-shift{width:90%}.paged-workspace .loading-shift>span{font-size:9px}.paged-workspace .loading-shift .signal-bars{margin-top:6px;gap:14px}.paged-workspace .loading-shift .signal-bar>div{height:30px}.paged-workspace .loading-shift .signal-bar>span{font-size:8px;margin-top:4px}.paged-workspace .loading-shift .signal-bar small{font-size:8px;margin-top:2px}}
