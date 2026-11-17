@@ -136,7 +136,7 @@
       if (state.candidateRequested) {
         state.candidateRequest = { photoFrames: s.normals.map(({ photo }) => photo.frame), requestedAt: validTime(saved.candidateRequest?.requestedAt) ? saved.candidateRequest.requestedAt : null, liveValidationPerformed: false, appearanceChange: saved.candidateRequest?.appearanceChange || { ...getShift(), acknowledgedAt: state.shiftAcknowledgedAt, userReview: state.shiftReview } };
         state.exampleViewedAt = validTime(saved.exampleViewedAt) ? saved.exampleViewedAt : null;
-        if (state.exampleViewedAt && ["hold", "additional-validation"].includes(saved.referenceDecision?.kind) && validTime(saved.referenceDecision?.at)) state.referenceDecision = { kind: saved.referenceDecision.kind, at: saved.referenceDecision.at };
+        if (state.exampleViewedAt && ["hold", "change", "additional-validation"].includes(saved.referenceDecision?.kind) && validTime(saved.referenceDecision?.at)) state.referenceDecision = { kind: saved.referenceDecision.kind, at: saved.referenceDecision.at, applied: false, status: saved.referenceDecision.kind === "change" ? "change-requested" : saved.referenceDecision.kind === "hold" ? "kept" : "additional-validation-requested" };
       }
       if (saved.version === 3 && PHASES.includes(saved.phase)) {
         state.phase = saved.phase;
@@ -231,7 +231,7 @@
     $("segmentName").textContent = s.c ? `시나리오 ${state.caseId === "defect" ? "A" : "B"} · ${format(s.c.frameCount)}장` : "진행 중인 작업 없음";
     $("pendingBadge").textContent = state.reviewGate === "expand" ? "추가 6장 요청 대기" : state.reviewGate === "waiting" ? "추가 사진 수신 대기" : `검수 대기 ${Math.max(0, s.available - s.reviewed)}장`;
     $("referenceBadge").hidden = !state.referenceDecision;
-    $("referenceBadge").textContent = state.referenceDecision?.kind === "hold" ? "후보 적용 보류" : "추가 검증 요청";
+    $("referenceBadge").textContent = state.referenceDecision?.kind === "change" ? "새 기준 변경 요청" : state.referenceDecision?.kind === "hold" ? "기존 기준 유지" : "추가 검증 요청";
     $("referenceBadge").className = `pill ${state.referenceDecision?.kind === "hold" ? "purple" : "amber"}`;
     const stage = state.phase === "ready" || busy() ? "data" : state.phase === "change-alert" ? "change" : state.phase === "reviewing" ? "review" : state.phase === "review-summary" ? "records" : "reference";
     const steps = ["data", "change", "review", "records", "reference"];
@@ -468,7 +468,7 @@
     $(id).replaceChildren(...normals.map(({ photo }) => { const f = node("figure"), image = node("img"); image.src = photo.image; image.alt = "담당자가 정상으로 확인한 사진"; f.append(image, node("figcaption", `${format(photo.frame)}번째 사진`)); return f; }));
     if (!normals.length) $(id).append(node("span", "아직 정상으로 확인한 사진이 없습니다.", "empty-normal"));
   }
-  function referenceLabel() { return state.referenceDecision?.kind === "hold" ? "적용 보류 · 기존 기준 유지" : state.referenceDecision ? "추가 검증 요청 · 기존 기준 유지" : state.candidateRequested ? "기준 후보 검토 요청됨" : "기존 기준 적용 중"; }
+  function referenceLabel() { return state.referenceDecision?.kind === "change" ? "새로운 기준 변경 요청" : state.referenceDecision?.kind === "hold" ? "기존 기준 유지" : state.referenceDecision ? "추가 검증 요청 · 기존 기준 유지" : state.candidateRequested ? "기준 후보 검토 요청됨" : "기존 기준 적용 중"; }
   function renderSummary() {
     const s = status(), counts = { normal: 0, defect: 0, hold: 0 };
     state.records.slice(0, s.available).filter(Boolean).forEach(r => counts[r.verdict]++);
@@ -531,7 +531,7 @@
     const s = status(); if (!s.c || !s.reviewed) return;
     const payload = { schemaVersion: 3, demo: true, phase: state.phase, analysisMode: "recorded-dinov2-and-mmd", run: s.c.run,
       receivedAt: state.receivedAt, exportedAt: new Date().toISOString(), sourceFrameCount: s.c.frameCount, requested: s.budget, reviewed: s.reviewed,
-      awaitingAdditionalPhotos: s.pending, activeReference: "frozen-source", modelWeightsUpdated: false,
+      awaitingAdditionalPhotos: s.pending, activeReference: "frozen-source", selectedReference: state.referenceDecision?.kind === "change" ? "candidate" : "frozen-source", referenceChangeApplied: false, modelWeightsUpdated: false,
       appearanceChange: { ...getShift(), acknowledgedAt: state.shiftAcknowledgedAt, userReview: state.shiftReview, scope: "recorded joined-run experiment" },
       candidateReviewRequest: state.candidateRequested ? state.candidateRequest : null,
       validationExample: state.exampleViewedAt ? { viewedAt: state.exampleViewedAt, source: data.updateEvaluation.source, scope: "separate saved experiment, not a live evaluation of this review selection" } : null,

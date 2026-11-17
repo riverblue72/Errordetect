@@ -72,9 +72,10 @@ window.createSurfaceTraceReference = ({ getState, persist, navigate, notify, onD
     const completed = getState().phase === "completed" && !!getState().referenceDecision;
     $("referenceWorkspace").hidden = completed; $("completedView").hidden = !completed;
     if (completed) {
-      const hold = getState().referenceDecision.kind === "hold";
-      $("completedDecision").textContent = hold ? "적용 보류 · 기존 기준 유지" : "추가 검증 요청 · 기존 기준 유지";
-      $("completedDescription").textContent = hold ? "새 기준 후보의 적용을 보류하고 검수 기록과 검증 요청 정보를 보관합니다." : "추가 검증 요청을 기록했습니다. 검증이 끝날 때까지 기존 검사 기준을 유지합니다.";
+      const kind = getState().referenceDecision.kind;
+      $("completedDecision").textContent = kind === "change" ? "새 기준 변경 요청 완료" : kind === "hold" ? "기존 기준 유지" : "추가 검증 요청 기록";
+      $("completedReference").textContent = kind === "change" ? "새로운 기준 · 변경 요청" : "기존 기준";
+      $("completedDescription").textContent = kind === "change" ? "변경 요청을 저장했습니다. 실제 분석에는 기존 기준이 적용됩니다." : kind === "hold" ? "기존 기준을 유지하는 선택을 저장했습니다. 검수 기록과 검증 요청 정보를 보관합니다." : "이전에 기록한 추가 검증 요청입니다. 현재 분석에는 기존 기준이 사용됩니다.";
       $("completedAt").textContent = time(getState().referenceDecision.at); onRender(); return;
     }
     const selected = normals(), prep = getState().candidatePreparation, done = !!prep?.completedAt;
@@ -110,10 +111,10 @@ window.createSurfaceTraceReference = ({ getState, persist, navigate, notify, onD
     try { persist(); render(); } catch (error) { notify(error.message); }
   }
   function decide(kind) {
-    if (getState().phase !== "reference-review" || !getState().exampleViewedAt || !getState().candidatePreparation?.completedAt || !["hold", "additional-validation"].includes(kind)) return;
-    getState().referenceDecision = { kind, at: new Date().toISOString() };
-    getState().candidatePreparation.validationRequest.status = kind === "hold" ? "on-hold" : "additional-validation-requested";
-    history("reference-decision", `${kind === "hold" ? "적용 보류" : "추가 검증 요청"} · 기존 기준 유지`, getState().referenceDecision.at);
+    if (getState().phase !== "reference-review" || !getState().exampleViewedAt || !getState().candidatePreparation?.completedAt || !["hold", "change"].includes(kind)) return;
+    getState().referenceDecision = { kind, at: new Date().toISOString(), applied: false, status: kind === "change" ? "change-requested" : "kept" };
+    getState().candidatePreparation.validationRequest.status = kind === "hold" ? "on-hold" : "change-requested";
+    history("reference-decision", kind === "change" ? "새로운 기준으로 변경 요청 · 실제 분석에는 기존 기준 사용" : "기존 기준 유지 선택", getState().referenceDecision.at);
     try { navigate("completed"); notify("담당자의 결정을 기록했습니다."); } catch (error) { notify(error.message); }
   }
   function showPage(index) {
@@ -126,7 +127,7 @@ window.createSurfaceTraceReference = ({ getState, persist, navigate, notify, onD
   $("referenceConfirmBack").addEventListener("click", () => showPage(0));
   $("prepareCandidate").addEventListener("click", prepare); $("repeatPreparation").addEventListener("click", prepare); $("retryPreparation").addEventListener("click", prepare);
   $("showValidation").addEventListener("click", showHistory);
-  $("finishCandidate").addEventListener("click", () => decide("hold")); $("requestMoreValidation").addEventListener("click", () => decide("additional-validation"));
+  $("finishCandidate").addEventListener("click", () => decide("hold")); $("changeReference").addEventListener("click", () => decide("change"));
   ["backToRecords", "completedRecords"].forEach(id => $(id).addEventListener("click", backToRecords));
   $("completedDownload").addEventListener("click", onDownload);
   $("reopenReference").addEventListener("click", () => navigate("reference-review"));
