@@ -62,6 +62,7 @@ def build(out: Path) -> tuple[int, int]:
         ("field-demo.html", "field-demo.html"),
         ("field-demo.css", "field-demo.css"),
         ("field-demo.js", "field-demo.js"),
+        ("field-shift-data.js", "field-shift-data.js"),
         ("field-reference.html", "field-reference.html"),
         ("field-reference.js", "field-reference.js"),
         ("presenter-en.html", "presenter-en.html"),
@@ -106,7 +107,7 @@ def build(out: Path) -> tuple[int, int]:
         if asset.suffix in {".png", ".json", ".svg"}:
             shutil.copyfile(asset, out / "ablation" / asset.name)
     for asset in (WEB / "scenario").iterdir():
-        if asset.suffix in {".jpg", ".json"}:
+        if asset.suffix in {".jpg", ".png", ".json"}:
             shutil.copyfile(asset, out / "scenario" / asset.name)
     for asset in (WEB / "review-frames").iterdir():
         if asset.suffix in {".jpg", ".json"}:

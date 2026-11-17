@@ -1,6 +1,6 @@
 "use strict";
 /* Reference operations for step 05 inside the field workspace. No new model metrics are fabricated. */
-window.createSurfaceTraceReference = ({ getState, persist, navigate, notify, onDownload }) => {
+window.createSurfaceTraceReference = ({ getState, persist, navigate, notify, onDownload, onRender = () => {} }) => {
   const data = window.SURFACETRACE_PRESENTER_DATA;
   const $ = id => document.getElementById(id);
   let run = 0, controller;
@@ -75,13 +75,13 @@ window.createSurfaceTraceReference = ({ getState, persist, navigate, notify, onD
       const hold = getState().referenceDecision.kind === "hold";
       $("completedDecision").textContent = hold ? "적용 보류 · 기존 기준 유지" : "추가 검증 요청 · 기존 기준 유지";
       $("completedDescription").textContent = hold ? "새 기준 후보의 적용을 보류하고 검수 기록과 검증 요청 정보를 보관합니다." : "추가 검증 요청을 기록했습니다. 검증이 끝날 때까지 기존 검사 기준을 유지합니다.";
-      $("completedAt").textContent = time(getState().referenceDecision.at); return;
+      $("completedAt").textContent = time(getState().referenceDecision.at); onRender(); return;
     }
     const selected = normals(), prep = getState().candidatePreparation, done = !!prep?.completedAt;
     $("candidateStatus").textContent = `정상 확인 ${selected.length}장을 검증 요청에 포함합니다. 적용 중인 검사 기준은 유지됩니다.`;
     $("normalPhotos").replaceChildren(...selected.map(({ photo }) => { const f = node("figure"), img = node("img"); img.src = photo.image; img.alt = "담당자가 정상으로 확인한 사진"; f.append(img, node("figcaption", `${format(photo.frame)}번째 사진`)); return f; }));
     $("referenceState").textContent = done ? "후속 검증 실행 대기" : prep?.running ? "후보 요청 준비 중" : "후보 검증 요청 준비";
-    $("referencePreparation").hidden = done;
+    $("referencePreparation").hidden = false;
     $("repeatPreparation").hidden = !done;
     $("preparedRequest").hidden = !done || !!getState().exampleViewedAt;
     $("validationHistory").hidden = !done || !getState().exampleViewedAt;
@@ -93,7 +93,7 @@ window.createSurfaceTraceReference = ({ getState, persist, navigate, notify, onD
     });
     const titles = ["기존 검사 기준을 보존하고 있습니다.", "정상 데이터를 반영할 기준 후보를 준비합니다.", "새 검사 기준의 적용 가능성을 검토하고 있습니다.", "검증 요청 준비 완료"];
     const descriptions = ["적용 중인 기준과 경보선을 보존합니다.", "확인된 정상 사진을 불러와 후보 검증 요청 목록에 포함합니다.", "정상 확인 사진의 입력 목록을 반영해 오경보·결함 탐지 후속 검증 요청을 구성합니다."];
-    $("preparationTitle").textContent = prep?.error ? "요청 준비를 완료하지 못했습니다." : prep?.running ? titles[stage] : "새 검사 기준의 적용 가능성을 검토합니다.";
+    $("preparationTitle").textContent = done ? "검증 요청 준비가 완료되었습니다." : prep?.error ? "요청 준비를 완료하지 못했습니다." : prep?.running ? titles[stage] : "새 검사 기준의 적용 가능성을 검토합니다.";
     $("preparationDescription").textContent = prep?.error || (prep?.running ? descriptions[stage] : "정상 확인 사진을 포함해 후보 검증에 필요한 입력 목록을 구성합니다.");
     $("preparationIcon").classList.toggle("is-processing", !!prep?.running);
     $("prepareCandidate").hidden = !!prep; $("retryPreparation").hidden = !prep?.error;
@@ -104,6 +104,7 @@ window.createSurfaceTraceReference = ({ getState, persist, navigate, notify, onD
       const labels = ["정상 사진 오경보", "결함 사진 경보", "신규 결함 사건 경보"];
       $("validationMetrics").replaceChildren(...data.updateEvaluation.metrics.map((m, i) => { const row = node("tr"); row.append(node("td", labels[i]), node("td", format(m.before)), node("td", format(m.after))); return row; }));
     }
+    onRender();
   }
   function showHistory() {
     if (getState().phase !== "reference-review" || !getState().candidatePreparation?.completedAt) return;

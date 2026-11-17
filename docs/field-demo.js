@@ -24,7 +24,7 @@
     source: "experiments/unsupervised/results/change_limit_development.json · original_limit" };
   const fresh = () => ({ version: 3, phase: "ready", caseId: null, receivedAt: null, records: [], drafts: [], active: 0,
     expanded: false, reviewGate: null, editing: false, loadingStep: 0, pipelineReady: false, loadingError: null,
-    shiftAcknowledgedAt: null, shiftReview: null, shiftDraft: { verdict: null, note: "" }, shiftFrame: 96, shiftViewedFrames: [], shiftAiIndex: 0, shiftAiViewedFrames: [], afterShiftPhase: null, truthRevealed: false, candidateRequested: false, candidateRequest: null,
+    shiftAcknowledgedAt: null, shiftReview: null, shiftDraft: { verdict: null, note: "" }, shiftFrame: 96, shiftViewedFrames: [], shiftAiViewedFrames: [], pages: {}, recordPage: 0, historyPage: 0, afterShiftPhase: null, truthRevealed: false, candidateRequested: false, candidateRequest: null,
     exampleViewedAt: null, referenceDecision: null, history: [] });
   let state = fresh(), job = 0, pipelineController, photoController, photoJob = 0, heatJob = 0;
   let photoReady = false, photoFailed = false, heatBusy = false, toastTimer, resetCase = null, storageAvailable = true;
@@ -121,9 +121,10 @@
       const frames = shiftPhotos().map(p => p.frame);
       state.shiftFrame = frames.includes(saved.shiftFrame) ? saved.shiftFrame : frames.includes(96) ? 96 : frames[0];
       state.shiftViewedFrames = Array.isArray(saved.shiftViewedFrames) ? saved.shiftViewedFrames.filter(f => frames.includes(f)) : [];
-      const aiPhotos = shiftAiPhotos();
-      state.shiftAiIndex = Number.isInteger(saved.shiftAiIndex) ? Math.max(0, Math.min(aiPhotos.length - 1, saved.shiftAiIndex)) : 0;
-      state.shiftAiViewedFrames = Array.isArray(saved.shiftAiViewedFrames) ? saved.shiftAiViewedFrames.filter(f => aiPhotos.some(p => p.frame === f)) : [];
+      state.shiftAiViewedFrames = Array.isArray(saved.shiftAiViewedFrames) ? saved.shiftAiViewedFrames.filter(f => frames.includes(f)) : [];
+      state.pages = saved.pages && typeof saved.pages === "object" ? Object.fromEntries(Object.entries(saved.pages).filter(([k,v]) => PHASES.includes(k) && Number.isInteger(v) && v >= 0 && v < 6)) : {};
+      state.recordPage = Number.isInteger(saved.recordPage) ? Math.max(0,saved.recordPage) : 0;
+      state.historyPage = Number.isInteger(saved.historyPage) ? Math.max(0,saved.historyPage) : 0;
       state.afterShiftPhase = saved.afterShiftPhase === "review-summary" ? "review-summary" : null;
       if (state.records.slice(2).some(Boolean)) state.expanded = true;
       const s = status();
@@ -155,12 +156,13 @@
   function busy() { return ["receiving", "analyzing"].includes(state.phase); }
   function focusView() {
     window.scrollTo({ top: 0, behavior: "instant" });
-    const heading = document.querySelector('[data-view]:not([hidden]) h2');
+    const heading = visiblePages()[state.pages[state.phase] || 0]?.querySelector("h2,h3");
     if (heading) { heading.tabIndex = -1; heading.focus({ preventScroll: true }); }
   }
   function transition(phase, focus = true) {
     if (phase !== state.phase && !transitions[state.phase]?.includes(phase)) throw new Error(`Invalid workflow transition: ${state.phase} → ${phase}`);
     if (state.phase === "reference-review" && phase !== "reference-review") referenceController?.cancel();
+    if (state.phase !== phase) state.pages[phase] = phase === "reviewing" ? 1 : phase === "reference-review" && state.candidatePreparation?.completedAt ? 2 : 0;
     state.phase = phase; persist(); render(); if (focus) focusView();
   }
   function cancelJobs() { shiftAiController?.abort(); shiftAiJob++; shiftAiReady = false; shiftController?.abort(); shiftJob++; shiftPhotosReady = false; referenceController?.cancel(); job++; pipelineController?.abort(); photoJob++; photoController?.abort(); heatJob++; }
@@ -238,6 +240,7 @@
     if (state.phase === "reviewing") renderReview();
     if (state.phase === "review-summary") renderSummary();
     if (["reference-review", "completed"].includes(state.phase)) referenceController?.render();
+    renderPages();
   }
   function signalBars(id, shift) {
     const max = Math.max(...shift.points.map(point => point.score));
@@ -271,22 +274,28 @@
       button.type = "button"; button.dataset.shiftFrame = photo.frame; button.setAttribute("aria-pressed", String(photo.frame === state.shiftFrame));
       button.addEventListener("click", () => { state.shiftFrame = photo.frame; persist(); renderChange(); }); return button;
     }));
-    renderShiftChoice(); loadShiftPhotos(); renderShiftAi();
+    renderShiftChoice(); loadShiftPhotos();
     $("shiftAcknowledgedAt").textContent = state.shiftAcknowledgedAt ? `${time(state.shiftAcknowledgedAt)} 확인 기록됨` : "확인 결과는 검수 이력에 저장됩니다.";
   }
   function shiftPhotos() {
-    return state.caseId === "normal" ? data.cases.normal.review.map(p => ({ frame: p.frame, image: p.image })) : data.visualShift.photos;
+    const photos = state.caseId === "normal" ? data.cases.normal.review.map(p => ({ frame: p.frame, image: p.image })) : data.visualShift.photos;
+    const analyses = window.SURFACETRACE_SHIFT_ANALYSIS?.assets || [];
+    return photos.map(p => ({ ...p, ...analyses.find(a => a.run === getShift().run && a.frame === p.frame) }));
   }
   function renderShiftChoice() {
     document.querySelectorAll("[data-shift-verdict]").forEach(button => button.setAttribute("aria-pressed", String(button.dataset.shiftVerdict === state.shiftDraft.verdict)));
-    $("acknowledgeShift").disabled = !shiftPhotosReady || !Object.hasOwn(shiftVerdicts, state.shiftDraft.verdict);
+    $("acknowledgeShift").disabled = !shiftPhotosReady || !state.shiftViewedFrames.length || !Object.hasOwn(shiftVerdicts, state.shiftDraft.verdict);
     $("acknowledgeShift").textContent = state.afterShiftPhase === "review-summary" ? "판단 저장하고 기록으로 돌아가기 →" : "판단 확정하고 검수 진행 →";
     $("shiftDecisionHint").textContent = !shiftPhotosReady ? "비교 사진을 불러온 뒤 판단을 확정할 수 있습니다." : !state.shiftDraft.verdict ? "사진을 비교한 뒤 외관 변화 여부를 선택해 주세요." : `${shiftVerdicts[state.shiftDraft.verdict]}으로 기록합니다. 사진별 결함 검수는 별도로 진행합니다.`;
+    renderPages();
   }
   async function loadShiftPhotos(retry = false) {
     shiftController?.abort(); shiftController = new AbortController(); const token = ++shiftJob;
     const reference = data.visualShift.referencePhoto, photos = shiftPhotos();
     const current = photos.find(p => p.frame === state.shiftFrame) || photos[0]; state.shiftFrame = current.frame;
+    shiftAiController?.abort(); shiftAiJob++; shiftAiReady = false;
+    $("shiftAiBase").hidden = true; $("shiftAiHeat").hidden = true; $("shiftAiUnavailable").hidden = true;
+    document.querySelectorAll("[data-shift-ai-zoom]").forEach(b => { b.disabled = true; });
     shiftPhotosReady = false; $("shiftPhotoLoading").hidden = false; $("shiftPhotoError").hidden = true;
     $("shiftReferencePhoto").hidden = true; $("shiftCurrentPhoto").hidden = true; renderShiftChoice();
     $("shiftReferenceCaption").textContent = `${reference.run} · ${format(reference.frame)}번째 사진`;
@@ -299,41 +308,28 @@
       if (token !== shiftJob || state.phase !== "change-alert") return;
       $("shiftReferencePhoto").hidden = false; $("shiftCurrentPhoto").hidden = false;
       shiftPhotosReady = true; $("shiftPhotoLoading").hidden = true;
-      if (!state.shiftViewedFrames.includes(current.frame)) state.shiftViewedFrames.push(current.frame);
-      persist(); renderShiftChoice();
+      $("shiftAiBase").src = right; $("shiftAiBase").hidden = false;
+      persist(); renderShiftChoice(); loadShiftAi();
     } catch {
       if (token !== shiftJob || state.phase !== "change-alert") return;
       $("shiftPhotoLoading").hidden = true; $("shiftPhotoError").hidden = false; renderShiftChoice();
     }
   }
-  function shiftAiPhotos() { const s = status(); return s.c.review.slice(0, s.available).filter(photo => photo.heatmap); }
-  function renderShiftAi() {
-    const photos = shiftAiPhotos();
-    $("shiftAiSelect").replaceChildren(...photos.map((photo, index) => {
-      const option = node("option", `후보 ${String(index + 1).padStart(2, "0")} · ${format(photo.frame)}번째 사진`);
-      option.value = String(index); option.selected = index === state.shiftAiIndex; return option;
-    }));
-    loadShiftAi();
-  }
   async function loadShiftAi(retry = false) {
     shiftAiController?.abort(); shiftAiController = new AbortController(); const token = ++shiftAiJob;
-    const photo = shiftAiPhotos()[state.shiftAiIndex]; shiftAiReady = false;
-    $("shiftAiLoading").hidden = false; $("shiftAiError").hidden = true;
-    ["shiftAiOriginal", "shiftAiBase", "shiftAiHeat"].forEach(id => { $(id).hidden = true; });
+    const photo = shiftPhotos().find(p => p.frame === state.shiftFrame); shiftAiReady = false;
+    $("shiftAiHeat").hidden = true; $("shiftAiError").hidden = true; $("shiftAiUnavailable").hidden = true;
     document.querySelectorAll("[data-shift-ai-zoom]").forEach(b => { b.disabled = true; });
-    $("shiftAiCaption").textContent = `${getShift().run} · ${format(photo.frame)}번째 사진`;
-    $("shiftAiScore").textContent = `이상 점수 ${photo.score.toFixed(4)} · 경보선 ${status().c.sourceThreshold.toFixed(4)}`;
+    $("shiftAiScore").textContent = Number.isFinite(photo?.score) ? `${format(photo.frame)}번째 · 이상 점수 ${photo.score.toFixed(4)}` : `${format(state.shiftFrame)}번째 사진`;
+    $("shiftAiLoading").hidden = !photo?.heatmap;
+    if (!photo?.heatmap) { $("shiftAiUnavailable").hidden = false; return; }
     try {
-      const [original, heat] = await Promise.all([adapter.asset(photo.image, shiftAiController.signal, retry), adapter.asset(photo.heatmap, shiftAiController.signal, retry)]);
-      if (token !== shiftAiJob || state.phase !== "change-alert") return;
-      $("shiftAiOriginal").src = original; $("shiftAiBase").src = original; $("shiftAiHeat").src = heat;
-      await Promise.all(["shiftAiOriginal", "shiftAiBase", "shiftAiHeat"].map(id => $(id).decode()));
-      if (token !== shiftAiJob || state.phase !== "change-alert") return;
-      ["shiftAiOriginal", "shiftAiBase", "shiftAiHeat"].forEach(id => { $(id).hidden = false; });
-      $("shiftAiLoading").hidden = true; shiftAiReady = true;
-      document.querySelectorAll("[data-shift-ai-zoom]").forEach(b => { b.disabled = false; });
-      if (!state.shiftAiViewedFrames.includes(photo.frame)) state.shiftAiViewedFrames.push(photo.frame);
-      persist();
+      const heat = await adapter.asset(photo.heatmap, shiftAiController.signal, retry);
+      if (token !== shiftAiJob || state.phase !== "change-alert" || state.shiftFrame !== photo.frame) return;
+      $("shiftAiHeat").src = heat; await $("shiftAiHeat").decode();
+      if (token !== shiftAiJob || state.phase !== "change-alert" || state.shiftFrame !== photo.frame) return;
+      $("shiftAiHeat").hidden = false; $("shiftAiLoading").hidden = true; shiftAiReady = true;
+      document.querySelectorAll("[data-shift-ai-zoom]").forEach(b => { b.disabled = false; }); renderPages();
     } catch {
       if (token !== shiftAiJob || state.phase !== "change-alert") return;
       $("shiftAiLoading").hidden = true; $("shiftAiError").hidden = false;
@@ -425,6 +421,7 @@
   function renderChoice() {
     const d = draft(); document.querySelectorAll("[data-verdict]").forEach(button => { button.setAttribute("aria-pressed", String(button.dataset.verdict === d.verdict)); });
     $("saveDecision").disabled = !d.verdict || !photoReady || photoFailed;
+    renderPages();
     $("saveHint").textContent = photoFailed ? "사진을 다시 불러온 뒤 판단을 저장해 주세요." : !photoReady ? "사진을 불러오고 있습니다." : d.verdict ? `${verdicts[d.verdict]}으로 저장합니다.` : "담당자의 판단을 선택해 주세요.";
   }
   function choose(verdict) {
@@ -433,7 +430,7 @@
   }
   function selectPhoto(index) {
     if (state.phase !== "reviewing" || state.reviewGate || index < 0 || index >= status().available) return;
-    state.active = index; persist(); renderReview();
+    state.active = index; state.pages.reviewing = 1; persist(); renderReview(); renderPages();
   }
   function invalidateReference() {
     if (state.candidateRequested) history("candidate-review-invalidated", "검수 결과 수정으로 이전 기준 후보 검토 요청과 담당자 결정을 해제했습니다.");
@@ -457,7 +454,7 @@
     if (after.complete) { state.editing = false; state.reviewGate = null; history("review-completed", `총 ${after.reviewed}장 검수 완료`); transition("review-summary"); return; }
     state.active = state.records.findIndex((record, index) => index < after.available && !record);
     if (state.active < 0) { state.reviewGate = "waiting"; persist(); render(); focusView(); }
-    else { persist(); render(); }
+    else { state.pages.reviewing = 1; persist(); render(); }
   }
   function gateAction() {
     if (state.phase !== "reviewing") return;
@@ -466,7 +463,7 @@
       history("additional-reviews-requested", "담당자 확인 · 추가 6장 검수 요청");
       const s = status();
       if (s.pending) { state.reviewGate = "waiting"; history("additional-photos-pending", "준비된 추가 사진 없음 · 추가 6장 수신 대기"); }
-      else { state.reviewGate = null; state.active = state.records.findIndex((r, i) => i < s.available && !r); }
+      else { state.reviewGate = null; state.pages.reviewing = 1; state.active = state.records.findIndex((r, i) => i < s.available && !r); }
       persist(); render(); focusView();
     } else if (["stop", "waiting"].includes(state.reviewGate)) transition("review-summary");
   }
@@ -494,7 +491,8 @@
       const decision = node("td"); decision.append(node("span", verdicts[record.verdict], `verdict-pill ${record.verdict}`));
       const truth = node("td", verdicts[photo.recordedLabel], "truth-column"); truth.hidden = !state.truthRevealed;
       const editCell = node("td"), button = node("button", "수정", "text-button"); button.type = "button"; button.dataset.edit = index; button.setAttribute("aria-label", `후보 ${index + 1} 판정 수정`); button.addEventListener("click", () => editPhoto(index)); editCell.append(button);
-      row.append(node("td", `후보 ${String(index + 1).padStart(2, "0")}`), imageCell, node("td", photo.score.toFixed(4)), decision, node("td", record.note || "—"), truth, editCell); return [row];
+      const noteCell=node("td"), noteText=node("span",record.note || "—","record-note");noteText.title=record.note;noteCell.append(noteText);
+      row.append(node("td", `후보 ${String(index + 1).padStart(2, "0")}`), imageCell, node("td", photo.score.toFixed(4)), decision, noteCell, truth, editCell); return [row];
     }));
     document.querySelectorAll(".truth-column").forEach(e => { e.hidden = !state.truthRevealed; });
     $("compareTruth").disabled = state.truthRevealed;
@@ -505,6 +503,7 @@
     $("openCandidate").disabled = !s.complete || s.normals.length < 2;
     $("openCandidate").textContent = state.candidateRequested ? "검사 기준 후보 검토 내역 보기 →" : "새 검사 기준 후보 검토 요청 →";
     $("inspectionHistory").replaceChildren(...state.history.map(event => { const item = node("li"), stamp = node("time", time(event.at)); stamp.dateTime = event.at; item.append(stamp, node("span", event.description)); return item; }));
+    renderListPages();
   }
   function editPhoto(index) {
     if (!["review-summary"].includes(state.phase) || !state.records[index]) return;
@@ -556,7 +555,7 @@
   $("retryLoading").addEventListener("click", () => { if (state.loadingError && busy()) pipeline(); });
   $("startReviewFlow").addEventListener("click", () => { if (state.pipelineReady && busy()) transition("change-alert"); });
   $("acknowledgeShift").addEventListener("click", () => {
-    if (state.phase !== "change-alert" || !shiftPhotosReady || !Object.hasOwn(shiftVerdicts, state.shiftDraft.verdict)) return;
+    if (state.phase !== "change-alert" || !shiftPhotosReady || !state.shiftViewedFrames.length || !Object.hasOwn(shiftVerdicts, state.shiftDraft.verdict)) return;
     const at = new Date().toISOString(); state.shiftAcknowledgedAt = at;
     state.shiftReview = { verdict: state.shiftDraft.verdict, note: state.shiftDraft.note.trim(), at, referenceRun: data.visualShift.sourceRun, referenceFrame: data.visualShift.referencePhoto.frame, targetRun: getShift().run, currentFrame: state.shiftFrame, comparedFrames: [...state.shiftViewedFrames], aiComparedFrames: [...state.shiftAiViewedFrames] };
     history("shift-reviewed", `외관 변화 담당자 판단 · ${shiftVerdicts[state.shiftReview.verdict]}${state.shiftReview.note ? " · " + state.shiftReview.note : ""} · 사진별 이상 경보와 기존 기준 유지`, at);
@@ -576,17 +575,12 @@
     $("photoDialogTitle").textContent = baseline ? $("shiftReferenceCaption").textContent : $("shiftCurrentCaption").textContent;
     $("zoomOriginal").src = $(baseline ? "shiftReferencePhoto" : "shiftCurrentPhoto").src; $("zoomHeat").hidden = true; $("photoDialog").showModal();
   }));
-  $("shiftAiSelect").addEventListener("change", () => {
-    if (state.phase !== "change-alert") return;
-    const index = Number($("shiftAiSelect").value); if (!Number.isInteger(index) || !shiftAiPhotos()[index]) return;
-    state.shiftAiIndex = index; persist(); loadShiftAi();
-  });
   $("retryShiftAi").addEventListener("click", () => loadShiftAi(true));
   document.querySelectorAll("[data-shift-ai-zoom]").forEach(button => button.addEventListener("click", () => {
     if (!shiftAiReady || state.phase !== "change-alert") return;
     const heat = button.dataset.shiftAiZoom === "heat";
-    $("photoDialogTitle").textContent = `${format(shiftAiPhotos()[state.shiftAiIndex].frame)}번째 사진 · ${heat ? "AI 제시 영역" : "원본"}`;
-    $("zoomOriginal").src = $("shiftAiOriginal").src; $("zoomHeat").hidden = !heat;
+    $("photoDialogTitle").textContent = `${format(state.shiftFrame)}번째 사진 · ${heat ? "AI 제시 영역" : "원본"}`;
+    $("zoomOriginal").src = $("shiftCurrentPhoto").src; $("zoomHeat").hidden = !heat;
     if (heat) $("zoomHeat").src = $("shiftAiHeat").src;
     $("photoDialog").showModal();
   }));
@@ -608,6 +602,77 @@
   });
   $("openCandidate").addEventListener("click", requestReference);
   document.addEventListener("keydown", event => { if (event.ctrlKey || event.metaKey || event.altKey || event.target.closest("textarea,input,select") || document.querySelector("dialog[open]")) return; const v = { "1": "normal", "2": "defect", "3": "hold" }[event.key]; if (v && state.phase === "reviewing" && !state.reviewGate) { event.preventDefault(); choose(v); } });
+  function visiblePages() {
+    const view = document.querySelector("[data-view]:not([hidden])");
+    if (!view) return [];
+    const parent = state.phase === "reviewing" ? (state.reviewGate ? $("reviewGate") : $("reviewWorkspace").querySelector(".workbench")) : view;
+    return [...parent.querySelectorAll(":scope > [data-page]")];
+  }
+  function renderPages() {
+    const pages = visiblePages(); if (!pages.length) return;
+    const index = state.reviewGate && state.phase === "reviewing" ? 0 : Math.min(state.pages[state.phase] || 0, pages.length - 1);
+    state.pages[state.phase] = index;
+    pages.forEach((page,i) => { page.hidden = i !== index; });
+    paginateNormalPreviews();
+    $("workspacePageTitle").textContent = pages[index].dataset.page;
+    $("workspacePagePosition").textContent = `${index+1} / ${pages.length}`;
+    const preparing = state.phase === "reference-review" && state.candidatePreparation?.running;
+    $("pagePrevious").disabled = index === 0 || preparing;
+    $("pageNext").disabled = index === pages.length-1 || preparing || state.phase === "reference-review" && index === 1 && !state.candidatePreparation?.completedAt || state.phase === "reviewing" && index === 1 && !photoReady || state.phase === "change-alert" && index === 1 && !shiftPhotosReady;
+    if (state.phase === "change-alert" && index === 1 && shiftPhotosReady) {
+      let changed = false;
+      if (!state.shiftViewedFrames.includes(state.shiftFrame)) { state.shiftViewedFrames.push(state.shiftFrame); changed = true; }
+      if (shiftAiReady && !state.shiftAiViewedFrames.includes(state.shiftFrame)) { state.shiftAiViewedFrames.push(state.shiftFrame); changed = true; }
+      if (changed) persist();
+    }
+  }
+  const normalPreviewPages = {};
+  function paginateNormalPreviews() {
+    for (const id of ["normalSummaryPhotos", "normalPhotos"]) {
+      const parent = $(id), photos = [...parent.querySelectorAll("figure")], count = Math.max(1,Math.ceil(photos.length/4));
+      normalPreviewPages[id] = Math.min(normalPreviewPages[id] || 0,count-1);
+      photos.forEach((photo,i)=>{photo.hidden=Math.floor(i/4)!==normalPreviewPages[id];});
+      let nav = $(id+"Paging");
+      if(!nav){ nav=node("nav",undefined,"list-pagination normal-pagination");nav.id=id+"Paging";
+        for(const delta of [-1,1]) {const b=node("button",delta<0?"← 이전 정상 사진":"다음 정상 사진 →","text-button");b.type="button";b.dataset.delta=delta;b.addEventListener("click",()=>{normalPreviewPages[id]+=delta;paginateNormalPreviews();});nav.append(b);}
+        parent.after(nav);
+      }
+      nav.hidden = count===1; nav.firstElementChild.disabled=normalPreviewPages[id]===0;nav.lastElementChild.disabled=normalPreviewPages[id]===count-1;
+    }
+  }
+  function movePage(delta) {
+    if ($(delta > 0 ? "pageNext" : "pagePrevious").disabled) return;
+    state.pages[state.phase] = (state.pages[state.phase] || 0) + delta; persist(); renderPages();
+    const heading = visiblePages()[state.pages[state.phase]]?.querySelector("h2,h3");
+    if (heading) { heading.tabIndex = -1; heading.focus({preventScroll:true}); }
+  }
+  function renderListPages() {
+    const compact = matchMedia("(max-width: 650px)").matches;
+    for (const [id,key,size,prefix] of [["recordRows","recordPage",compact ? 2 : 4,"record"],["inspectionHistory","historyPage",compact ? 3 : 6,"history"]]) {
+      const rows = [...$(id).children], count = Math.max(1,Math.ceil(rows.length/size));
+      if (!rows.length) { $(prefix+"Previous").disabled = true; $(prefix+"Next").disabled = true; $(prefix+"PagePosition").textContent = "1 / 1"; continue; }
+      state[key] = Math.min(state[key] || 0,count-1);
+      rows.forEach((row,i) => { row.hidden = Math.floor(i/size) !== state[key]; });
+      $(prefix+"Previous").disabled = state[key]===0; $(prefix+"Next").disabled = state[key]===count-1;
+      $(prefix+"PagePosition").textContent = `${state[key]+1} / ${count}`;
+    }
+  }
+  let referenceCompletion;
+  function referenceRendered() {
+    const completed = state.candidatePreparation?.completedAt;
+    if (state.phase === "reference-review") {
+      if (state.candidatePreparation?.running) state.pages[state.phase] = 1;
+      else if (completed && referenceCompletion !== completed) state.pages[state.phase] = 2;
+    }
+    referenceCompletion = completed; renderPages(); persist();
+  }
+  $("pagePrevious").addEventListener("click",()=>movePage(-1)); $("pageNext").addEventListener("click",()=>movePage(1));
+  for (const [prefix,key] of [["record","recordPage"],["history","historyPage"]]) for (const [suffix,delta] of [["Previous",-1],["Next",1]]) $(prefix+suffix).addEventListener("click",()=>{state[key]+=delta;renderListPages();persist();});
+  $("fieldFullscreen").addEventListener("click",async()=>{try { if(document.fullscreenElement) await document.exitFullscreen(); else await document.documentElement.requestFullscreen(); } catch { toast("브라우저의 전체 화면 기능을 이용해 주세요."); }});
+  document.querySelectorAll("[data-detail]").forEach((button,i)=>button.addEventListener("click",()=>document.querySelectorAll(".detail-dialog")[i].showModal()));
+  document.querySelectorAll("[data-close-detail]").forEach(button=>button.addEventListener("click",()=>button.closest("dialog").close()));
+  window.addEventListener("resize",()=>{renderPages();renderListPages();});
+  document.addEventListener("keydown",e=>{if(e.ctrlKey||e.metaKey||e.altKey||e.target.closest("textarea,input,select")||document.querySelector("dialog[open]"))return;if(["ArrowLeft","ArrowRight"].includes(e.key)){e.preventDefault();movePage(e.key==="ArrowRight"?1:-1);}});
   restore();
   if (state.candidatePreparation?.running) {
     state.candidatePreparation.running = false;
@@ -617,7 +682,7 @@
     if (state.candidateRequested && status().complete && status().normals.length >= 2) state.phase = state.referenceDecision ? "completed" : "reference-review";
     window.history.replaceState(null, "", location.pathname + location.search);
   }
-  referenceController = window.createSurfaceTraceReference({ getState: () => state, persist, navigate: transition, notify: toast, onDownload: downloadRecord });
+  referenceController = window.createSurfaceTraceReference({ getState: () => state, persist, navigate: transition, notify: toast, onDownload: downloadRecord, onRender: referenceRendered });
   render();
   window.addEventListener("pageshow", event => { if (event.persisted) {
     referenceController?.cancel(); restore();
