@@ -24,10 +24,11 @@
     source: "experiments/unsupervised/results/change_limit_development.json · original_limit" };
   const fresh = () => ({ version: 3, phase: "ready", caseId: null, receivedAt: null, records: [], drafts: [], active: 0,
     expanded: false, reviewGate: null, editing: false, loadingStep: 0, pipelineReady: false, loadingError: null,
-    shiftAcknowledgedAt: null, shiftReview: null, shiftDraft: { verdict: null, note: "" }, shiftFrame: 96, shiftViewedFrames: [], shiftAiViewedFrames: [], pages: {}, recordPage: 0, historyPage: 0, afterShiftPhase: null, truthRevealed: false, candidateRequested: false, candidateRequest: null,
+    shiftAcknowledgedAt: null, shiftReview: null, shiftDraft: { verdict: null, note: "" }, shiftFrame: 96, shiftViewedFrames: [], shiftAiViewedFrames: [], pages: {}, recordPage: 0, historyPage: 0, batchPage: 0, afterShiftPhase: null, truthRevealed: false, candidateRequested: false, candidateRequest: null,
     exampleViewedAt: null, referenceDecision: null, history: [] });
-  let state = fresh(), job = 0, pipelineController, photoController, photoJob = 0, heatJob = 0;
-  let photoReady = false, photoFailed = false, heatBusy = false, toastTimer, resetCase = null, storageAvailable = true;
+  let state = fresh(), job = 0, pipelineController, photoController, photoJob = 0;
+  const batchAssets = new Map();
+  let toastTimer, resetCase = null, storageAvailable = true;
   let shiftController, shiftJob = 0, shiftPhotosReady = false, shiftAiController, shiftAiJob = 0, shiftAiReady = false;
   const assets = new Map();
 
@@ -125,6 +126,7 @@
       state.pages = saved.pages && typeof saved.pages === "object" ? Object.fromEntries(Object.entries(saved.pages).filter(([k,v]) => PHASES.includes(k) && Number.isInteger(v) && v >= 0 && v < 6)) : {};
       state.recordPage = Number.isInteger(saved.recordPage) ? Math.max(0,saved.recordPage) : 0;
       state.historyPage = Number.isInteger(saved.historyPage) ? Math.max(0,saved.historyPage) : 0;
+      state.batchPage = Number.isInteger(saved.batchPage) ? Math.max(0,saved.batchPage) : 0;
       state.afterShiftPhase = saved.afterShiftPhase === "review-summary" ? "review-summary" : null;
       if (state.records.slice(2).some(Boolean)) state.expanded = true;
       const s = status();
@@ -162,12 +164,13 @@
   function transition(phase, focus = true) {
     if (phase !== state.phase && !transitions[state.phase]?.includes(phase)) throw new Error(`Invalid workflow transition: ${state.phase} → ${phase}`);
     if (state.phase === "reference-review" && phase !== "reference-review") referenceController?.cancel();
-    if (state.phase !== phase) state.pages[phase] = phase === "reviewing" ? 1 : phase === "reference-review" && state.candidatePreparation?.completedAt ? 2 : 0;
+    if (state.phase !== phase) state.pages[phase] = phase === "reviewing" ? 0 : phase === "reference-review" && state.candidatePreparation?.completedAt ? 2 : 0;
+    if (state.phase === "reviewing" && phase !== "reviewing") { photoJob++; photoController?.abort(); }
     state.phase = phase; persist(); render(); if (focus) focusView();
   }
-  function cancelJobs() { shiftAiController?.abort(); shiftAiJob++; shiftAiReady = false; shiftController?.abort(); shiftJob++; shiftPhotosReady = false; referenceController?.cancel(); job++; pipelineController?.abort(); photoJob++; photoController?.abort(); heatJob++; }
+  function cancelJobs() { shiftAiController?.abort(); shiftAiJob++; shiftAiReady = false; shiftController?.abort(); shiftJob++; shiftPhotosReady = false; referenceController?.cancel(); job++; pipelineController?.abort(); photoJob++; photoController?.abort(); batchAssets.clear(); }
   function reset(caseId = null) {
-    cancelJobs(); state = fresh(); photoReady = false; photoFailed = false; heatBusy = false;
+    cancelJobs(); state = fresh();
     persist(); render(); focusView(); if (caseId) startReceiving(caseId);
   }
   function requestReceive(caseId) {
@@ -335,7 +338,8 @@
       $("shiftAiLoading").hidden = true; $("shiftAiError").hidden = false;
     }
   }
-  function draft() { return state.drafts[state.active] || (state.records[state.active] ? { verdict: state.records[state.active].verdict, note: state.records[state.active].note } : { verdict: null, note: "" }); }
+  function draft(index = state.active) { return state.drafts[index] || (state.records[index] ? { verdict: state.records[index].verdict, note: state.records[index].note } : { verdict: null, note: "" }); }
+  function batchPageSize() { return matchMedia("(max-width: 850px)").matches ? 4 : 8; }
   function renderReview() {
     const s = status(), gate = state.reviewGate;
     $("reviewGate").hidden = !gate; $("reviewWorkspace").hidden = !!gate;
@@ -348,113 +352,106 @@
     $("reviewProgress").textContent = `검수 진행 ${s.reviewed} / ${s.budget}`;
     $("reviewProgressFill").style.width = `${s.reviewed / s.budget * 100}%`;
     $("reviewStageBadge").textContent = state.expanded ? "추가 검수 · 총 8장" : "우선 검수 2장";
-    $("queueCount").textContent = `${s.budget}장 요청`;
-    $("queueHint").textContent = state.expanded ? "추가 요청된 후보를 포함해 확인합니다." : "먼저 두 장을 확인한 뒤 추가 요청 여부를 결정합니다.";
-    $("photoQueue").replaceChildren(...s.c.review.map((photo, index) => {
-      const record = state.records[index], locked = index >= s.available, button = node("button", undefined, `queue-item${record ? " is-reviewed" : ""}${state.expanded && index > 1 ? " is-new" : ""}`);
-      button.type = "button"; button.disabled = locked; button.dataset.index = String(index); button.setAttribute("aria-pressed", String(index === state.active));
-      button.setAttribute("aria-label", `우선순위 ${index + 1}, ${locked ? "추가 요청 전" : record ? verdicts[record.verdict] : "대기"}`);
-      const pair = node("div", undefined, "queue-pair");
-      for (const mode of ["original", "ai"]) {
-        const frame = node("span", undefined, "queue-preview"), image = node("img"); image.src = photo.image; image.alt = "";
-        frame.append(image);
-        if (mode === "ai" && photo.heatmap) { const overlay = node("img", undefined, "queue-heat"); overlay.src = photo.heatmap; overlay.alt = ""; frame.append(overlay); }
-        frame.append(node("i", mode === "ai" ? "AI" : "원본")); pair.append(frame);
+    $("batchCards").classList.toggle("is-pilot", s.available <= 2);
+    $("batchCards").replaceChildren(...s.c.review.slice(0,s.available).map((photo,index)=>{
+      const card=node("article",undefined,"batch-card"); card.dataset.batchIndex=index;
+      const head=node("div",undefined,"batch-card-heading"), title=node("div");
+      title.append(node("strong",`${String(index+1).padStart(2,"0")} · ${format(photo.frame)}번째`),node("small",`이상 점수 ${photo.score.toFixed(4)}`));
+      const note=node("button","메모","text-button"); note.type="button";note.dataset.batchNote=index;note.setAttribute("aria-label",`후보 ${index+1} 메모`);note.addEventListener("click",()=>openBatchNote(index)); head.append(title,note);
+      const pair=node("div",undefined,"batch-photo-pair");
+      for(const mode of ["original","heat"]){
+        const button=node("button");button.type="button";button.disabled=true;button.dataset.batchZoom=mode;button.setAttribute("aria-label",`후보 ${index+1} ${mode==="heat"?"AI 표시":"원본"} 확대`);
+        const image=node("img");image.id=`batch${mode==="heat"?"Base":"Original"}-${index}`;image.alt=`${photo.frame}번째 사진 ${mode==="heat"?"AI 표시 배경":"원본"}`;image.hidden=true;button.append(image);
+        if(mode==="heat"){const heat=node("img",undefined,"batch-heat");heat.id=`batchHeat-${index}`;heat.alt="같은 사진의 AI 이상 영역";heat.hidden=true;button.append(heat);}
+        button.append(node("span",mode==="heat"?"AI 표시":"원본","batch-photo-label"));button.addEventListener("click",()=>zoomBatch(index,mode));pair.append(button);
       }
-      const text = node("span"); text.append(node("strong", `후보 ${String(index + 1).padStart(2, "0")}`), node("small", `${photo.score.toFixed(4)} · ${locked ? "추가 요청 전" : record ? "확인 완료" : "대기"}`));
-      button.append(pair, text, node("b", record ? "✓" : "→")); button.addEventListener("click", () => selectPhoto(index)); return button;
+      const options=node("div",undefined,"batch-options");options.setAttribute("role","group");options.setAttribute("aria-label",`후보 ${index+1} 담당자 판정`);
+      for(const [verdict,label] of [["normal","정상"],["defect","결함"],["hold","보류"]]){const button=node("button",label);button.type="button";button.dataset.batchVerdict=verdict;button.dataset.index=index;button.setAttribute("aria-pressed","false");button.addEventListener("click",()=>chooseBatch(index,verdict));options.append(button);}
+      const info=node("div",undefined,"batch-card-status");info.append(node("span","사진 준비 중…"));const retry=node("button","재시도","text-button");retry.type="button";retry.hidden=true;retry.addEventListener("click",()=>loadBatchPhoto(index,photoJob,true));info.append(retry);
+      card.append(head,pair,options,info);return card;
     }));
-    const photo = s.c.review[state.active], d = draft();
-    $("photoRank").textContent = `REVIEW CANDIDATE ${String(state.active + 1).padStart(2, "0")}`;
-    $("photoTitle").textContent = `${format(photo.frame)}번째 사진`;
-    $("photoScore").textContent = photo.score.toFixed(4); $("threshold").textContent = s.c.sourceThreshold.toFixed(4);
-    const alert = photo.score > s.c.sourceThreshold;
-    $("scoreStatus").textContent = alert ? "경보선 초과" : "경보선 이하"; $("scoreStatus").className = `pill ${alert ? "amber" : "green"}`;
-    $("reviewNote").value = d.note; $("photoPosition").textContent = `${state.active + 1} / ${s.available}`;
-    $("previousPhoto").disabled = state.active === 0; $("nextPhoto").disabled = state.active >= s.available - 1;
-    $("recentReviews").replaceChildren(...state.records.flatMap((record, index) => {
-      if (!record || index >= s.available) return [];
-      const item = node("li", `후보 ${index + 1} · ${verdicts[record.verdict]}`); if (record.note) item.append(node("small", record.note)); return [item];
-    }));
-    if (!s.reviewed) $("recentReviews").append(node("li", "아직 저장한 확인 기록이 없습니다."));
-    $("saveDecision").textContent = state.records[state.active] ? "확인 결과 수정 →" : "확인 결과 저장 →";
-    loadPhoto(); renderChoice();
+    photoController?.abort();photoController=new AbortController();const token=++photoJob;batchAssets.clear();
+    renderBatchChoice();renderBatchPages();
+    s.c.review.slice(0,s.available).forEach((_,index)=>loadBatchPhoto(index,token));
   }
-  async function loadPhoto(retry = false) {
-    photoController?.abort(); photoController = new AbortController();
-    const token = ++photoJob, photo = status().c.review[state.active]; heatJob++; heatBusy = false; photoReady = false; photoFailed = false;
-    $("photoLoading").hidden = false; $("photoError").hidden = true; $("heatError").hidden = true;
-    $("originalPhoto").hidden = true; $("heatBase").hidden = true; $("heatPhoto").hidden = true;
-    $("heatLoading").hidden = false; $("heatUnavailable").hidden = true; renderChoice();
-    try {
-      const url = await adapter.asset(photo.image, photoController.signal, retry);
-      if (token !== photoJob || state.phase !== "reviewing" || state.reviewGate) return;
-      $("originalPhoto").src = url; $("originalPhoto").hidden = false;
-      $("heatBase").src = url; $("heatBase").hidden = false; photoReady = true;
-      $("photoLoading").hidden = true; renderChoice(); loadHeat();
-    } catch {
-      if (token !== photoJob || state.phase !== "reviewing") return;
-      photoFailed = true; $("photoLoading").hidden = true; $("photoError").hidden = false;
-      $("heatLoading").hidden = true; $("heatUnavailable").hidden = false; renderChoice();
+  async function loadBatchPhoto(index,token,retry=false){
+    const photo=status().c.review[index], card=$("batchCards").children[index];
+    batchAssets.set(index,{ready:false,heatReady:false,error:false});renderBatchChoice();
+    try{
+      const original=await adapter.asset(photo.image,photoController.signal,retry);
+      if(token!==photoJob||state.phase!=="reviewing"||state.reviewGate)return;
+      $(`batchOriginal-${index}`).src=original;$(`batchBase-${index}`).src=original;
+      $(`batchOriginal-${index}`).hidden=false;$(`batchBase-${index}`).hidden=false;
+      batchAssets.set(index,{ready:true,heatReady:false,error:false});card.querySelector('[data-batch-zoom="original"]').disabled=false;renderBatchChoice();
+      if(!photo.heatmap){batchAssets.get(index).heatUnavailable=true;renderBatchChoice();return;}
+      const heat=await adapter.asset(photo.heatmap,photoController.signal,retry);
+      if(token!==photoJob||state.phase!=="reviewing"||state.reviewGate)return;
+      $(`batchHeat-${index}`).src=heat;await $(`batchHeat-${index}`).decode();
+      if(token!==photoJob||state.phase!=="reviewing"||state.reviewGate)return;
+      $(`batchHeat-${index}`).hidden=false;batchAssets.get(index).heatReady=true;card.querySelector('[data-batch-zoom="heat"]').disabled=false;renderBatchChoice();
+    }catch{
+      if(token!==photoJob||state.phase!=="reviewing"||state.reviewGate)return;
+      const asset=batchAssets.get(index)||{ready:false,heatReady:false};asset.error=true;batchAssets.set(index,asset);renderBatchChoice();
     }
   }
-  async function loadHeat(retry = false) {
-    const photo = status().c?.review[state.active];
-    if (!photo?.heatmap || !photoReady || heatBusy || state.phase !== "reviewing") return;
-    const token = ++heatJob, imageToken = photoJob; heatBusy = true;
-    $("heatLoading").hidden = false; $("heatUnavailable").hidden = true; $("heatError").hidden = true;
-    try {
-      const url = await adapter.asset(photo.heatmap, photoController.signal, retry);
-      if (token !== heatJob || imageToken !== photoJob) return;
-      $("heatPhoto").src = url; $("heatPhoto").hidden = false; $("heatLoading").hidden = true;
-    } catch {
-      if (token === heatJob && imageToken === photoJob) { $("heatLoading").hidden = true; $("heatUnavailable").hidden = false; $("heatError").hidden = false; }
-    } finally { if (token === heatJob && imageToken === photoJob) heatBusy = false; }
+  function renderBatchChoice(){
+    if(state.phase!=="reviewing"||state.reviewGate)return;
+    const s=status();let chosen=0,ready=0;
+    [...$("batchCards").children].forEach((card,index)=>{
+      const d=draft(index),asset=batchAssets.get(index);if(d.verdict)chosen++;if(asset?.ready)ready++;
+      card.querySelectorAll("[data-batch-verdict]").forEach(button=>{button.setAttribute("aria-pressed",String(button.dataset.batchVerdict===d.verdict));button.disabled=!asset?.ready;});
+      card.classList.toggle("is-saved",!!state.records[index]&&!state.drafts[index]);
+      const message=card.querySelector(".batch-card-status>span");
+      message.textContent=asset?.error?(asset.ready?"AI 표시 재시도 가능":"사진 불러오기 실패"):!asset?.ready?"사진 준비 중…":state.records[index]&&!state.drafts[index]?`저장됨 · ${verdicts[d.verdict]}`:d.verdict?`${verdicts[d.verdict]} 선택${d.note?" · 메모 있음":""}`:"판정을 선택하세요";
+      message.title=message.textContent;
+      card.querySelector(".batch-card-status>button").hidden=!asset?.error;
+      card.querySelector("[data-batch-note]").classList.toggle("has-note",!!d.note);
+    });
+    $("batchHint").textContent=`${s.available}장을 함께 확인하고 판정을 선택하세요. ${chosen} / ${s.available}장 선택`;
+    $("saveDecision").disabled=chosen!==s.available||ready!==s.available;
+    $("saveDecision").textContent=s.reviewed===s.available&&!state.drafts.some(Boolean)?"검수 결과 확인하기 →":`선택한 ${s.available}장 결과 한 번에 저장 →`;
+    $("saveHint").textContent=ready!==s.available?"사진을 불러오는 중입니다.":chosen!==s.available?`남은 ${s.available-chosen}장의 판정을 선택하세요.`:"판정을 확인한 뒤 한 번에 저장하세요.";
+    $("batchNormal").disabled=ready!==s.available||chosen===s.available;
   }
-  function zoomPhoto(mode) {
-    if (!photoReady || mode === "heat" && $("heatPhoto").hidden) { toast("사진과 AI 표시를 불러온 뒤 확대할 수 있습니다."); return; }
-    $("photoDialogTitle").textContent = `${format(status().c.review[state.active].frame)}번째 사진 · ${mode === "heat" ? "AI 이상 영역" : "원본"}`;
-    $("zoomOriginal").src = $("originalPhoto").src; $("zoomHeat").hidden = mode !== "heat";
-    if (mode === "heat") $("zoomHeat").src = $("heatPhoto").src;
-    $("photoDialog").showModal();
+  function renderBatchPages(){
+    if(state.phase!=="reviewing"||state.reviewGate)return;
+    const size=batchPageSize(),cards=[...$("batchCards").children],count=Math.max(1,Math.ceil(cards.length/size));state.batchPage=Math.min(state.batchPage||0,count-1);
+    cards.forEach((card,index)=>{card.hidden=Math.floor(index/size)!==state.batchPage;});
+    document.querySelector(".batch-pagination").hidden=count===1;$("batchPrevious").disabled=state.batchPage===0;$("batchNext").disabled=state.batchPage===count-1;$("batchPagePosition").textContent=`${state.batchPage+1} / ${count}`;
   }
-  function renderChoice() {
-    const d = draft(); document.querySelectorAll("[data-verdict]").forEach(button => { button.setAttribute("aria-pressed", String(button.dataset.verdict === d.verdict)); });
-    $("saveDecision").disabled = !d.verdict || !photoReady || photoFailed;
-    renderPages();
-    $("saveHint").textContent = photoFailed ? "사진을 다시 불러온 뒤 판단을 저장해 주세요." : !photoReady ? "사진을 불러오고 있습니다." : d.verdict ? `${verdicts[d.verdict]}으로 저장합니다.` : "담당자의 판단을 선택해 주세요.";
+  function chooseBatch(index,verdict){
+    if(state.phase!=="reviewing"||state.reviewGate||!batchAssets.get(index)?.ready||!Object.hasOwn(verdicts,verdict))return;
+    state.drafts[index]={...draft(index),verdict};persist();renderBatchChoice();
   }
-  function choose(verdict) {
-    if (state.phase !== "reviewing" || state.reviewGate || !Object.hasOwn(verdicts, verdict)) return;
-    state.drafts[state.active] = { ...draft(), verdict }; persist(); renderChoice();
+  function openBatchNote(index){
+    if(state.phase!=="reviewing"||state.reviewGate)return;
+    state.active=index;$("batchNoteTitle").textContent=`후보 ${index+1} · ${format(status().c.review[index].frame)}번째 사진 메모`;$("reviewNote").value=draft(index).note;$("batchNoteDialog").showModal();
   }
-  function selectPhoto(index) {
-    if (state.phase !== "reviewing" || state.reviewGate || index < 0 || index >= status().available) return;
-    state.active = index; state.pages.reviewing = 1; persist(); renderReview(); renderPages();
+  function zoomBatch(index,mode){
+    const asset=batchAssets.get(index);if(!asset?.ready||mode==="heat"&&!asset.heatReady)return;
+    $("photoDialogTitle").textContent=`${format(status().c.review[index].frame)}번째 사진 · ${mode==="heat"?"AI 이상 영역":"원본"}`;$("zoomOriginal").src=$(`batchOriginal-${index}`).src;$("zoomHeat").hidden=mode!=="heat";if(mode==="heat")$("zoomHeat").src=$(`batchHeat-${index}`).src;$("photoDialog").showModal();
   }
   function invalidateReference() {
     if (state.candidateRequested) history("candidate-review-invalidated", "검수 결과 수정으로 이전 기준 후보 검토 요청과 담당자 결정을 해제했습니다.");
     state.candidateRequested = false; state.candidateRequest = null; state.exampleViewedAt = null; state.referenceDecision = null; state.candidatePreparation = null; state.truthRevealed = false;
   }
-  function saveDecision() {
-    const s = status(), d = draft();
-    if (state.phase !== "reviewing" || state.reviewGate || !photoReady || !Object.hasOwn(verdicts, d.verdict)) return;
-    const record = { verdict: d.verdict, note: d.note.trim().slice(0, 240), at: new Date().toISOString() };
-    invalidateReference(); state.records[state.active] = record; state.drafts[state.active] = null;
-    history("photo-reviewed", `${s.c.review[state.active].frame}번째 사진 · ${verdicts[record.verdict]}${record.note ? " · " + record.note : ""}`, record.at);
-    toast(`후보 ${state.active + 1}의 ${verdicts[record.verdict]} 판정을 저장했습니다.`);
-    const after = status();
-    if (!state.expanded && state.records.slice(0, 2).every(Boolean)) {
-      const needsMore = state.records.slice(0, 2).some(r => r.verdict !== "normal");
-      if (state.editing && !needsMore) { state.editing = false; state.reviewGate = null; transition("review-summary"); return; }
-      state.reviewGate = needsMore ? "expand" : "stop";
-      history(needsMore ? "expansion-needed" : "pilot-review-completed", needsMore ? "우선 2장 중 결함 또는 판단 보류 · 추가 검수 필요" : "정상 2장 확인 · 추가 6장 요청 종료");
-      persist(); render(); focusView(); return;
+  function saveDecision(){
+    const s=status();if(state.phase!=="reviewing"||state.reviewGate||s.c.review.slice(0,s.available).some((_,i)=>!batchAssets.get(i)?.ready||!Object.hasOwn(verdicts,draft(i).verdict)))return;
+    const changes=[];
+    for(let index=0;index<s.available;index++){
+      const d=draft(index),old=state.records[index],note=d.note.trim().slice(0,240);
+      if(!old||old.verdict!==d.verdict||old.note!==note)changes.push({index,record:{verdict:d.verdict,note,at:new Date().toISOString()}});
     }
-    if (after.complete) { state.editing = false; state.reviewGate = null; history("review-completed", `총 ${after.reviewed}장 검수 완료`); transition("review-summary"); return; }
-    state.active = state.records.findIndex((record, index) => index < after.available && !record);
-    if (state.active < 0) { state.reviewGate = "waiting"; persist(); render(); focusView(); }
-    else { state.pages.reviewing = 1; persist(); render(); }
+    if(changes.length)invalidateReference();
+    for(const {index,record} of changes){state.records[index]=record;history("photo-reviewed",`${s.c.review[index].frame}번째 사진 · ${verdicts[record.verdict]}${record.note?" · "+record.note:""}`,record.at);}
+    state.drafts.fill(null);history("review-batch-saved",`담당자가 ${s.available}장의 판정을 한 번에 저장`);toast(`${s.available}장의 검수 결과를 저장했습니다.`);
+    if(!state.expanded){
+      const needsMore=state.records.slice(0,2).some(r=>r.verdict!=="normal");
+      if(state.editing&&!needsMore){state.editing=false;state.reviewGate=null;transition("review-summary");return;}
+      state.reviewGate=needsMore?"expand":"stop";history(needsMore?"expansion-needed":"pilot-review-completed",needsMore?"우선 2장 중 결함 또는 판단 보류 · 추가 검수 필요":"정상 2장 확인 · 추가 6장 요청 종료");persist();render();focusView();return;
+    }
+    if(status().complete){state.editing=false;state.reviewGate=null;history("review-completed",`총 ${s.available}장 검수 완료`);transition("review-summary");}
+    else{state.reviewGate="waiting";persist();render();focusView();}
   }
   function gateAction() {
     if (state.phase !== "reviewing") return;
@@ -463,7 +460,7 @@
       history("additional-reviews-requested", "담당자 확인 · 추가 6장 검수 요청");
       const s = status();
       if (s.pending) { state.reviewGate = "waiting"; history("additional-photos-pending", "준비된 추가 사진 없음 · 추가 6장 수신 대기"); }
-      else { state.reviewGate = null; state.pages.reviewing = 1; state.active = state.records.findIndex((r, i) => i < s.available && !r); }
+      else { state.reviewGate = null; state.pages.reviewing = 0; state.active = state.records.findIndex((r, i) => i < s.available && !r); }
       persist(); render(); focusView();
     } else if (["stop", "waiting"].includes(state.reviewGate)) transition("review-summary");
   }
@@ -507,7 +504,7 @@
   }
   function editPhoto(index) {
     if (!["review-summary"].includes(state.phase) || !state.records[index]) return;
-    state.active = index; state.editing = true; state.reviewGate = null; transition("reviewing");
+    state.active = index; state.batchPage = Math.floor(index/batchPageSize()); state.editing = true; state.reviewGate = null; transition("reviewing");
   }
   let referenceBusy = false;
   let referenceController;
@@ -585,14 +582,12 @@
     $("photoDialog").showModal();
   }));
   $("gateAction").addEventListener("click", gateAction);
-  document.querySelectorAll("[data-verdict]").forEach(button => button.addEventListener("click", () => choose(button.dataset.verdict)));
-  $("reviewNote").addEventListener("input", () => { if (state.phase !== "reviewing" || state.reviewGate) return; state.drafts[state.active] = { ...draft(), note: $("reviewNote").value.slice(0, 240) }; persist(); });
-  $("saveDecision").addEventListener("click", saveDecision);
-  $("previousPhoto").addEventListener("click", () => selectPhoto(state.active - 1)); $("nextPhoto").addEventListener("click", () => selectPhoto(state.active + 1));
-  $("retryHeat").addEventListener("click", () => loadHeat(true)); $("retryHeatInPanel").addEventListener("click", () => loadHeat(true)); $("retryPhoto").addEventListener("click", () => loadPhoto(true));
-  document.querySelectorAll("[data-zoom]").forEach(button => button.addEventListener("click", () => zoomPhoto(button.dataset.zoom)));
+  $("reviewNote").addEventListener("input",()=>{if(state.phase!=="reviewing"||state.reviewGate)return;state.drafts[state.active]={...draft(),note:$("reviewNote").value.slice(0,240)};persist();renderBatchChoice();});
+  $("saveDecision").addEventListener("click",saveDecision);
+  $("batchNormal").addEventListener("click",()=>{for(let i=0;i<status().available;i++)if(!draft(i).verdict)chooseBatch(i,"normal");});
+  for(const [id,delta] of [["batchPrevious",-1],["batchNext",1]])$(id).addEventListener("click",()=>{state.batchPage+=delta;persist();renderBatchPages();});
+  ["closeBatchNote","saveBatchNote"].forEach(id=>$(id).addEventListener("click",()=>{$("batchNoteDialog").close();persist();renderBatchChoice();}));
   $("closePhotoDialog").addEventListener("click", () => $("photoDialog").close());
-  $("originalPhoto").addEventListener("error", () => { if (state.phase === "reviewing" && !$("originalPhoto").hidden) { photoReady = false; photoFailed = true; $("photoError").hidden = false; renderChoice(); } });
   $("compareTruth").addEventListener("click", () => { state.truthRevealed = true; persist(); renderSummary(); });
   ["downloadRecord"].forEach(id => $(id).addEventListener("click", downloadRecord));
   $("continueReview").addEventListener("click", () => {
@@ -601,7 +596,7 @@
     transition("reviewing");
   });
   $("openCandidate").addEventListener("click", requestReference);
-  document.addEventListener("keydown", event => { if (event.ctrlKey || event.metaKey || event.altKey || event.target.closest("textarea,input,select") || document.querySelector("dialog[open]")) return; const v = { "1": "normal", "2": "defect", "3": "hold" }[event.key]; if (v && state.phase === "reviewing" && !state.reviewGate) { event.preventDefault(); choose(v); } });
+
   function visiblePages() {
     const view = document.querySelector("[data-view]:not([hidden])");
     if (!view) return [];
@@ -618,7 +613,7 @@
     $("workspacePagePosition").textContent = `${index+1} / ${pages.length}`;
     const preparing = state.phase === "reference-review" && state.candidatePreparation?.running;
     $("pagePrevious").disabled = index === 0 || preparing;
-    $("pageNext").disabled = index === pages.length-1 || preparing || state.phase === "reference-review" && index === 1 && !state.candidatePreparation?.completedAt || state.phase === "reviewing" && index === 1 && !photoReady || state.phase === "change-alert" && index === 1 && !shiftPhotosReady;
+    $("pageNext").disabled = index === pages.length-1 || preparing || state.phase === "reference-review" && index === 1 && !state.candidatePreparation?.completedAt || state.phase === "change-alert" && index === 1 && !shiftPhotosReady;
     if (state.phase === "change-alert" && index === 1 && shiftPhotosReady) {
       let changed = false;
       if (!state.shiftViewedFrames.includes(state.shiftFrame)) { state.shiftViewedFrames.push(state.shiftFrame); changed = true; }
@@ -671,7 +666,7 @@
   $("fieldFullscreen").addEventListener("click",async()=>{try { if(document.fullscreenElement) await document.exitFullscreen(); else await document.documentElement.requestFullscreen(); } catch { toast("브라우저의 전체 화면 기능을 이용해 주세요."); }});
   document.querySelectorAll("[data-detail]").forEach((button,i)=>button.addEventListener("click",()=>document.querySelectorAll(".detail-dialog")[i].showModal()));
   document.querySelectorAll("[data-close-detail]").forEach(button=>button.addEventListener("click",()=>button.closest("dialog").close()));
-  window.addEventListener("resize",()=>{renderPages();renderListPages();});
+  window.addEventListener("resize",()=>{renderPages();renderListPages();renderBatchPages();});
   document.addEventListener("keydown",e=>{if(e.ctrlKey||e.metaKey||e.altKey||e.target.closest("textarea,input,select")||document.querySelector("dialog[open]"))return;if(["ArrowLeft","ArrowRight"].includes(e.key)){e.preventDefault();movePage(e.key==="ArrowRight"?1:-1);}});
   restore();
   if (state.candidatePreparation?.running) {
