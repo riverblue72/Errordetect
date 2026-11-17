@@ -60,6 +60,18 @@
       "label": "결과",
       "durationMs": 25000,
       "note": "두 강점은 신속한 문제 인지·효율적인 현장 검수와 검수 결과 기반 검사 기준 개선 체계입니다. DINOv2 히트맵·이상 점수와 독립적인 MMD 변화 신호를 구간 단위로 함께 확인합니다. 이상 점수와 시간 간격으로 후보를 선정하고, 우선 2장·필요 시 최대 8장으로 검수 요청 128 → 56건(56.3% 감소), 신규 결함 사건 26건 유지를 확인했습니다. 정상 확인 → 기존 기준의 복사본에 특징을 추가해 후보 생성 → 별도 후속 데이터 검증 → 적용 검토 또는 보류입니다. 이번 후보는 오경보와 함께 결함 탐지도 감소해 적용 보류·기존 기준 유지를 결정했습니다. 공개 데이터 정답을 활용한 오프라인 검수 재현이며 실제 현장 대응 시간 단축, 자동 기준 갱신, 재학습이나 자동 성능 향상을 주장하지 않습니다. 마지막 메시지: AI가 이상을 분석하고, 사람이 확인하며, 검수 결과를 바탕으로 검사 기준의 개선 가능성을 검증하는 품질 관리 파이프라인입니다."
+    },
+    {
+      "view": "conclusion",
+      "label": "결론·확장 방향",
+      "durationMs": 0,
+      "note": "최종 발표 PDF 22페이지를 원본 디자인으로 표시합니다. 현재 한계와 보완할 점, 기업별 공정으로의 확장 가능성을 설명합니다. 09 결과 뒤에서 직접 넘기며 발표합니다."
+    },
+    {
+      "view": "thanks",
+      "label": "THANK YOU",
+      "durationMs": 0,
+      "note": "최종 발표 PDF 23페이지. 감사 인사와 질의응답을 진행하며 이 화면을 유지합니다."
     }
   ],
   "en": [
@@ -116,6 +128,18 @@
       "label": "Results",
       "durationMs": 25000,
       "note": "Two strengths: prompt problem awareness and efficient field review; inspection-reference improvement informed by review. DINOv2 heatmaps and scores and an independent MMD shift signal support interval-level review. Rank and time-space candidates, check two first and expand to eight as needed: 128 → 56 requests (56.3% fewer), retaining 26 newly found episodes. Human confirms normal → add features to a preserved-reference copy → validate on separate later data → consider adoption or hold. This candidate was held because defect detection declined along with false alarms. These offline experiments replay public ground truth; do not imply measured field-response-time savings, automatic updates, retraining or guaranteed improvement. Final message: A quality-management pipeline where AI analyzes anomalies, people confirm the findings, and review results support validation of potential inspection-reference improvements."
+    },
+    {
+      "view": "conclusion",
+      "label": "Conclusion & outlook",
+      "durationMs": 0,
+      "note": "Show the original PDF page 22. Discuss current limitations, improvements and expansion to company-specific processes. Advance manually after Results."
+    },
+    {
+      "view": "thanks",
+      "label": "THANK YOU",
+      "durationMs": 0,
+      "note": "Original PDF page 23. Keep this closing slide visible for thanks and questions."
     }
   ]
 }

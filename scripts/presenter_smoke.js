@@ -3,7 +3,7 @@ const assert = require("node:assert/strict"), fs = require("node:fs/promises"), 
 const { chromium } = require("playwright");
 const base = process.env.SITE_URL || "http://127.0.0.1:62309/";
 const output = process.env.QA_OUTPUT || "/private/tmp/surfacetrace-presenter-team-qa";
-const views = ["overview","data","shift","compare","interval","inspect","handoff","candidate","results"];
+const views = ["overview","data","shift","compare","interval","inspect","handoff","candidate","results","conclusion","thanks"];
 function fakeVoice() {
   window.__narrationCalls = [];
   Object.defineProperty(window,"SpeechSynthesisUtterance",{configurable:true,value:class { constructor(text){this.text=text;} }});
@@ -25,8 +25,8 @@ function fakeVoice() {
       await page.goto(new URL(file,base).href);await page.waitForFunction(()=>window.surfaceTracePresenter);
       const copy=await page.evaluate(lang=>window.SURFACETRACE_PRESENTER_COPY[lang],language);
       assert.deepEqual(copy.map(c=>c.view),views);assert.equal(copy.reduce((n,c)=>n+c.durationMs,0),240000);
-      assert.equal(await page.locator(".demo-steps [data-step]").count(),9);
-      assert.equal(await page.locator("[data-scene]").count(),9);
+      assert.equal(await page.locator(".demo-steps [data-step]").count(),11);
+      assert.equal(await page.locator("[data-scene]").count(),11);
       assert.equal(await page.locator(".summary-card .flow-number").innerText(),"REVIEW SELECTION");
       assert.equal(await page.locator(".reviewer-card .flow-number").innerText(),"HUMAN REVIEW");
       assert(await page.locator(".parallel-analyses article").first().evaluate(e=>e.classList.contains("shift-analysis")));
@@ -43,10 +43,12 @@ function fakeVoice() {
             const geometry=await page.evaluate(()=>({cards:[...document.querySelectorAll(".parallel-flow>.pipeline-card")].map(e=>e.getBoundingClientRect().height),overlap:["summary-card","reviewer-card","reference-candidate-card"].some(cls=>{const card=document.querySelector("."+cls);return card.querySelector("h3").getBoundingClientRect().top < Math.max(...[...card.querySelectorAll("img")].map(i=>i.getBoundingClientRect().bottom))-1;})}));
             assert(geometry.cards.every(h=>h<=622),"Overview cards should not stretch into empty towers");assert(!geometry.overlap,"Overview image/title overlap");
           }
-          if(size.width===1440&&[0,2,6,7].includes(index))await capture(views[index]);
+          if(index>=9) { await page.locator(`[data-scene="${index}"]>img`).evaluate(e=>e.decode()); assert(await page.locator("#playTour").isDisabled()); const image=await page.locator(`[data-scene="${index}"]>img`).evaluate(e=>({width:e.naturalWidth,height:e.naturalHeight,fit:getComputedStyle(e).objectFit}));assert.equal(image.width,2560);assert.equal(image.fit,"contain"); }
+          if(size.width===1440&&[0,2,6,7,9,10].includes(index))await capture(views[index]);
         }
       }
       await page.setViewportSize({width:1440,height:900});
+      await scene(8);assert(await page.locator("#nextStep").isEnabled());await page.locator("#nextStep").click();assert.equal((await state()).view,"conclusion");await page.locator("#nextStep").click();assert.equal((await state()).view,"thanks");assert(await page.locator("#nextStep").isDisabled());await page.locator("#previousStep").click();assert.equal((await state()).view,"conclusion");await page.keyboard.press("ArrowLeft");assert.equal((await state()).view,"results");
       await scene(0);await page.locator('[data-overview="animation"]').click();assert.equal((await state()).overview,"animation");await page.locator('[data-overview="flow"]').click();
       await scene(1);await page.locator('[data-method="reference"]').click();assert.equal((await state()).method,"reference");
       await scene(2);await page.locator("#shiftSlider").evaluate(e=>e.value="4");await page.locator("#shiftSlider").dispatchEvent("input");assert.equal((await state()).shift,4);assert.equal((await page.locator("#shiftStreak").innerText()).replace(/\s/g,""),"3/3");
@@ -67,9 +69,10 @@ function fakeVoice() {
       assert.equal(await page.evaluate(()=>JSON.stringify(window.SURFACETRACE_PRESENTER_DATA)),originalData);assert.deepEqual(errors,[]);assert.deepEqual(failed,[]);
       await context.close();
       const timed=await browser.newContext({viewport:{width:1440,height:900}});await timed.addInitScript(fakeVoice);const replay=await timed.newPage(),replayErrors=[];replay.on("pageerror",e=>replayErrors.push(e.message));await replay.clock.install();await replay.goto(new URL(file,base).href);await replay.waitForFunction(()=>window.surfaceTracePresenter);await replay.clock.pauseAt(await replay.evaluate(()=>new Date(Date.now()+10000)));await replay.locator("#playTour").click();
-      for(let i=0;i<copy.length;i++){await replay.clock.runFor(copy[i].durationMs);const s=await replay.evaluate(()=>window.surfaceTracePresenter.getState());assert.equal(s.scene,Math.min(i+1,copy.length-1),`${language} autoplay after ${views[i]}`);}
-      const final=await replay.evaluate(()=>({state:window.surfaceTracePresenter.getState(),calls:window.__narrationCalls}));assert.equal(final.state.playing,false);assert.equal(final.calls.length,9);assert.equal(final.state.reviews.defect.records.filter(Boolean).length,8);assert.equal(final.state.reviews.normal.records.filter(Boolean).length,2);assert.deepEqual(replayErrors,[]);await timed.close();
-      reports.push({language,chapters:9,durationMs:240000,reviewPaths:[8,2],reportHandoff:true,referenceChoices:true,overviewSizing:true,narrationChapters:9});
+      const autoCopy=copy.filter(chapter=>!chapter.manual);
+      for(let i=0;i<autoCopy.length;i++){await replay.clock.runFor(autoCopy[i].durationMs);const s=await replay.evaluate(()=>window.surfaceTracePresenter.getState());assert.equal(s.scene,Math.min(i+1,autoCopy.length-1),`${language} autoplay after ${views[i]}`);}
+      const final=await replay.evaluate(()=>({state:window.surfaceTracePresenter.getState(),calls:window.__narrationCalls}));assert.equal(final.state.playing,false);assert.equal(final.calls.length,9);assert.equal(final.state.reviews.defect.records.filter(Boolean).length,8);assert.equal(final.state.reviews.normal.records.filter(Boolean).length,2);assert.equal(final.state.view,"results");assert(await replay.locator("#nextStep").isEnabled());await replay.locator("#nextStep").click();assert.equal((await replay.evaluate(()=>window.surfaceTracePresenter.getState())).view,"conclusion");await replay.clock.runFor(60000);assert.equal((await replay.evaluate(()=>window.surfaceTracePresenter.getState())).view,"conclusion");await replay.keyboard.press("Space");assert.equal((await replay.evaluate(()=>window.surfaceTracePresenter.getState())).view,"conclusion");assert.equal(await replay.evaluate(()=>window.__narrationCalls.length),9);assert.deepEqual(replayErrors,[]);await timed.close();
+      reports.push({language,chapters:11,automaticChapters:9,manualPdfPages:[22,23],durationMs:240000,reviewPaths:[8,2],reportHandoff:true,referenceChoices:true,overviewSizing:true,narrationChapters:9});
     }
     console.log(JSON.stringify({status:"passed",reports,screenshots:output}));
   }finally{await browser.close();}

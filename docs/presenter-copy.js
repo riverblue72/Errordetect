@@ -83,6 +83,26 @@
       "durationMs": 25000,
       "ticks": 4,
       "delay": 6250
+    },
+    {
+      "view": "conclusion",
+      "label": "결론·확장 방향",
+      "scope": "FINAL PRESENTATION · PDF 22",
+      "manual": true,
+      "narration": "",
+      "durationMs": 0,
+      "ticks": 0,
+      "delay": 0
+    },
+    {
+      "view": "thanks",
+      "label": "THANK YOU",
+      "scope": "FINAL PRESENTATION · PDF 23",
+      "manual": true,
+      "narration": "",
+      "durationMs": 0,
+      "ticks": 0,
+      "delay": 0
     }
   ],
   "en": [
@@ -166,6 +186,26 @@
       "durationMs": 25000,
       "ticks": 4,
       "delay": 6250
+    },
+    {
+      "view": "conclusion",
+      "label": "Conclusion & outlook",
+      "scope": "FINAL PRESENTATION · PDF 22",
+      "manual": true,
+      "narration": "",
+      "durationMs": 0,
+      "ticks": 0,
+      "delay": 0
+    },
+    {
+      "view": "thanks",
+      "label": "THANK YOU",
+      "scope": "FINAL PRESENTATION · PDF 23",
+      "manual": true,
+      "narration": "",
+      "durationMs": 0,
+      "ticks": 0,
+      "delay": 0
     }
   ],
   "durationMs": 240000,

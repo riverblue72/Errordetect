@@ -119,6 +119,9 @@ def build(out: Path) -> tuple[int, int]:
     shutil.copyfile(WEB / "media" / "recorded-run-1080p.gif", out / "media" / "recorded-run-1080p.gif")
     shutil.copyfile(WEB / "media" / "recorded-run-ko-125x-1080p.mp4", out / "media" / "recorded-run-ko-125x-1080p.mp4")
 
+    for name in ("presenter-closing-22.png", "presenter-closing-23.png"):
+        shutil.copyfile(WEB / "media" / name, out / "media" / name)
+
     saved = np.load(MODEL)
     calibration_file = ROOT / "model" / "browser_calibration.json"
     calibration = json.loads(calibration_file.read_text(encoding="utf-8")) if calibration_file.exists() else None

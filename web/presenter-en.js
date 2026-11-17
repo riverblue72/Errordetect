@@ -35,7 +35,7 @@
 
   function narrateChapter() {
     cancelNarration();
-    if (!state.playing || !narrationEnabled) return;
+    if (!state.playing || !narrationEnabled || chapters[state.scene].manual) return;
     try {
       const utterance = new SpeechSynthesisUtterance(chapters[state.scene].narration);
       utterance.lang = "en-US";
@@ -249,6 +249,7 @@
     if ($("nextStep")) $("nextStep").disabled = state.scene === chapters.length - 1;
     setText("tourStatus", message || (state.playing ? "Replaying recorded photos and results" : "← → Change step · Space Play/pause"));
     document.body.classList.toggle("is-playing", state.playing);
+    if ($("playTour")) { $("playTour").disabled = !!chapters[state.scene].manual; if (chapters[state.scene].manual) setText("playTour", "Closing · manual slides"); }
   }
 
   function showView(view) {
@@ -256,6 +257,7 @@
     if (index < 0) return;
     state.view = view;
     state.scene = index;
+    document.body.classList.toggle("is-closing-slide", !!chapters[index].manual);
     document.title = `${chapters[index].label} · SurfaceTrace demo`;
     document.querySelectorAll("[data-scene]").forEach(panel => {
       const selected = Number(panel.dataset.scene) === index;
@@ -280,6 +282,7 @@
     const nav = document.querySelector(".demo-steps"), active = nav?.querySelector('[aria-current="step"]');
     if (nav && active && nav.scrollWidth > nav.clientWidth) nav.scrollLeft = Math.max(0, active.offsetLeft - nav.offsetLeft - 16);
     window.scrollTo({ top: 0, behavior: "instant" });
+    if (chapters[index].manual) { const panel = document.querySelector(`[data-scene="${index}"]`); if (panel) { panel.tabIndex = -1; panel.focus({ preventScroll: true }); } }
   }
 
   function showScene(index) {
@@ -309,7 +312,8 @@
     if (chapters[next].view === "data") state.method = "features";
     if (chapters[next].view === "compare") { state.photo = 0; state.compareRaw = false; }
     if (chapters[next].view === "shift") state.shift = 0;
-    if (next === chapters.length - 1) { state.resultsStep = 0; state.resultsClosing = false; }
+    if (chapters[next].manual) { stopTour("Replay complete · use Next for the closing slides."); return; }
+    if (chapters[next].view === "results") { state.resultsStep = 0; state.resultsClosing = false; }
     if (chapters[next].view === "inspect") {
       // Entering this chapter during a new tour replays both recorded review routes from their first photo.
       // Pausing and resuming inside this chapter does not reset the current review.
@@ -349,15 +353,15 @@
       } else {
         autoNextScene();
       }
-    } else if (state.scene === chapters.length - 1 && state.resultsStep < 2) {
+    } else if (state.view === "results" && state.resultsStep < 2) {
       if (state.resultsStep === 0) {
         document.querySelector(".industrial-strengths")?.scrollIntoView({ block: "start", behavior: "instant" });
       }
       state.resultsStep++;
-    } else if (state.scene === chapters.length - 1 && !state.resultsClosing) {
+    } else if (state.view === "results" && !state.resultsClosing) {
       state.resultsClosing = true;
       document.querySelector(".pipeline-closing")?.scrollIntoView({ block: "center", behavior: "instant" });
-    } else if (state.scene === chapters.length - 1) {
+    } else if (state.view === "results") {
       stopTour("Replay complete · You can start again.");
       return;
     } else {
@@ -368,7 +372,8 @@
   }
 
   function startTour() {
-    if (state.scene === chapters.length - 1) resetTour();
+    if (chapters[state.scene].manual) { stopTour("Use Previous / Next to navigate the closing slides."); return; }
+    if (state.view === "results") resetTour();
     state.playing = true;
     narrateChapter();
     updateTourControls();

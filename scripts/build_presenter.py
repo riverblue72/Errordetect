@@ -10,6 +10,7 @@ ROOT = Path(__file__).resolve().parents[1]
 ASSETS = (
     "presenter.html", "presenter-en.html", "presenter.css", "presenter-en.css",
     "presenter.js", "presenter-en.js", "presenter-copy.js",
+    "media/presenter-closing-22.png", "media/presenter-closing-23.png",
 )
 REFERENCES = re.compile(r'(\b(?:href|src)="\./)([a-zA-Z0-9-]+\.(?:css|js))(?:\?v=[a-f0-9]+)?(")')
 
@@ -17,6 +18,7 @@ REFERENCES = re.compile(r'(\b(?:href|src)="\./)([a-zA-Z0-9-]+\.(?:css|js))(?:\?v
 def main():
     out = ROOT / "docs"
     for name in ASSETS:
+        (out / name).parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(ROOT / "web" / name, out / name)
     for name in ("presenter.html", "presenter-en.html"):
         page = out / name
