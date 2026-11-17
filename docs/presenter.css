@@ -301,3 +301,34 @@
   .present-compact .original-illustration picture img { max-height: 125px; object-fit: contain; }
   .present-compact .results-stage .demo-visual { display: flex; flex-direction: column; justify-content: flex-start; padding-top: 52px; }
 }
+
+/* Fill the presentation viewport while preserving each scene's composition. */
+@media (min-width: 1000px) {
+  .presenter-page.present-compact .demo-main {
+    width: calc(100% - clamp(24px, 2.5vw, 48px));
+    max-width: none;
+  }
+  .presenter-page.present-compact .demo-stage {
+    min-height: calc(100svh - 170px);
+  }
+  .presenter-page.present-compact .overview-stage {
+    display: flex;
+    flex-direction: column;
+  }
+  .present-compact .overview-stage [data-overview-panel="flow"] {
+    display: flex;
+    flex: 1;
+  }
+  .present-compact .overview-stage .parallel-flow { flex: 1; }
+  .present-compact .overview-stage .flow-connector { height: 100%; }
+  .present-compact .overview-stage .parallel-analyses { grid-template-rows: 1fr 1fr; }
+  .present-compact .overview-stage .original-overview { flex: 1; }
+  .present-compact .pipeline-card .input-photo-stack { width: 75%; height: clamp(175px, 24vh, 260px); }
+  .present-compact .pipeline-card .input-photo-stack img { width: 78%; }
+  .present-compact .pipeline-card .review-photo-row img { width: min(44%, 105px); }
+  .present-compact .pipeline-card .summary-photo-row img { width: min(28%, 80px); }
+  .present-compact .overview-stage :is(.summary-drawing, .review-drawing) { height: auto; }
+  .present-compact .pipeline-card .reference-candidate-art img { max-width: 100%; }
+  .present-compact .feature-pair .feature-photo { --compact-photo-height: clamp(180px, 43vh, 470px); }
+  .present-compact .method-visual article img { max-height: clamp(230px, 48vh, 510px); }
+}

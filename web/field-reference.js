@@ -91,9 +91,9 @@ window.createSurfaceTraceReference = ({ getState, persist, navigate, notify, onD
       e.classList.toggle("is-active", done ? step === 3 && !getState().referenceDecision : !!prep?.running && step === stage);
       e.classList.toggle("is-done", done ? step < 3 || !!getState().referenceDecision : step < stage);
     });
-    const titles = ["기존 검사 기준을 보존하고 있습니다.", "정상 확인 사진을 반영할 입력을 준비합니다.", "새 기준 후보의 이상 검출 검증을 준비하고 있습니다.", "검증 요청 준비 완료"];
+    const titles = ["기존 검사 기준을 보존하고 있습니다.", "정상 데이터를 반영할 기준 후보를 준비합니다.", "새 검사 기준의 적용 가능성을 검토하고 있습니다.", "검증 요청 준비 완료"];
     const descriptions = ["적용 중인 기준과 경보선을 보존합니다.", "확인된 정상 사진을 불러와 후보 검증 요청 목록에 포함합니다.", "정상 확인 사진의 입력 목록을 반영해 오경보·결함 탐지 후속 검증 요청을 구성합니다."];
-    $("preparationTitle").textContent = prep?.error ? "요청 준비를 완료하지 못했습니다." : prep?.running ? titles[stage] : "새 기준 후보의 이상 검출 검증을 준비합니다.";
+    $("preparationTitle").textContent = prep?.error ? "요청 준비를 완료하지 못했습니다." : prep?.running ? titles[stage] : "새 검사 기준의 적용 가능성을 검토합니다.";
     $("preparationDescription").textContent = prep?.error || (prep?.running ? descriptions[stage] : "정상 확인 사진을 포함해 후보 검증에 필요한 입력 목록을 구성합니다.");
     $("preparationIcon").classList.toggle("is-processing", !!prep?.running);
     $("prepareCandidate").hidden = !!prep; $("retryPreparation").hidden = !prep?.error;

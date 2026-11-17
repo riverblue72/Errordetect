@@ -5,11 +5,12 @@
   const $ = id => document.getElementById(id);
   const KEY = "surfacetrace-field-demo-v1";
   const verdicts = { normal: "정상", defect: "결함 확인", hold: "판단 보류" };
+  const shiftVerdicts = { changed: "변화 확인", unchanged: "변화 없음", hold: "판단 보류" };
   const PHASES = ["ready", "receiving", "analyzing", "change-alert", "reviewing", "review-summary", "reference-review", "completed"];
   const transitions = {
     ready: ["receiving", "review-summary"], receiving: ["analyzing", "ready"],
     analyzing: ["receiving", "change-alert", "ready"], "change-alert": ["reviewing", "review-summary", "ready"],
-    reviewing: ["review-summary", "ready"], "review-summary": ["reviewing", "reference-review", "ready"],
+    reviewing: ["review-summary", "ready"], "review-summary": ["change-alert", "reviewing", "reference-review", "ready"],
     "reference-review": ["completed", "review-summary", "ready"], completed: ["review-summary", "reference-review", "ready"]
   };
   const caseNames = { defect: "외관 변화 및 검수" };
@@ -23,10 +24,11 @@
     source: "experiments/unsupervised/results/change_limit_development.json · original_limit" };
   const fresh = () => ({ version: 3, phase: "ready", caseId: null, receivedAt: null, records: [], drafts: [], active: 0,
     expanded: false, reviewGate: null, editing: false, loadingStep: 0, pipelineReady: false, loadingError: null,
-    shiftAcknowledgedAt: null, truthRevealed: false, candidateRequested: false, candidateRequest: null,
+    shiftAcknowledgedAt: null, shiftReview: null, shiftDraft: { verdict: null, note: "" }, shiftFrame: 96, shiftViewedFrames: [], afterShiftPhase: null, truthRevealed: false, candidateRequested: false, candidateRequest: null,
     exampleViewedAt: null, referenceDecision: null, history: [] });
   let state = fresh(), job = 0, pipelineController, photoController, photoJob = 0, heatJob = 0;
   let photoReady = false, photoFailed = false, heatBusy = false, toastTimer, resetCase = null, storageAvailable = true;
+  let shiftController, shiftJob = 0, shiftPhotosReady = false;
   const assets = new Map();
 
   // Data access has no view dependencies. Replace these fixture methods with backend calls later.
@@ -112,13 +114,21 @@
         shiftAcknowledgedAt: validTime(saved.shiftAcknowledgedAt) ? saved.shiftAcknowledgedAt : null,
         truthRevealed: !!saved.truthRevealed,
         history: Array.isArray(saved.history) ? saved.history.filter(e => e && typeof e.type === "string" && typeof e.description === "string" && validTime(e.at)).slice(-500).map(e => ({ type: e.type.slice(0, 60), description: e.description.slice(0, 500), at: e.at })) : [] };
+      const validShift = r => r && Object.hasOwn(shiftVerdicts, r.verdict) && typeof r.note === "string";
+      if (validShift(saved.shiftReview) && validTime(saved.shiftReview.at)) state.shiftReview = { ...saved.shiftReview, note: saved.shiftReview.note.slice(0, 240) };
+      if (saved.shiftDraft && (saved.shiftDraft.verdict === null || Object.hasOwn(shiftVerdicts, saved.shiftDraft.verdict)) && typeof saved.shiftDraft.note === "string") state.shiftDraft = { verdict: saved.shiftDraft.verdict, note: saved.shiftDraft.note.slice(0, 240) };
+      else if (state.shiftReview) state.shiftDraft = { verdict: state.shiftReview.verdict, note: state.shiftReview.note };
+      const frames = shiftPhotos().map(p => p.frame);
+      state.shiftFrame = frames.includes(saved.shiftFrame) ? saved.shiftFrame : frames.includes(96) ? 96 : frames[0];
+      state.shiftViewedFrames = Array.isArray(saved.shiftViewedFrames) ? saved.shiftViewedFrames.filter(f => frames.includes(f)) : [];
+      state.afterShiftPhase = saved.afterShiftPhase === "review-summary" ? "review-summary" : null;
       if (state.records.slice(2).some(Boolean)) state.expanded = true;
       const s = status();
       state.active = Math.min(state.active, s.available - 1);
       state.candidateRequested = !!saved.candidateRequested && s.complete && s.normals.length >= 2;
       state.candidatePreparation = saved.candidatePreparation && typeof saved.candidatePreparation === "object" ? saved.candidatePreparation : null;
       if (state.candidateRequested) {
-        state.candidateRequest = { photoFrames: s.normals.map(({ photo }) => photo.frame), requestedAt: validTime(saved.candidateRequest?.requestedAt) ? saved.candidateRequest.requestedAt : null, liveValidationPerformed: false, appearanceChange: { ...getShift(), acknowledgedAt: state.shiftAcknowledgedAt } };
+        state.candidateRequest = { photoFrames: s.normals.map(({ photo }) => photo.frame), requestedAt: validTime(saved.candidateRequest?.requestedAt) ? saved.candidateRequest.requestedAt : null, liveValidationPerformed: false, appearanceChange: saved.candidateRequest?.appearanceChange || { ...getShift(), acknowledgedAt: state.shiftAcknowledgedAt, userReview: state.shiftReview } };
         state.exampleViewedAt = validTime(saved.exampleViewedAt) ? saved.exampleViewedAt : null;
         if (state.exampleViewedAt && ["hold", "additional-validation"].includes(saved.referenceDecision?.kind) && validTime(saved.referenceDecision?.at)) state.referenceDecision = { kind: saved.referenceDecision.kind, at: saved.referenceDecision.at };
       }
@@ -150,7 +160,7 @@
     if (state.phase === "reference-review" && phase !== "reference-review") referenceController?.cancel();
     state.phase = phase; persist(); render(); if (focus) focusView();
   }
-  function cancelJobs() { referenceController?.cancel(); job++; pipelineController?.abort(); photoJob++; photoController?.abort(); heatJob++; }
+  function cancelJobs() { shiftController?.abort(); shiftJob++; shiftPhotosReady = false; referenceController?.cancel(); job++; pipelineController?.abort(); photoJob++; photoController?.abort(); heatJob++; }
   function reset(caseId = null) {
     cancelJobs(); state = fresh(); photoReady = false; photoFailed = false; heatBusy = false;
     persist(); render(); focusView(); if (caseId) startReceiving(caseId);
@@ -252,7 +262,46 @@
     $("shiftScore").textContent = shift.points.at(-1).score.toFixed(4);
     $("shiftLimit").textContent = `경보선 ${shift.threshold.toFixed(4)} · 연속 3개 창에서 초과`;
     $("shiftSource").textContent = `${shift.run} · 기존 기준 녹화와 새 녹화를 이어 붙인 저장된 전환 실험입니다. ${shift.source}`;
+    $("shiftNote").value = state.shiftDraft.note;
+    $("shiftTimeline").replaceChildren(...shiftPhotos().map(photo => {
+      const button = node("button", `${format(photo.frame)}번째${photo.frame === 96 ? " · 변화 신호" : ""}`);
+      button.type = "button"; button.dataset.shiftFrame = photo.frame; button.setAttribute("aria-pressed", String(photo.frame === state.shiftFrame));
+      button.addEventListener("click", () => { state.shiftFrame = photo.frame; persist(); renderChange(); }); return button;
+    }));
+    renderShiftChoice(); loadShiftPhotos();
     $("shiftAcknowledgedAt").textContent = state.shiftAcknowledgedAt ? `${time(state.shiftAcknowledgedAt)} 확인 기록됨` : "확인 결과는 검수 이력에 저장됩니다.";
+  }
+  function shiftPhotos() {
+    return state.caseId === "normal" ? data.cases.normal.review.map(p => ({ frame: p.frame, image: p.image })) : data.visualShift.photos;
+  }
+  function renderShiftChoice() {
+    document.querySelectorAll("[data-shift-verdict]").forEach(button => button.setAttribute("aria-pressed", String(button.dataset.shiftVerdict === state.shiftDraft.verdict)));
+    $("acknowledgeShift").disabled = !shiftPhotosReady || !Object.hasOwn(shiftVerdicts, state.shiftDraft.verdict);
+    $("acknowledgeShift").textContent = state.afterShiftPhase === "review-summary" ? "판단 저장하고 기록으로 돌아가기 →" : "판단 확정하고 검수 진행 →";
+    $("shiftDecisionHint").textContent = !shiftPhotosReady ? "비교 사진을 불러온 뒤 판단을 확정할 수 있습니다." : !state.shiftDraft.verdict ? "사진을 비교한 뒤 외관 변화 여부를 선택해 주세요." : `${shiftVerdicts[state.shiftDraft.verdict]}으로 기록합니다. 사진별 결함 검수는 별도로 진행합니다.`;
+  }
+  async function loadShiftPhotos(retry = false) {
+    shiftController?.abort(); shiftController = new AbortController(); const token = ++shiftJob;
+    const reference = data.visualShift.referencePhoto, photos = shiftPhotos();
+    const current = photos.find(p => p.frame === state.shiftFrame) || photos[0]; state.shiftFrame = current.frame;
+    shiftPhotosReady = false; $("shiftPhotoLoading").hidden = false; $("shiftPhotoError").hidden = true;
+    $("shiftReferencePhoto").hidden = true; $("shiftCurrentPhoto").hidden = true; renderShiftChoice();
+    $("shiftReferenceCaption").textContent = `${reference.run} · ${format(reference.frame)}번째 사진`;
+    $("shiftCurrentCaption").textContent = `${getShift().run} · ${format(current.frame)}번째 사진`;
+    try {
+      const [left, right] = await Promise.all([adapter.asset(reference.image, shiftController.signal, retry), adapter.asset(current.image, shiftController.signal, retry)]);
+      if (token !== shiftJob || state.phase !== "change-alert") return;
+      $("shiftReferencePhoto").src = left; $("shiftCurrentPhoto").src = right;
+      await Promise.all([$("shiftReferencePhoto").decode(), $("shiftCurrentPhoto").decode()]);
+      if (token !== shiftJob || state.phase !== "change-alert") return;
+      $("shiftReferencePhoto").hidden = false; $("shiftCurrentPhoto").hidden = false;
+      shiftPhotosReady = true; $("shiftPhotoLoading").hidden = true;
+      if (!state.shiftViewedFrames.includes(current.frame)) state.shiftViewedFrames.push(current.frame);
+      persist(); renderShiftChoice();
+    } catch {
+      if (token !== shiftJob || state.phase !== "change-alert") return;
+      $("shiftPhotoLoading").hidden = true; $("shiftPhotoError").hidden = false; renderShiftChoice();
+    }
   }
   function draft() { return state.drafts[state.active] || (state.records[state.active] ? { verdict: state.records[state.active].verdict, note: state.records[state.active].note } : { verdict: null, note: "" }); }
   function renderReview() {
@@ -397,7 +446,7 @@
     $("continueReview").hidden = s.complete && state.reviewGate !== "expand";
     $("summaryDescription").textContent = !s.complete && !s.pending ? `확인한 ${s.reviewed}장의 기록을 저장했습니다. 남은 사진의 검수를 이어갈 수 있습니다.` : s.pending ? "추가 6장의 사진 수신 전까지 확인한 두 장의 기록을 보관합니다." : state.expanded ? "요청한 사진의 확인이 끝났습니다. 결과를 확인하고 정상 데이터를 다음 기준 검토에 활용하세요." : "두 장 모두 정상으로 확인되어 추가 요청을 종료했습니다. 구간 전체를 정상으로 확정한 것은 아닙니다.";
     $("summarySegment").textContent = `시나리오 ${state.caseId === "defect" ? "A" : "B"} · ${format(s.c.frameCount)}장`;
-    $("shiftHistoryStatus").textContent = state.shiftAcknowledgedAt ? `${time(state.shiftAcknowledgedAt)} 확인` : "확인 기록 없음";
+    $("shiftHistoryStatus").textContent = state.shiftReview ? `${shiftVerdicts[state.shiftReview.verdict]} · ${time(state.shiftReview.at)}` : state.shiftAcknowledgedAt ? `${time(state.shiftAcknowledgedAt)} 알림 확인` : "확인 기록 없음";
     $("summaryRequested").textContent = `${s.budget}장 요청 / ${s.reviewed}장 확인`;
     $("additionalRequestStatus").textContent = s.pending ? "추가 6장 수신 대기" : state.reviewGate === "expand" ? "추가 6장 확인 대기" : !s.complete ? "검수 진행 중" : state.expanded ? "추가 6장 요청·확인 완료" : "추가 6장 요청 종료";
     for (const kind of Object.keys(counts)) $(kind + "Count").textContent = `${counts[kind]}장`;
@@ -435,7 +484,7 @@
       if (!state.candidateRequested) {
         const request = await adapter.requestReference(s.normals.map(({ photo }) => photo.frame));
         if (token !== job || state.phase !== "review-summary") return;
-        state.candidateRequest = { ...request, appearanceChange: { ...getShift(), acknowledgedAt: state.shiftAcknowledgedAt } }; state.candidateRequested = true;
+        state.candidateRequest = { ...request, appearanceChange: { ...getShift(), acknowledgedAt: state.shiftAcknowledgedAt, userReview: state.shiftReview } }; state.candidateRequested = true;
         history("candidate-review-requested", `정상 확인 ${s.normals.length}장 · 기준 후보 검증 검토 요청 · 기존 기준 보존`, state.candidateRequest.requestedAt);
       }
       transition("reference-review");
@@ -451,7 +500,7 @@
     const payload = { schemaVersion: 3, demo: true, phase: state.phase, analysisMode: "recorded-dinov2-and-mmd", run: s.c.run,
       receivedAt: state.receivedAt, exportedAt: new Date().toISOString(), sourceFrameCount: s.c.frameCount, requested: s.budget, reviewed: s.reviewed,
       awaitingAdditionalPhotos: s.pending, activeReference: "frozen-source", modelWeightsUpdated: false,
-      appearanceChange: { ...getShift(), acknowledgedAt: state.shiftAcknowledgedAt, scope: "recorded joined-run experiment" },
+      appearanceChange: { ...getShift(), acknowledgedAt: state.shiftAcknowledgedAt, userReview: state.shiftReview, scope: "recorded joined-run experiment" },
       candidateReviewRequest: state.candidateRequested ? state.candidateRequest : null,
       validationExample: state.exampleViewedAt ? { viewedAt: state.exampleViewedAt, source: data.updateEvaluation.source, scope: "separate saved experiment, not a live evaluation of this review selection" } : null,
       candidatePreparation: state.candidatePreparation || null,
@@ -471,10 +520,26 @@
   $("retryLoading").addEventListener("click", () => { if (state.loadingError && busy()) pipeline(); });
   $("startReviewFlow").addEventListener("click", () => { if (state.pipelineReady && busy()) transition("change-alert"); });
   $("acknowledgeShift").addEventListener("click", () => {
-    if (state.phase !== "change-alert") return;
-    if (!state.shiftAcknowledgedAt) { state.shiftAcknowledgedAt = new Date().toISOString(); history("shift-acknowledged", "외관 변화 알림 확인 · 사진별 이상 경보와 기존 기준 유지", state.shiftAcknowledgedAt); }
-    transition(status().complete ? "review-summary" : "reviewing"); toast("변화 알림 확인 이력을 저장했습니다.");
+    if (state.phase !== "change-alert" || !shiftPhotosReady || !Object.hasOwn(shiftVerdicts, state.shiftDraft.verdict)) return;
+    const at = new Date().toISOString(); state.shiftAcknowledgedAt = at;
+    state.shiftReview = { verdict: state.shiftDraft.verdict, note: state.shiftDraft.note.trim(), at, referenceRun: data.visualShift.sourceRun, referenceFrame: data.visualShift.referencePhoto.frame, targetRun: getShift().run, currentFrame: state.shiftFrame, comparedFrames: [...state.shiftViewedFrames] };
+    history("shift-reviewed", `외관 변화 담당자 판단 · ${shiftVerdicts[state.shiftReview.verdict]}${state.shiftReview.note ? " · " + state.shiftReview.note : ""} · 사진별 이상 경보와 기존 기준 유지`, at);
+    const next = state.afterShiftPhase || (status().complete ? "review-summary" : "reviewing"); state.afterShiftPhase = null;
+    transition(next); toast("사진 비교와 외관 변화 판단을 저장했습니다.");
   });
+  document.querySelectorAll("[data-shift-verdict]").forEach(button => button.addEventListener("click", () => {
+    if (state.phase !== "change-alert") return;
+    state.shiftDraft.verdict = button.dataset.shiftVerdict; persist(); renderShiftChoice();
+  }));
+  $("shiftNote").addEventListener("input", () => { if (state.phase !== "change-alert") return; state.shiftDraft.note = $("shiftNote").value.slice(0, 240); persist(); });
+  $("retryShiftPhotos").addEventListener("click", () => loadShiftPhotos(true));
+  $("editShiftReview").addEventListener("click", () => { if (state.phase !== "review-summary") return; state.afterShiftPhase = "review-summary"; transition("change-alert"); });
+  document.querySelectorAll("[data-shift-zoom]").forEach(button => button.addEventListener("click", () => {
+    if (!shiftPhotosReady || state.phase !== "change-alert") return;
+    const baseline = button.dataset.shiftZoom === "reference";
+    $("photoDialogTitle").textContent = baseline ? $("shiftReferenceCaption").textContent : $("shiftCurrentCaption").textContent;
+    $("zoomOriginal").src = $(baseline ? "shiftReferencePhoto" : "shiftCurrentPhoto").src; $("zoomHeat").hidden = true; $("photoDialog").showModal();
+  }));
   $("gateAction").addEventListener("click", gateAction);
   document.querySelectorAll("[data-verdict]").forEach(button => button.addEventListener("click", () => choose(button.dataset.verdict)));
   $("reviewNote").addEventListener("input", () => { if (state.phase !== "reviewing" || state.reviewGate) return; state.drafts[state.active] = { ...draft(), note: $("reviewNote").value.slice(0, 240) }; persist(); });
