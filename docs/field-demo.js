@@ -24,9 +24,9 @@
     source: "experiments/unsupervised/results/change_limit_development.json · original_limit" };
   const fresh = () => ({ version: 3, phase: "ready", caseId: null, receivedAt: null, records: [], drafts: [], active: 0,
     expanded: false, reviewGate: null, editing: false, loadingStep: 0, pipelineReady: false, loadingError: null,
-    shiftDetectedAt: null, shiftAcknowledgedAt: null, shiftReview: null, shiftDraft: { verdict: null, note: "" }, shiftFrame: 96, shiftViewedFrames: [], shiftAiViewedFrames: [], pages: {}, recordPage: 0, historyPage: 0, batchPage: 0, afterShiftPhase: null, truthRevealed: false, candidateRequested: false, candidateRequest: null,
+    changeStep: "detected", changeNoticeConfirmedAt: null, teamHandoff: null, shiftDetectedAt: null, shiftAcknowledgedAt: null, shiftReview: null, shiftDraft: { verdict: null, note: "" }, shiftFrame: 96, shiftViewedFrames: [], shiftAiViewedFrames: [], pages: {}, recordPage: 0, historyPage: 0, batchPage: 0, afterShiftPhase: null, truthRevealed: false, candidateRequested: false, candidateRequest: null,
     exampleViewedAt: null, referenceDecision: null, history: [] });
-  let state = fresh(), job = 0, pipelineController, photoController, photoJob = 0, pipelineStarted = 0, alertController;
+  let state = fresh(), job = 0, pipelineController, photoController, photoJob = 0, pipelineStarted = 0, alertController, handoffController;
   const batchAssets = new Map();
   let toastTimer, resetCase = null, storageAvailable = true;
   const assets = new Map();
@@ -111,6 +111,8 @@
           const d = saved.drafts?.[i]; return d && (d.verdict === null || Object.hasOwn(verdicts, d.verdict)) && typeof d.note === "string" ? { verdict: d.verdict, note: d.note.slice(0, 240) } : null;
         }),
         expanded: !!saved.expanded, active: Number.isInteger(saved.active) ? Math.max(0, Math.min(saved.active, c.review.length - 1)) : 0,
+        changeStep: saved.changeStep === "review-intro" ? "review-intro" : "detected",
+        changeNoticeConfirmedAt: validTime(saved.changeNoticeConfirmedAt) ? saved.changeNoticeConfirmedAt : null,
         shiftDetectedAt: validTime(saved.shiftDetectedAt) ? saved.shiftDetectedAt : null,
         shiftAcknowledgedAt: validTime(saved.shiftAcknowledgedAt) ? saved.shiftAcknowledgedAt : null,
         truthRevealed: !!saved.truthRevealed,
@@ -130,14 +132,15 @@
       state.afterShiftPhase = saved.afterShiftPhase === "review-summary" ? "review-summary" : null;
       if (state.records.slice(2).some(Boolean)) state.expanded = true;
       const s = status();
+      if (saved.teamHandoff?.mode === "demo-local" && saved.teamHandoff.status === "delivered" && validTime(saved.teamHandoff.deliveredAt) && saved.teamHandoff.signature === reviewSignature()) state.teamHandoff = saved.teamHandoff;
       state.active = Math.min(state.active, s.available - 1);
       state.candidateRequested = !!saved.candidateRequested && s.complete && s.normals.length >= 2;
       state.referenceOperation = saved.referenceOperation && typeof saved.referenceOperation === "object" ? saved.referenceOperation : null;
       state.candidatePreparation = saved.candidatePreparation && typeof saved.candidatePreparation === "object" ? saved.candidatePreparation : null;
       if (state.candidateRequested) {
-        state.candidateRequest = { photoFrames: s.normals.map(({ photo }) => photo.frame), requestedAt: validTime(saved.candidateRequest?.requestedAt) ? saved.candidateRequest.requestedAt : null, liveValidationPerformed: false, appearanceChange: saved.candidateRequest?.appearanceChange || { ...getShift(), detected: true, detectedAt: state.shiftDetectedAt, acknowledgedAt: state.shiftAcknowledgedAt, userReview: state.shiftReview } };
+        state.candidateRequest = { requestedBy: "AI 솔루션팀", handoffDeliveredAt: validTime(saved.candidateRequest?.handoffDeliveredAt) ? saved.candidateRequest.handoffDeliveredAt : null, photoFrames: s.normals.map(({ photo }) => photo.frame), requestedAt: validTime(saved.candidateRequest?.requestedAt) ? saved.candidateRequest.requestedAt : null, liveValidationPerformed: false, appearanceChange: saved.candidateRequest?.appearanceChange || { ...getShift(), notificationConfirmedAt: state.changeNoticeConfirmedAt, detected: true, detectedAt: state.shiftDetectedAt, acknowledgedAt: state.shiftAcknowledgedAt, userReview: state.shiftReview } };
         state.exampleViewedAt = validTime(saved.exampleViewedAt) ? saved.exampleViewedAt : null;
-        if (state.exampleViewedAt && ["hold", "change", "additional-validation"].includes(saved.referenceDecision?.kind) && validTime(saved.referenceDecision?.at)) state.referenceDecision = { kind: saved.referenceDecision.kind, at: saved.referenceDecision.at, applied: false, status: saved.referenceDecision.kind === "change" ? "change-requested" : saved.referenceDecision.kind === "hold" ? "kept" : "additional-validation-requested" };
+        if (state.exampleViewedAt && ["hold", "change", "additional-validation"].includes(saved.referenceDecision?.kind) && validTime(saved.referenceDecision?.at)) state.referenceDecision = { kind: saved.referenceDecision.kind, team: "AI 솔루션팀", at: saved.referenceDecision.at, applied: false, status: saved.referenceDecision.kind === "change" ? "change-requested" : saved.referenceDecision.kind === "hold" ? "kept" : "additional-validation-requested" };
       }
       if (saved.version === 3 && PHASES.includes(saved.phase)) {
         state.phase = saved.phase;
@@ -165,13 +168,14 @@
   function transition(phase, focus = true) {
     if (phase !== state.phase && !transitions[state.phase]?.includes(phase)) throw new Error(`Invalid workflow transition: ${state.phase} → ${phase}`);
     if (state.phase === "change-alert" && phase !== "change-alert") alertController?.abort();
+    if (state.phase === "review-summary" && phase !== "review-summary") cancelHandoff();
     if (busy() && !state.pipelineReady && phase === "ready") { job++; pipelineController?.abort(); }
     if (state.phase === "reference-review" && phase !== "reference-review") referenceController?.cancel();
     if (state.phase !== phase) state.pages[phase] = phase === "reviewing" ? 0 : phase === "reference-review" && state.candidatePreparation?.completedAt ? 2 : 0;
     if (state.phase === "reviewing" && phase !== "reviewing") { photoJob++; photoController?.abort(); }
     state.phase = phase; persist(); render(); if (focus) focusView();
   }
-  function cancelJobs() { alertController?.abort(); referenceController?.cancel(); job++; pipelineController?.abort(); photoJob++; photoController?.abort(); batchAssets.clear(); }
+  function cancelJobs() { cancelHandoff(); alertController?.abort(); referenceController?.cancel(); job++; pipelineController?.abort(); photoJob++; photoController?.abort(); batchAssets.clear(); }
   function reset(caseId = null) {
     cancelJobs(); state = fresh();
     persist(); render(); focusView(); if (caseId) startReceiving(caseId);
@@ -199,15 +203,15 @@
     const progressTimer = setInterval(() => { if (current() && busy()) updatePipelineProgress(); }, 100);
     if (state.phase !== "receiving") transition("receiving"); else { persist(); render(); }
     try {
-      await Promise.all([adapter.receiveProduction(caseId, controller.signal), wait(6000, controller.signal)]);
+      await Promise.all([adapter.receiveProduction(caseId, controller.signal), wait(5000, controller.signal)]);
       if (!current()) return;
       state.receivedAt ||= new Date().toISOString(); historyOnce("segment-received", `생산 구간 수신 · ${data.cases[caseId].run}`);
       state.loadingStep = 1; transition("analyzing");
-      await Promise.all([adapter.savedAnalysis(caseId), wait(7000, controller.signal)]);
+      await Promise.all([adapter.savedAnalysis(caseId), wait(5000, controller.signal)]);
       if (!current()) return;
       historyOnce("analysis-loaded", "저장된 DINOv2 이상 분석 결과 준비");
       state.loadingStep = 2; persist(); renderLoading();
-      await Promise.all([adapter.savedShift(caseId), wait(7000, controller.signal)]);
+      await Promise.all([adapter.savedShift(caseId), wait(5000, controller.signal)]);
       if (!current()) return;
       historyOnce("shift-loaded", "저장된 MMD 외관 변화 신호 확인 · 새 녹화 96번째 사진");
       state.loadingStep = 3; state.pipelineReady = true; persist(); render();
@@ -246,6 +250,7 @@
     document.querySelectorAll("[data-receive]").forEach(button => { button.disabled = busy(); });
     if (busy()) renderLoading();
 
+    if (state.phase === "change-alert") renderChangeNotice();
     if (state.phase === "reviewing") renderReview();
     if (state.phase === "review-summary") renderSummary();
     if (["reference-review", "completed"].includes(state.phase)) referenceController?.render();
@@ -274,17 +279,30 @@
     $("startReviewFlow").hidden = !state.pipelineReady || !!state.loadingError;
   }
   function updatePipelineProgress() {
-    const percent = state.pipelineReady ? 100 : Math.min(99, Math.floor((performance.now() - pipelineStarted) / 200));
+    const percent = state.pipelineReady ? 100 : Math.min(99, Math.floor((performance.now() - pipelineStarted) / 150));
     $("loadingPercent").textContent = `${percent}%`;
     $("loadingProgress").setAttribute("aria-valuenow", percent);
     $("loadingProgress").firstElementChild.style.width = `${percent}%`;
   }
-  async function showChangeSignal() {
-    alertController?.abort(); const controller = new AbortController(); alertController = controller;
+  function showChangeSignal() {
+    alertController?.abort(); state.changeStep = "detected";
     state.shiftDetectedAt ||= new Date().toISOString();
     historyOnce("shift-detected", "구간 변화가 탐지되었습니다. · 새 녹화 96번째 사진 · MMD 128장 창 / 32장 이동 / 3회 연속 초과");
     transition("change-alert");
-    try { await wait(1600, controller.signal); if (state.phase === "change-alert") transition("reviewing"); } catch { /* Navigation cancels the passive notification. */ }
+  }
+  function renderChangeNotice() {
+    const intro = state.changeStep === "review-intro";
+    $("changeTitle").textContent = intro ? "검수할 사진을 제시드립니다." : "구간 변화가 탐지되었습니다.";
+    $("changeNoticeDescription").textContent = intro ? "우선 확인할 사진 2장을 준비합니다." : "";
+    $("confirmChangeNotice").hidden = intro; $("reviewIntroSpinner").hidden = !intro;
+  }
+  async function confirmChangeNotice(resuming = false) {
+    if (state.phase !== "change-alert" || !resuming && state.changeStep === "review-intro") return;
+    alertController?.abort(); const controller = new AbortController(); alertController = controller;
+    state.changeStep = "review-intro";
+    if (!resuming) { state.changeNoticeConfirmedAt = new Date().toISOString(); history("shift-notice-confirmed", "현장팀 · 구간 변화 감지 알림 확인", state.changeNoticeConfirmedAt); }
+    persist(); render(); focusView();
+    try { await wait(1600, controller.signal); if (state.phase === "change-alert") transition("reviewing"); } catch { /* Previous/reset preserves review records and cancels only this transition. */ }
   }
   function shiftPhotos() {
     const photos = state.caseId === "normal" ? data.cases.normal.review.map(p => ({ frame: p.frame, image: p.image })) : data.visualShift.photos;
@@ -386,6 +404,8 @@
   }
   function invalidateReference() {
     if (state.candidateRequested) history("candidate-review-invalidated", "검수 결과 수정으로 이전 기준 후보 검토 요청과 담당자 결정을 해제했습니다.");
+    if (state.teamHandoff?.status === "delivered") history("team-handoff-invalidated", "검수 결과 수정 · AI 솔루션팀에 최신 결과 재전달 필요");
+    state.teamHandoff = null;
     state.candidateRequested = false; state.candidateRequest = null; state.exampleViewedAt = null; state.referenceDecision = null; state.candidatePreparation = null; state.referenceOperation = null; state.truthRevealed = false;
   }
   function saveDecision(){
@@ -449,11 +469,46 @@
     $("truthResult").textContent = state.truthRevealed ? `확인한 ${s.reviewed}장 중 ${s.c.review.filter((p, i) => i < s.available && state.records[i]?.verdict === p.recordedLabel).length}장 일치 · 공개 정답과 사용자 판단 비교` : "";
     $("referenceDecisionStatus").textContent = referenceLabel();
     normalPhotos("normalSummaryPhotos", s.normals);
-    $("candidateDescription").textContent = s.normals.length >= 2 && s.complete ? `정상 확인 ${s.normals.length}장을 기준 후보 검증 요청 목록에 추가할 수 있습니다. 기존 검사 기준은 유지됩니다.` : `정상 확인 ${s.normals.length}장 · 검수를 마치고 정상 사진이 2장 이상이면 검토를 요청할 수 있습니다.`;
-    $("openCandidate").disabled = !s.complete || s.normals.length < 2;
-    $("openCandidate").textContent = state.candidateRequested ? "검사 기준 후보 검토 내역 보기 →" : "새 검사 기준 후보 검토 요청 →";
+    $("candidateDescription").textContent = !handoffDelivered() ? "현장팀의 검수 결과를 AI 솔루션팀으로 먼저 전달해 주세요." : s.normals.length >= 2 && s.complete ? `정상 확인 ${s.normals.length}장을 기준 후보 검증 요청 목록에 추가할 수 있습니다. 기존 검사 기준은 유지됩니다.` : `정상 확인 ${s.normals.length}장 · 검수를 마치고 정상 사진이 2장 이상이면 검토를 요청할 수 있습니다.`;
+    $("openCandidate").disabled = !s.complete || s.normals.length < 2 || !handoffDelivered();
+    $("openCandidate").textContent = state.candidateRequested ? "검사 기준 후보 검토 내역 보기 →" : "AI 솔루션팀 · 기준 후보 검토 시작 →";
     $("inspectionHistory").replaceChildren(...state.history.map(event => { const item = node("li"), stamp = node("time", time(event.at)); stamp.dateTime = event.at; item.append(stamp, node("span", event.description)); return item; }));
-    renderListPages();
+    renderListPages(); renderTeamHandoff();
+  }
+  function reviewSignature() { return JSON.stringify({ budget: status().budget, records: state.records.slice(0, status().available) }); }
+  function handoffDelivered() { return state.teamHandoff?.status === "delivered" && state.teamHandoff.signature === reviewSignature(); }
+  function cancelHandoff() {
+    handoffController?.abort();
+    if (state.teamHandoff?.status === "sending") state.teamHandoff = null;
+  }
+  function renderTeamHandoff() {
+    const s = status(), delivered = handoffDelivered(), sending = state.teamHandoff?.status === "sending";
+    $("teamHandoffTitle").textContent = delivered ? "AI 솔루션팀으로 알림이 전송되었습니다." : "현장팀에서 AI 솔루션팀으로 알림이 전송됩니다.";
+    $("teamHandoffDescription").textContent = delivered ? "현장팀의 사진별 판정과 메모를 전달했습니다. 이제 AI 솔루션팀이 검사 기준 후보를 검토합니다." : "사진별 판정과 검수 메모를 전달합니다. 검사 기준 후보의 검토는 AI 솔루션팀이 진행합니다.";
+    $("teamHandoffSummary").textContent = `확인 기록 ${s.reviewed}장 · 정상 ${s.normals.length}장 · 판정 및 메모 포함`;
+    $("teamHandoffAt").textContent = delivered ? `전달 시각 ${time(state.teamHandoff.deliveredAt)}` : !s.complete ? "사진 검수를 마치면 결과를 전달할 수 있습니다." : "";
+    $("sendTeamNotification").hidden = delivered || sending; $("sendTeamNotification").disabled = !s.complete;
+    $("teamHandoffProgress").hidden = !sending; $("openSolutionReview").hidden = !delivered;
+  }
+  async function sendTeamNotification() {
+    if (state.phase !== "review-summary" || !status().complete || handoffDelivered() || state.teamHandoff?.status === "sending") return;
+    handoffController?.abort(); const controller = new AbortController(); handoffController = controller;
+    const session = state, signature = reviewSignature();
+    state.teamHandoff = { mode: "demo-local", externalDelivery: false, from: "현장팀", to: "AI 솔루션팀", status: "sending", signature, startedAt: new Date().toISOString() };
+    persist(); render();
+    try {
+      await wait(2400, controller.signal);
+      if (session !== state || controller.signal.aborted || state.phase !== "review-summary" || signature !== reviewSignature()) return;
+      state.teamHandoff = { ...state.teamHandoff, status: "delivered", deliveredAt: new Date().toISOString(),
+        payload: { run: status().c.run, appearanceChange: { ...getShift(), detectedAt: state.shiftDetectedAt, notificationConfirmedAt: state.changeNoticeConfirmedAt },
+          records: status().c.review.flatMap((photo, index) => index < status().available && state.records[index] ? [{ frame: photo.frame, image: photo.image, recordedAiScore: photo.score, userReview: { ...state.records[index] } }] : []) } };
+      history("team-handoff-delivered", "현장팀 → AI 솔루션팀 · 사진별 판정 및 검수 메모 전달 기록 저장", state.teamHandoff.deliveredAt);
+      persist(); render(); toast("AI 솔루션팀 전달 기록을 저장했습니다.");
+    } catch (error) { if (controller.signal.aborted || session !== state) return; state.teamHandoff = null; persist(); render(); toast("결과를 전달하지 못했습니다. 다시 시도해 주세요."); }
+  }
+  function renderTeamRole() {
+    const solution = ["reference-review", "completed"].includes(state.phase) || state.phase === "review-summary" && (state.pages[state.phase] || 0) >= 3;
+    $("teamRole").textContent = solution ? "AI 솔루션팀" : "현장팀";
   }
   function editPhoto(index) {
     if (!["review-summary"].includes(state.phase) || !state.records[index]) return;
@@ -462,14 +517,14 @@
   let referenceBusy = false;
   let referenceController;
   async function requestReference() {
-    const s = status(); if (state.phase !== "review-summary" || !s.complete || s.normals.length < 2 || referenceBusy) return;
+    const s = status(); if (state.phase !== "review-summary" || !s.complete || s.normals.length < 2 || !handoffDelivered() || referenceBusy) return;
     const token = job;
     referenceBusy = true; $("openCandidate").disabled = true;
     try {
       if (!state.candidateRequested) {
         const request = await adapter.requestReference(s.normals.map(({ photo }) => photo.frame));
         if (token !== job || state.phase !== "review-summary") return;
-        state.candidateRequest = { ...request, appearanceChange: { ...getShift(), detected: true, detectedAt: state.shiftDetectedAt, acknowledgedAt: state.shiftAcknowledgedAt, userReview: state.shiftReview } }; state.candidateRequested = true;
+        state.candidateRequest = { ...request, requestedBy: "AI 솔루션팀", handoffDeliveredAt: state.teamHandoff.deliveredAt, appearanceChange: { ...getShift(), notificationConfirmedAt: state.changeNoticeConfirmedAt, detected: true, detectedAt: state.shiftDetectedAt, acknowledgedAt: state.shiftAcknowledgedAt, userReview: state.shiftReview } }; state.candidateRequested = true;
         history("candidate-review-requested", `정상 확인 ${s.normals.length}장 · 기준 후보 검증 검토 요청 · 기존 기준 보존`, state.candidateRequest.requestedAt);
       }
       transition("reference-review");
@@ -485,11 +540,11 @@
     const payload = { schemaVersion: 3, demo: true, phase: state.phase, analysisMode: "recorded-dinov2-and-mmd", run: s.c.run,
       receivedAt: state.receivedAt, exportedAt: new Date().toISOString(), sourceFrameCount: s.c.frameCount, requested: s.budget, reviewed: s.reviewed,
       awaitingAdditionalPhotos: s.pending, activeReference: "frozen-source", selectedReference: state.referenceDecision?.kind === "change" ? "candidate" : "frozen-source", referenceChangeApplied: false, modelWeightsUpdated: false,
-      appearanceChange: { ...getShift(), detected: true, detectedAt: state.shiftDetectedAt, acknowledgedAt: state.shiftAcknowledgedAt, userReview: state.shiftReview, scope: "recorded joined-run experiment" },
+      appearanceChange: { ...getShift(), notificationConfirmedAt: state.changeNoticeConfirmedAt, detected: true, detectedAt: state.shiftDetectedAt, acknowledgedAt: state.shiftAcknowledgedAt, userReview: state.shiftReview, scope: "recorded joined-run experiment" },
       candidateReviewRequest: state.candidateRequested ? state.candidateRequest : null,
       validationExample: state.exampleViewedAt ? { viewedAt: state.exampleViewedAt, source: data.updateEvaluation.source, scope: "separate saved experiment, not a live evaluation of this review selection" } : null,
       candidatePreparation: state.candidatePreparation || null, referenceOperation: state.referenceOperation || null,
-      referenceDecision: state.referenceDecision, history: state.history,
+      referenceDecision: state.referenceDecision, teamHandoff: state.teamHandoff, referenceReviewTeam: "AI 솔루션팀", history: state.history,
       records: s.c.review.flatMap((photo, i) => i < s.available && state.records[i] ? [{ frame: photo.frame, rank: photo.rank, image: photo.image, recordedAiScore: photo.score, userReview: state.records[i], ...(state.truthRevealed ? { publishedDatasetLabel: photo.recordedLabel } : {}) }] : []) };
     const url = URL.createObjectURL(new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" }));
     const a = node("a"); a.href = url; a.download = `surfacetrace-review-${state.caseId}.json`; a.click(); setTimeout(() => URL.revokeObjectURL(url), 1500); toast("검수 기록을 내려받았습니다.");
@@ -505,6 +560,9 @@
   $("resumeRecords").addEventListener("click", () => { if (state.pipelineReady && !status().reviewed) transition("analyzing"); else goRecords(); });
   $("retryLoading").addEventListener("click", () => { if (state.loadingError && busy()) pipeline(); });
   $("startReviewFlow").addEventListener("click", () => { if (state.pipelineReady && busy()) showChangeSignal(); });
+  $("confirmChangeNotice").addEventListener("click", () => confirmChangeNotice());
+  $("sendTeamNotification").addEventListener("click", sendTeamNotification);
+  $("openSolutionReview").addEventListener("click", () => { if (!handoffDelivered()) return; state.pages["review-summary"] = 3; persist(); renderPages(); focusView(); });
   $("gateAction").addEventListener("click", gateAction);
   $("reviewNote").addEventListener("input",()=>{if(state.phase!=="reviewing"||state.reviewGate)return;state.drafts[state.active]={...draft(),note:$("reviewNote").value.slice(0,240)};persist();renderBatchChoice();});
   $("saveDecision").addEventListener("click",saveDecision);
@@ -532,13 +590,13 @@
     const index = state.reviewGate && state.phase === "reviewing" ? 0 : Math.min(state.pages[state.phase] || 0, pages.length - 1);
     state.pages[state.phase] = index;
     pages.forEach((page,i) => { page.hidden = i !== index; });
-    paginateNormalPreviews();
+    paginateNormalPreviews(); renderTeamRole();
     $("workspacePageTitle").textContent = pages[index].dataset.page;
     $("workspacePagePosition").textContent = `${index+1} / ${pages.length}`;
     const preparing = state.phase === "reference-review" && (state.candidatePreparation?.running || state.referenceOperation?.running);
     $("pagePrevious").disabled = index === 0 && state.phase === "ready";
     $("pagePrevious").textContent = index === 0 ? "← 이전 단계" : "← 이전";
-    $("pageNext").disabled = index === pages.length-1 || preparing || state.phase === "reference-review" && index === 1 && !state.candidatePreparation?.completedAt;
+    $("pageNext").disabled = index === pages.length-1 || preparing || state.phase === "review-summary" && index === 2 && !handoffDelivered() || state.phase === "reference-review" && index === 1 && !state.candidatePreparation?.completedAt;
 
   }
   const normalPreviewPages = {};
@@ -570,6 +628,7 @@
     if (delta < 0 && state.referenceOperation?.error) { state.referenceOperation.error = null; referenceController.render(); }
     if (delta > 0 && state.phase === "reference-review" && !(state.pages[state.phase] || 0)) { referenceController.stageNormals(); return; }
     if (delta < 0 && !(state.pages[state.phase] || 0)) { previousStage(); return; }
+    if (delta < 0 && state.phase === "review-summary" && state.teamHandoff?.status === "sending") { cancelHandoff(); renderTeamHandoff(); }
     state.pages[state.phase] = (state.pages[state.phase] || 0) + delta; persist(); renderPages();
     const heading = visiblePages()[state.pages[state.phase]]?.querySelector("h2,h3");
     if (heading) { heading.tabIndex = -1; heading.focus({preventScroll:true}); }
@@ -619,6 +678,6 @@
     persist(); render();
   } });
   if (busy() && !state.pipelineReady && !state.loadingError) pipeline();
-  if (state.phase === "change-alert") showChangeSignal();
+  if (state.phase === "change-alert" && state.changeStep === "review-intro") confirmChangeNotice(true);
   window.surfaceTraceFieldDemo = Object.freeze({ getState: () => JSON.parse(JSON.stringify(state)), getStatus: () => { const { budget, available, reviewed, pending, complete } = status(); return { budget, available, reviewed, pending, complete }; } });
 })();

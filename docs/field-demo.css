@@ -125,3 +125,19 @@ main{max-width:1380px;margin:0 auto;padding:30px 28px 20px}.page-heading{display
 @media(prefers-reduced-motion:reduce){.operation-spinner,.loading-shift .signal-bar i{animation:none}}
 .paged-workspace .loading-shift .signal-bars{height:auto;margin:8px 0 0}
 @media(max-width:650px){.paged-workspace .loading-shift{width:90%}.paged-workspace .loading-shift>span{font-size:9px}.paged-workspace .loading-shift .signal-bars{margin-top:6px;gap:14px}.paged-workspace .loading-shift .signal-bar>div{height:30px}.paged-workspace .loading-shift .signal-bar>span{font-size:8px;margin-top:4px}.paged-workspace .loading-shift .signal-bar small{font-size:8px;margin-top:2px}}
+
+/* Explicit field-team acknowledgement and a separate AI solution-team handoff. */
+#changeNoticeDescription:empty{display:none}
+.paged-workspace .passive-change .primary{min-width:180px}
+.paged-workspace .team-handoff{align-items:center;justify-content:center;text-align:center;gap:20px}
+.paged-workspace .team-handoff h2{max-width:920px;font-size:clamp(27px,3vw,42px);word-break:keep-all}
+.paged-workspace .team-handoff>p:not(.small-note){max-width:700px;margin:0;font-size:14px;line-height:1.8;color:#82738f;word-break:keep-all}
+.handoff-route{display:flex;align-items:center;justify-content:center;gap:28px;width:min(650px,100%)}
+.handoff-route>div{display:flex;flex:1;flex-direction:column;align-items:center;gap:10px;padding:23px;background:#f6f3ff;border:1px solid #e4dcf6;border-radius:12px}
+.handoff-route>div>span{font-size:25px;color:#7458cb}.handoff-route strong{font-size:19px}.handoff-route small{font-size:11px;color:#8b7e9a}.handoff-route>i{font-size:26px;color:#a596ce;font-style:normal}
+.handoff-summary{padding:12px 20px;background:#f9f7fd;border-radius:8px;font-size:13px;color:#83718f}
+.handoff-progress{display:flex;align-items:center;gap:12px;font-size:13px;color:#796391}.handoff-progress .operation-spinner{width:27px;height:27px;border-width:3px}
+.paged-workspace .team-handoff>.primary{min-width:245px}.paged-workspace .team-handoff .small-note{margin:0}
+.paged-workspace .context-bar #teamRole{flex:none;white-space:nowrap}
+@media(max-width:650px){.paged-workspace .team-handoff{gap:16px}.paged-workspace .team-handoff h2{font-size:26px}.paged-workspace .team-handoff>p:not(.small-note){font-size:12px}.handoff-route{gap:10px}.handoff-route>div{padding:16px 7px;gap:8px}.handoff-route strong{font-size:16px}.handoff-route small{font-size:9px}.handoff-route>i{font-size:20px}.handoff-summary{font-size:10px;padding:10px 13px}.handoff-progress{font-size:11px}.paged-workspace .context-bar #teamRole{font-size:8px}}
+@media(max-width:650px) and (max-height:730px){.paged-workspace .team-handoff{gap:12px}.paged-workspace .team-handoff h2{font-size:23px}.handoff-route>div{padding:11px 6px;gap:6px}.handoff-route>div>span{font-size:19px}.paged-workspace .team-handoff>p:not(.small-note){font-size:11px}}

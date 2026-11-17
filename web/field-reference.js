@@ -96,7 +96,7 @@ window.createSurfaceTraceReference = ({ getState, persist, navigate, notify, onD
     $("referenceOperation").hidden = !visible; $("referenceWorkspace").classList.toggle("has-operation", visible);
     if (!visible) return;
     $("referenceOperationTitle").textContent = op.error ? "작업이 중단되었습니다." : op.kind === "intake" ? "정상 기준에 추가 중입니다." : op.kind === "save-change" ? "새로운 기준으로 저장 중입니다." : "기존 기준 유지 결정을 저장 중입니다.";
-    $("referenceOperationDescription").textContent = op.error || (op.kind === "intake" ? "정상으로 확인한 사진을 새 기준 후보의 입력 목록에 추가합니다." : "담당자가 선택한 기준과 검토 기록을 저장합니다.");
+    $("referenceOperationDescription").textContent = op.error || (op.kind === "intake" ? "정상으로 확인한 사진을 새 기준 후보의 입력 목록에 추가합니다." : "AI 솔루션팀이 선택한 기준과 검토 기록을 저장합니다.");
     $("retryReferenceOperation").hidden = !op.error;
     $("referenceOperation").querySelector(".operation-spinner").hidden = !!op.error;
   }
@@ -145,10 +145,10 @@ window.createSurfaceTraceReference = ({ getState, persist, navigate, notify, onD
   }
   function commitDecision(kind) {
     if (getState().phase !== "reference-review" || !getState().exampleViewedAt || !getState().candidatePreparation?.completedAt || !["hold", "change"].includes(kind)) return;
-    getState().referenceDecision = { kind, at: new Date().toISOString(), applied: false, status: kind === "change" ? "change-requested" : "kept" };
+    getState().referenceDecision = { kind, team: "AI 솔루션팀", at: new Date().toISOString(), applied: false, status: kind === "change" ? "change-requested" : "kept" };
     getState().candidatePreparation.validationRequest.status = kind === "hold" ? "on-hold" : "change-requested";
-    history("reference-decision", kind === "change" ? "새로운 기준으로 변경 요청 · 실제 분석에는 기존 기준 사용" : "기존 기준 유지 선택", getState().referenceDecision.at);
-    try { navigate("completed"); notify("담당자의 결정을 기록했습니다."); } catch (error) { notify(error.message); }
+    history("reference-decision", kind === "change" ? "AI 솔루션팀 · 새로운 기준으로 변경 요청 · 실제 분석에는 기존 기준 사용" : "AI 솔루션팀 · 기존 기준 유지 선택", getState().referenceDecision.at);
+    try { navigate("completed"); notify("AI 솔루션팀의 결정을 기록했습니다."); } catch (error) { notify(error.message); }
   }
   function decide(kind) {
     if (getState().phase !== "reference-review" || !getState().exampleViewedAt || !getState().candidatePreparation?.completedAt || !["hold", "change"].includes(kind)) return;
