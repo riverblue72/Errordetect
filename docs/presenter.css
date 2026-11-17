@@ -332,3 +332,19 @@
   .present-compact .feature-pair .feature-photo { --compact-photo-height: clamp(180px, 43vh, 470px); }
   .present-compact .method-visual article img { max-height: clamp(230px, 48vh, 510px); }
 }
+
+/* Keep the validation flow compact; center the two result strengths as one group. */
+@media (min-width: 1000px) {
+  .presenter-page.present-compact .reference-validation-stage {
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+  .presenter-page.present-compact .reference-validation-stage > .validation-flow {
+    align-self: start;
+    padding: 10px 18px;
+  }
+  .presenter-page.present-compact .results-stage .demo-visual {
+    justify-content: center;
+    padding-top: 23px;
+    padding-bottom: 23px;
+  }
+}

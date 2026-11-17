@@ -6,10 +6,10 @@
   <meta name="description" content="생산 구간 수신부터 외관 변화 확인, 사진 검수, 검사 기준 후보 검토까지 이어지는 SurfaceTrace 현장 작업대.">
   <title>생산 품질 모니터링 | SurfaceTrace</title>
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="./field-demo.css?v=f3e4e8606194">
+  <link rel="stylesheet" href="./field-demo.css?v=8cee3f7ba3ac">
   <script src="./presenter-data.js?v=bb469f121335" defer></script>
   <script src="./field-reference.js?v=955dedf25369" defer></script>
-  <script src="./field-demo.js?v=f882b0402abc" defer></script>
+  <script src="./field-demo.js?v=d30007906ae1" defer></script>
 </head>
 <body>
   <a class="skip" href="#main">작업 화면으로 이동</a>
@@ -47,6 +47,13 @@
         <div class="shift-photo-pair"><figure><button type="button" data-shift-zoom="reference" aria-label="기존 구간 사진 크게 보기"><img id="shiftReferencePhoto" alt="기존 생산 구간의 실제 직물 사진" hidden></button><figcaption><strong>기존 구간</strong><span id="shiftReferenceCaption"></span></figcaption></figure><figure><button type="button" data-shift-zoom="current" aria-label="새 구간 사진 크게 보기"><img id="shiftCurrentPhoto" alt="새 생산 구간의 실제 직물 사진" hidden></button><figcaption><strong>새 구간</strong><span id="shiftCurrentCaption"></span></figcaption></figure></div>
         <p id="shiftPhotoLoading" class="small-note" role="status">비교 사진을 불러오고 있습니다.</p><div id="shiftPhotoError" class="error-box" role="alert" hidden><p>비교 사진을 불러오지 못했습니다.</p><button id="retryShiftPhotos" class="secondary" type="button">사진 다시 불러오기 ↻</button></div>
         <div id="shiftTimeline" class="shift-timeline" role="group" aria-label="새 구간 시간순 사진"></div>
+        <section class="shift-ai-preview" aria-labelledby="shiftAiTitle">
+          <div class="section-heading"><div><h3 id="shiftAiTitle">같은 구간의 AI 제시 영역</h3><p>실제 검수 후보의 원본과 AI 이상 영역을 나란히 비교하세요. 위의 변화 시점 사진과는 별도의 사진입니다.</p></div><span id="shiftAiScore" class="pill purple"></span></div>
+          <label class="shift-ai-select" for="shiftAiSelect">AI 검수 후보 <select id="shiftAiSelect"></select></label>
+          <div class="shift-photo-pair shift-ai-pair"><figure><button type="button" data-shift-ai-zoom="original" aria-label="AI 검수 후보 원본 크게 보기" disabled><img id="shiftAiOriginal" alt="같은 생산 구간의 실제 AI 검수 후보 원본" hidden></button><figcaption><strong>원본 사진</strong><span id="shiftAiCaption"></span></figcaption></figure><figure><button type="button" data-shift-ai-zoom="heat" aria-label="AI 제시 영역 크게 보기" disabled><img id="shiftAiBase" alt="AI 표시와 동일한 원본 사진" hidden><img id="shiftAiHeat" class="shift-ai-overlay" alt="동일 사진의 저장된 DINOv2 이상 영역" hidden></button><figcaption><strong>AI 제시 영역</strong><span>붉은 표시: 사진별 이상 영역</span></figcaption></figure></div>
+          <p id="shiftAiLoading" class="small-note" role="status">AI 제시 영역을 불러오고 있습니다.</p><div id="shiftAiError" class="error-box" role="alert" hidden><p>AI 비교 사진을 불러오지 못했습니다.</p><button id="retryShiftAi" class="secondary" type="button">AI 표시 다시 불러오기 ↻</button></div>
+          <p class="small-note">사진별 DINOv2 이상 영역은 MMD 외관 변화 신호와 독립적이며, 결함 확정 표시는 아닙니다.</p>
+        </section>
         <fieldset class="shift-judgment"><legend>담당자 외관 변화 판단</legend><div class="shift-verdicts"><button type="button" data-shift-verdict="changed" aria-pressed="false">변화 확인</button><button type="button" data-shift-verdict="unchanged" aria-pressed="false">변화 없음</button><button type="button" data-shift-verdict="hold" aria-pressed="false">판단 보류</button></div><label for="shiftNote">확인 메모 <span>(선택)</span></label><textarea id="shiftNote" maxlength="240" rows="2" placeholder="소재·조명·촬영 조건 등 확인한 내용을 남기세요."></textarea><p id="shiftDecisionHint" class="small-note" role="status"></p></fieldset>
       </section>
       <div class="change-content"><div class="change-chart"><div class="chart-heading"><span>MMD 변화 신호</span><strong id="shiftScore"></strong></div><div id="shiftBars" class="signal-bars"></div><p id="shiftLimit"></p></div><dl class="change-facts"><div><dt>AI 변화 신호</dt><dd>감지됨</dd></div><div><dt>변화 신호 시점</dt><dd>새 녹화 96번째 사진</dd></div><div><dt>비교 창 / 이동</dt><dd>128장 / 32장</dd></div><div><dt>경보 조건</dt><dd>3회 연속 임계값 초과</dd></div></dl></div>

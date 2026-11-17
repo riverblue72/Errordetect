@@ -24,11 +24,11 @@
     source: "experiments/unsupervised/results/change_limit_development.json · original_limit" };
   const fresh = () => ({ version: 3, phase: "ready", caseId: null, receivedAt: null, records: [], drafts: [], active: 0,
     expanded: false, reviewGate: null, editing: false, loadingStep: 0, pipelineReady: false, loadingError: null,
-    shiftAcknowledgedAt: null, shiftReview: null, shiftDraft: { verdict: null, note: "" }, shiftFrame: 96, shiftViewedFrames: [], afterShiftPhase: null, truthRevealed: false, candidateRequested: false, candidateRequest: null,
+    shiftAcknowledgedAt: null, shiftReview: null, shiftDraft: { verdict: null, note: "" }, shiftFrame: 96, shiftViewedFrames: [], shiftAiIndex: 0, shiftAiViewedFrames: [], afterShiftPhase: null, truthRevealed: false, candidateRequested: false, candidateRequest: null,
     exampleViewedAt: null, referenceDecision: null, history: [] });
   let state = fresh(), job = 0, pipelineController, photoController, photoJob = 0, heatJob = 0;
   let photoReady = false, photoFailed = false, heatBusy = false, toastTimer, resetCase = null, storageAvailable = true;
-  let shiftController, shiftJob = 0, shiftPhotosReady = false;
+  let shiftController, shiftJob = 0, shiftPhotosReady = false, shiftAiController, shiftAiJob = 0, shiftAiReady = false;
   const assets = new Map();
 
   // Data access has no view dependencies. Replace these fixture methods with backend calls later.
@@ -121,6 +121,9 @@
       const frames = shiftPhotos().map(p => p.frame);
       state.shiftFrame = frames.includes(saved.shiftFrame) ? saved.shiftFrame : frames.includes(96) ? 96 : frames[0];
       state.shiftViewedFrames = Array.isArray(saved.shiftViewedFrames) ? saved.shiftViewedFrames.filter(f => frames.includes(f)) : [];
+      const aiPhotos = shiftAiPhotos();
+      state.shiftAiIndex = Number.isInteger(saved.shiftAiIndex) ? Math.max(0, Math.min(aiPhotos.length - 1, saved.shiftAiIndex)) : 0;
+      state.shiftAiViewedFrames = Array.isArray(saved.shiftAiViewedFrames) ? saved.shiftAiViewedFrames.filter(f => aiPhotos.some(p => p.frame === f)) : [];
       state.afterShiftPhase = saved.afterShiftPhase === "review-summary" ? "review-summary" : null;
       if (state.records.slice(2).some(Boolean)) state.expanded = true;
       const s = status();
@@ -160,7 +163,7 @@
     if (state.phase === "reference-review" && phase !== "reference-review") referenceController?.cancel();
     state.phase = phase; persist(); render(); if (focus) focusView();
   }
-  function cancelJobs() { shiftController?.abort(); shiftJob++; shiftPhotosReady = false; referenceController?.cancel(); job++; pipelineController?.abort(); photoJob++; photoController?.abort(); heatJob++; }
+  function cancelJobs() { shiftAiController?.abort(); shiftAiJob++; shiftAiReady = false; shiftController?.abort(); shiftJob++; shiftPhotosReady = false; referenceController?.cancel(); job++; pipelineController?.abort(); photoJob++; photoController?.abort(); heatJob++; }
   function reset(caseId = null) {
     cancelJobs(); state = fresh(); photoReady = false; photoFailed = false; heatBusy = false;
     persist(); render(); focusView(); if (caseId) startReceiving(caseId);
@@ -268,7 +271,7 @@
       button.type = "button"; button.dataset.shiftFrame = photo.frame; button.setAttribute("aria-pressed", String(photo.frame === state.shiftFrame));
       button.addEventListener("click", () => { state.shiftFrame = photo.frame; persist(); renderChange(); }); return button;
     }));
-    renderShiftChoice(); loadShiftPhotos();
+    renderShiftChoice(); loadShiftPhotos(); renderShiftAi();
     $("shiftAcknowledgedAt").textContent = state.shiftAcknowledgedAt ? `${time(state.shiftAcknowledgedAt)} 확인 기록됨` : "확인 결과는 검수 이력에 저장됩니다.";
   }
   function shiftPhotos() {
@@ -301,6 +304,39 @@
     } catch {
       if (token !== shiftJob || state.phase !== "change-alert") return;
       $("shiftPhotoLoading").hidden = true; $("shiftPhotoError").hidden = false; renderShiftChoice();
+    }
+  }
+  function shiftAiPhotos() { const s = status(); return s.c.review.slice(0, s.available).filter(photo => photo.heatmap); }
+  function renderShiftAi() {
+    const photos = shiftAiPhotos();
+    $("shiftAiSelect").replaceChildren(...photos.map((photo, index) => {
+      const option = node("option", `후보 ${String(index + 1).padStart(2, "0")} · ${format(photo.frame)}번째 사진`);
+      option.value = String(index); option.selected = index === state.shiftAiIndex; return option;
+    }));
+    loadShiftAi();
+  }
+  async function loadShiftAi(retry = false) {
+    shiftAiController?.abort(); shiftAiController = new AbortController(); const token = ++shiftAiJob;
+    const photo = shiftAiPhotos()[state.shiftAiIndex]; shiftAiReady = false;
+    $("shiftAiLoading").hidden = false; $("shiftAiError").hidden = true;
+    ["shiftAiOriginal", "shiftAiBase", "shiftAiHeat"].forEach(id => { $(id).hidden = true; });
+    document.querySelectorAll("[data-shift-ai-zoom]").forEach(b => { b.disabled = true; });
+    $("shiftAiCaption").textContent = `${getShift().run} · ${format(photo.frame)}번째 사진`;
+    $("shiftAiScore").textContent = `이상 점수 ${photo.score.toFixed(4)} · 경보선 ${status().c.sourceThreshold.toFixed(4)}`;
+    try {
+      const [original, heat] = await Promise.all([adapter.asset(photo.image, shiftAiController.signal, retry), adapter.asset(photo.heatmap, shiftAiController.signal, retry)]);
+      if (token !== shiftAiJob || state.phase !== "change-alert") return;
+      $("shiftAiOriginal").src = original; $("shiftAiBase").src = original; $("shiftAiHeat").src = heat;
+      await Promise.all(["shiftAiOriginal", "shiftAiBase", "shiftAiHeat"].map(id => $(id).decode()));
+      if (token !== shiftAiJob || state.phase !== "change-alert") return;
+      ["shiftAiOriginal", "shiftAiBase", "shiftAiHeat"].forEach(id => { $(id).hidden = false; });
+      $("shiftAiLoading").hidden = true; shiftAiReady = true;
+      document.querySelectorAll("[data-shift-ai-zoom]").forEach(b => { b.disabled = false; });
+      if (!state.shiftAiViewedFrames.includes(photo.frame)) state.shiftAiViewedFrames.push(photo.frame);
+      persist();
+    } catch {
+      if (token !== shiftAiJob || state.phase !== "change-alert") return;
+      $("shiftAiLoading").hidden = true; $("shiftAiError").hidden = false;
     }
   }
   function draft() { return state.drafts[state.active] || (state.records[state.active] ? { verdict: state.records[state.active].verdict, note: state.records[state.active].note } : { verdict: null, note: "" }); }
@@ -522,7 +558,7 @@
   $("acknowledgeShift").addEventListener("click", () => {
     if (state.phase !== "change-alert" || !shiftPhotosReady || !Object.hasOwn(shiftVerdicts, state.shiftDraft.verdict)) return;
     const at = new Date().toISOString(); state.shiftAcknowledgedAt = at;
-    state.shiftReview = { verdict: state.shiftDraft.verdict, note: state.shiftDraft.note.trim(), at, referenceRun: data.visualShift.sourceRun, referenceFrame: data.visualShift.referencePhoto.frame, targetRun: getShift().run, currentFrame: state.shiftFrame, comparedFrames: [...state.shiftViewedFrames] };
+    state.shiftReview = { verdict: state.shiftDraft.verdict, note: state.shiftDraft.note.trim(), at, referenceRun: data.visualShift.sourceRun, referenceFrame: data.visualShift.referencePhoto.frame, targetRun: getShift().run, currentFrame: state.shiftFrame, comparedFrames: [...state.shiftViewedFrames], aiComparedFrames: [...state.shiftAiViewedFrames] };
     history("shift-reviewed", `외관 변화 담당자 판단 · ${shiftVerdicts[state.shiftReview.verdict]}${state.shiftReview.note ? " · " + state.shiftReview.note : ""} · 사진별 이상 경보와 기존 기준 유지`, at);
     const next = state.afterShiftPhase || (status().complete ? "review-summary" : "reviewing"); state.afterShiftPhase = null;
     transition(next); toast("사진 비교와 외관 변화 판단을 저장했습니다.");
@@ -539,6 +575,20 @@
     const baseline = button.dataset.shiftZoom === "reference";
     $("photoDialogTitle").textContent = baseline ? $("shiftReferenceCaption").textContent : $("shiftCurrentCaption").textContent;
     $("zoomOriginal").src = $(baseline ? "shiftReferencePhoto" : "shiftCurrentPhoto").src; $("zoomHeat").hidden = true; $("photoDialog").showModal();
+  }));
+  $("shiftAiSelect").addEventListener("change", () => {
+    if (state.phase !== "change-alert") return;
+    const index = Number($("shiftAiSelect").value); if (!Number.isInteger(index) || !shiftAiPhotos()[index]) return;
+    state.shiftAiIndex = index; persist(); loadShiftAi();
+  });
+  $("retryShiftAi").addEventListener("click", () => loadShiftAi(true));
+  document.querySelectorAll("[data-shift-ai-zoom]").forEach(button => button.addEventListener("click", () => {
+    if (!shiftAiReady || state.phase !== "change-alert") return;
+    const heat = button.dataset.shiftAiZoom === "heat";
+    $("photoDialogTitle").textContent = `${format(shiftAiPhotos()[state.shiftAiIndex].frame)}번째 사진 · ${heat ? "AI 제시 영역" : "원본"}`;
+    $("zoomOriginal").src = $("shiftAiOriginal").src; $("zoomHeat").hidden = !heat;
+    if (heat) $("zoomHeat").src = $("shiftAiHeat").src;
+    $("photoDialog").showModal();
   }));
   $("gateAction").addEventListener("click", gateAction);
   document.querySelectorAll("[data-verdict]").forEach(button => button.addEventListener("click", () => choose(button.dataset.verdict)));
