@@ -16,6 +16,8 @@ window.createSurfaceTraceReference = ({ getState, persist, navigate, notify, onD
   }
   function cancel() {
     controller?.abort(); run++;
+    const operation = getState().referenceOperation;
+    if (operation?.running) { operation.running = false; operation.error = "작업이 중단되었습니다. 다시 시도해 주세요."; }
     const prep = getState().candidatePreparation;
     if (prep?.running) { prep.running = false; prep.error = "중단된 준비 작업을 다시 시작해 주세요."; }
   }
@@ -68,7 +70,38 @@ window.createSurfaceTraceReference = ({ getState, persist, navigate, notify, onD
       render();
     }
   }
+  async function operate(kind) {
+    if (getState().phase !== "reference-review" || getState().referenceOperation?.running || getState().candidatePreparation?.running) return;
+    controller?.abort(); controller = new AbortController(); const signal = controller.signal, token = ++run, session = getState();
+    getState().referenceOperation = { kind, running: true, error: null, startedAt: new Date().toISOString(), completedAt: null };
+    const operation = getState().referenceOperation;
+    const timer = setInterval(() => { if (token === run) $("referenceOperationProgress").style.width = `${Math.min(95, (Date.now() - Date.parse(operation.startedAt)) / 60)}%`; }, 100);
+    persist(); render();
+    try {
+      const [inputs] = await Promise.all([kind === "intake" ? adapter.normalInputs(signal) : Promise.resolve(null), wait(6000, signal)]);
+      if (token !== run || session !== getState() || getState().phase !== "reference-review") return;
+      operation.running = false; operation.completedAt = new Date().toISOString();
+      if (kind === "intake") {
+        operation.inputs = inputs; operation.activeReferenceChanged = false;
+        history("normal-data-staged", `정상 확인 사진 ${inputs.length}장 · 기준 후보 입력 목록 저장`);
+        getState().pages["reference-review"] = 1; persist(); render();
+      } else commitDecision(kind === "save-change" ? "change" : "hold");
+    } catch (error) {
+      if (token !== run || session !== getState() || signal.aborted) return;
+      operation.running = false; operation.error = error.message || "저장을 완료하지 못했습니다."; persist(); render();
+    } finally { clearInterval(timer); }
+  }
+  function renderOperation() {
+    const op = getState().referenceOperation, visible = getState().phase === "reference-review" && !!(op?.running || op?.error);
+    $("referenceOperation").hidden = !visible; $("referenceWorkspace").classList.toggle("has-operation", visible);
+    if (!visible) return;
+    $("referenceOperationTitle").textContent = op.error ? "작업이 중단되었습니다." : op.kind === "intake" ? "정상 기준에 추가 중입니다." : op.kind === "save-change" ? "새로운 기준으로 저장 중입니다." : "기존 기준 유지 결정을 저장 중입니다.";
+    $("referenceOperationDescription").textContent = op.error || (op.kind === "intake" ? "정상으로 확인한 사진을 새 기준 후보의 입력 목록에 추가합니다." : "담당자가 선택한 기준과 검토 기록을 저장합니다.");
+    $("retryReferenceOperation").hidden = !op.error;
+    $("referenceOperation").querySelector(".operation-spinner").hidden = !!op.error;
+  }
   function render() {
+    renderOperation();
     const completed = getState().phase === "completed" && !!getState().referenceDecision;
     $("referenceWorkspace").hidden = completed; $("completedView").hidden = !completed;
     if (completed) {
@@ -90,7 +123,7 @@ window.createSurfaceTraceReference = ({ getState, persist, navigate, notify, onD
     $("preparedRequest").hidden = !done || !!getState().exampleViewedAt;
     $("validationHistory").hidden = !done || !getState().exampleViewedAt;
     const stage = prep?.stage || 0;
-    const titles = ["기존 검사 기준을 보존하고 있습니다.", "정상으로 확인된 사진을 검증 요청에 포함합니다.", "새로운 기준 후보의 검증을 요청하고 있습니다.", "검증 요청 준비 완료"];
+    const titles = ["기존 검사 기준을 보존하고 있습니다.", "정상으로 확인된 사진을 검증 요청에 포함합니다.", "새 검사 기준의 적용 가능성을 검토합니다.", "검증 요청 준비 완료"];
     const descriptions = ["검토가 끝날 때까지 현재 검사 기준을 유지합니다.", "선택한 정상 사진을 검증 요청에 첨부합니다.", "오경보와 결함 탐지를 확인할 검증 요청을 등록합니다."];
     $("preparationTitle").textContent = done ? "검증 요청 준비가 완료되었습니다." : prep?.error ? "요청 준비를 완료하지 못했습니다." : prep?.running ? titles[stage] : "새 검사 기준의 적용 가능성을 검토합니다.";
     $("preparationDescription").textContent = prep?.error || (prep?.running ? descriptions[stage] : "정상 확인 사진을 포함해 후보 검증에 필요한 입력 목록을 구성합니다.");
@@ -110,12 +143,16 @@ window.createSurfaceTraceReference = ({ getState, persist, navigate, notify, onD
     getState().exampleViewedAt ||= new Date().toISOString(); history("validation-history-viewed", "이전 기준 후보의 검증 기록 열람");
     try { persist(); render(); } catch (error) { notify(error.message); }
   }
-  function decide(kind) {
+  function commitDecision(kind) {
     if (getState().phase !== "reference-review" || !getState().exampleViewedAt || !getState().candidatePreparation?.completedAt || !["hold", "change"].includes(kind)) return;
     getState().referenceDecision = { kind, at: new Date().toISOString(), applied: false, status: kind === "change" ? "change-requested" : "kept" };
     getState().candidatePreparation.validationRequest.status = kind === "hold" ? "on-hold" : "change-requested";
     history("reference-decision", kind === "change" ? "새로운 기준으로 변경 요청 · 실제 분석에는 기존 기준 사용" : "기존 기준 유지 선택", getState().referenceDecision.at);
     try { navigate("completed"); notify("담당자의 결정을 기록했습니다."); } catch (error) { notify(error.message); }
+  }
+  function decide(kind) {
+    if (getState().phase !== "reference-review" || !getState().exampleViewedAt || !getState().candidatePreparation?.completedAt || !["hold", "change"].includes(kind)) return;
+    operate(kind === "change" ? "save-change" : "save-hold");
   }
   function showPage(index) {
     if (getState().phase !== "reference-review" || getState().candidatePreparation?.running) return;
@@ -123,7 +160,8 @@ window.createSurfaceTraceReference = ({ getState, persist, navigate, notify, onD
     const heading = $("referenceWorkspace").querySelectorAll("[data-page]")[index]?.querySelector("h2,h3");
     if (heading) { heading.tabIndex = -1; heading.focus({ preventScroll: true }); }
   }
-  $("referenceEntryContinue").addEventListener("click", () => showPage(1));
+  $("referenceEntryContinue").addEventListener("click", () => operate("intake"));
+  $("retryReferenceOperation").addEventListener("click", () => operate(getState().referenceOperation.kind));
   $("referenceConfirmBack").addEventListener("click", () => showPage(0));
   $("prepareCandidate").addEventListener("click", prepare); $("repeatPreparation").addEventListener("click", prepare); $("retryPreparation").addEventListener("click", prepare);
   $("showValidation").addEventListener("click", showHistory);
@@ -131,5 +169,5 @@ window.createSurfaceTraceReference = ({ getState, persist, navigate, notify, onD
   ["backToRecords", "completedRecords"].forEach(id => $(id).addEventListener("click", backToRecords));
   $("completedDownload").addEventListener("click", onDownload);
   $("reopenReference").addEventListener("click", () => navigate("reference-review"));
-  return Object.freeze({ render, cancel });
+  return Object.freeze({ render, cancel, stageNormals: () => operate("intake") });
 };

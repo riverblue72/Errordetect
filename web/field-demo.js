@@ -8,9 +8,9 @@
   const shiftVerdicts = { changed: "변화 확인", unchanged: "변화 없음", hold: "판단 보류" };
   const PHASES = ["ready", "receiving", "analyzing", "change-alert", "reviewing", "review-summary", "reference-review", "completed"];
   const transitions = {
-    ready: ["receiving", "review-summary"], receiving: ["analyzing", "ready"],
+    ready: ["receiving", "analyzing", "review-summary"], receiving: ["analyzing", "ready"],
     analyzing: ["receiving", "change-alert", "ready"], "change-alert": ["reviewing", "review-summary", "ready"],
-    reviewing: ["review-summary", "ready"], "review-summary": ["change-alert", "reviewing", "reference-review", "ready"],
+    reviewing: ["analyzing", "review-summary", "ready"], "review-summary": ["change-alert", "reviewing", "reference-review", "ready"],
     "reference-review": ["completed", "review-summary", "ready"], completed: ["review-summary", "reference-review", "ready"]
   };
   const caseNames = { defect: "외관 변화 및 검수" };
@@ -24,12 +24,11 @@
     source: "experiments/unsupervised/results/change_limit_development.json · original_limit" };
   const fresh = () => ({ version: 3, phase: "ready", caseId: null, receivedAt: null, records: [], drafts: [], active: 0,
     expanded: false, reviewGate: null, editing: false, loadingStep: 0, pipelineReady: false, loadingError: null,
-    shiftAcknowledgedAt: null, shiftReview: null, shiftDraft: { verdict: null, note: "" }, shiftFrame: 96, shiftViewedFrames: [], shiftAiViewedFrames: [], pages: {}, recordPage: 0, historyPage: 0, batchPage: 0, afterShiftPhase: null, truthRevealed: false, candidateRequested: false, candidateRequest: null,
+    shiftDetectedAt: null, shiftAcknowledgedAt: null, shiftReview: null, shiftDraft: { verdict: null, note: "" }, shiftFrame: 96, shiftViewedFrames: [], shiftAiViewedFrames: [], pages: {}, recordPage: 0, historyPage: 0, batchPage: 0, afterShiftPhase: null, truthRevealed: false, candidateRequested: false, candidateRequest: null,
     exampleViewedAt: null, referenceDecision: null, history: [] });
-  let state = fresh(), job = 0, pipelineController, photoController, photoJob = 0;
+  let state = fresh(), job = 0, pipelineController, photoController, photoJob = 0, pipelineStarted = 0, alertController;
   const batchAssets = new Map();
   let toastTimer, resetCase = null, storageAvailable = true;
-  let shiftController, shiftJob = 0, shiftPhotosReady = false, shiftAiController, shiftAiJob = 0, shiftAiReady = false;
   const assets = new Map();
 
   // Data access has no view dependencies. Replace these fixture methods with backend calls later.
@@ -112,6 +111,7 @@
           const d = saved.drafts?.[i]; return d && (d.verdict === null || Object.hasOwn(verdicts, d.verdict)) && typeof d.note === "string" ? { verdict: d.verdict, note: d.note.slice(0, 240) } : null;
         }),
         expanded: !!saved.expanded, active: Number.isInteger(saved.active) ? Math.max(0, Math.min(saved.active, c.review.length - 1)) : 0,
+        shiftDetectedAt: validTime(saved.shiftDetectedAt) ? saved.shiftDetectedAt : null,
         shiftAcknowledgedAt: validTime(saved.shiftAcknowledgedAt) ? saved.shiftAcknowledgedAt : null,
         truthRevealed: !!saved.truthRevealed,
         history: Array.isArray(saved.history) ? saved.history.filter(e => e && typeof e.type === "string" && typeof e.description === "string" && validTime(e.at)).slice(-500).map(e => ({ type: e.type.slice(0, 60), description: e.description.slice(0, 500), at: e.at })) : [] };
@@ -132,9 +132,10 @@
       const s = status();
       state.active = Math.min(state.active, s.available - 1);
       state.candidateRequested = !!saved.candidateRequested && s.complete && s.normals.length >= 2;
+      state.referenceOperation = saved.referenceOperation && typeof saved.referenceOperation === "object" ? saved.referenceOperation : null;
       state.candidatePreparation = saved.candidatePreparation && typeof saved.candidatePreparation === "object" ? saved.candidatePreparation : null;
       if (state.candidateRequested) {
-        state.candidateRequest = { photoFrames: s.normals.map(({ photo }) => photo.frame), requestedAt: validTime(saved.candidateRequest?.requestedAt) ? saved.candidateRequest.requestedAt : null, liveValidationPerformed: false, appearanceChange: saved.candidateRequest?.appearanceChange || { ...getShift(), acknowledgedAt: state.shiftAcknowledgedAt, userReview: state.shiftReview } };
+        state.candidateRequest = { photoFrames: s.normals.map(({ photo }) => photo.frame), requestedAt: validTime(saved.candidateRequest?.requestedAt) ? saved.candidateRequest.requestedAt : null, liveValidationPerformed: false, appearanceChange: saved.candidateRequest?.appearanceChange || { ...getShift(), detected: true, detectedAt: state.shiftDetectedAt, acknowledgedAt: state.shiftAcknowledgedAt, userReview: state.shiftReview } };
         state.exampleViewedAt = validTime(saved.exampleViewedAt) ? saved.exampleViewedAt : null;
         if (state.exampleViewedAt && ["hold", "change", "additional-validation"].includes(saved.referenceDecision?.kind) && validTime(saved.referenceDecision?.at)) state.referenceDecision = { kind: saved.referenceDecision.kind, at: saved.referenceDecision.at, applied: false, status: saved.referenceDecision.kind === "change" ? "change-requested" : saved.referenceDecision.kind === "hold" ? "kept" : "additional-validation-requested" };
       }
@@ -149,7 +150,7 @@
       } else state.phase = state.referenceDecision ? "completed" : s.complete || s.pending && s.reviewed === s.available ? "review-summary" : state.shiftAcknowledgedAt ? "reviewing" : "change-alert";
       if (state.phase === "completed" && !state.referenceDecision) state.phase = "review-summary";
       if (state.phase === "reference-review" && !state.candidateRequested) state.phase = "review-summary";
-      if (["reviewing", "review-summary", "reference-review"].includes(state.phase) && !state.shiftAcknowledgedAt) state.phase = "change-alert";
+
       if (state.phase === "reviewing" && !state.expanded && state.records.slice(0, 2).every(Boolean) && !state.editing) state.reviewGate = state.records.slice(0, 2).some(r => r.verdict !== "normal") ? "expand" : "stop";
     } catch { state = fresh(); }
   }
@@ -163,12 +164,14 @@
   }
   function transition(phase, focus = true) {
     if (phase !== state.phase && !transitions[state.phase]?.includes(phase)) throw new Error(`Invalid workflow transition: ${state.phase} → ${phase}`);
+    if (state.phase === "change-alert" && phase !== "change-alert") alertController?.abort();
+    if (busy() && !state.pipelineReady && phase === "ready") { job++; pipelineController?.abort(); }
     if (state.phase === "reference-review" && phase !== "reference-review") referenceController?.cancel();
     if (state.phase !== phase) state.pages[phase] = phase === "reviewing" ? 0 : phase === "reference-review" && state.candidatePreparation?.completedAt ? 2 : 0;
     if (state.phase === "reviewing" && phase !== "reviewing") { photoJob++; photoController?.abort(); }
     state.phase = phase; persist(); render(); if (focus) focusView();
   }
-  function cancelJobs() { shiftAiController?.abort(); shiftAiJob++; shiftAiReady = false; shiftController?.abort(); shiftJob++; shiftPhotosReady = false; referenceController?.cancel(); job++; pipelineController?.abort(); photoJob++; photoController?.abort(); batchAssets.clear(); }
+  function cancelJobs() { alertController?.abort(); referenceController?.cancel(); job++; pipelineController?.abort(); photoJob++; photoController?.abort(); batchAssets.clear(); }
   function reset(caseId = null) {
     cancelJobs(); state = fresh();
     persist(); render(); focusView(); if (caseId) startReceiving(caseId);
@@ -192,26 +195,28 @@
     pipelineController?.abort(); const controller = new AbortController(); pipelineController = controller;
     const token = ++job, caseId = state.caseId;
     const current = () => token === job && !controller.signal.aborted && state.caseId === caseId;
-    state.loadingError = null; state.pipelineReady = false; state.loadingStep = 0;
+    state.loadingError = null; state.pipelineReady = false; state.loadingStep = 0; pipelineStarted = performance.now();
+    const progressTimer = setInterval(() => { if (current() && busy()) updatePipelineProgress(); }, 100);
     if (state.phase !== "receiving") transition("receiving"); else { persist(); render(); }
     try {
-      await Promise.all([adapter.receiveProduction(caseId, controller.signal), wait(1800, controller.signal)]);
+      await Promise.all([adapter.receiveProduction(caseId, controller.signal), wait(6000, controller.signal)]);
       if (!current()) return;
       state.receivedAt ||= new Date().toISOString(); historyOnce("segment-received", `생산 구간 수신 · ${data.cases[caseId].run}`);
       state.loadingStep = 1; transition("analyzing");
-      await Promise.all([adapter.savedAnalysis(caseId), wait(2100, controller.signal)]);
+      await Promise.all([adapter.savedAnalysis(caseId), wait(7000, controller.signal)]);
       if (!current()) return;
       historyOnce("analysis-loaded", "저장된 DINOv2 이상 분석 결과 준비");
       state.loadingStep = 2; persist(); renderLoading();
-      await Promise.all([adapter.savedShift(caseId), wait(1900, controller.signal)]);
+      await Promise.all([adapter.savedShift(caseId), wait(7000, controller.signal)]);
       if (!current()) return;
       historyOnce("shift-loaded", "저장된 MMD 외관 변화 신호 확인 · 새 녹화 96번째 사진");
       state.loadingStep = 3; state.pipelineReady = true; persist(); render();
+      showChangeSignal();
     } catch (error) {
       if (!current()) return;
       state.loadingError = error.message || "준비된 데이터를 불러오지 못했습니다.";
       persist(); renderLoading();
-    }
+    } finally { clearInterval(progressTimer); }
   }
   function startReceiving(caseId) {
     state = { ...fresh(), caseId, phase: "receiving", records: Array(data.cases[caseId].review.length).fill(null), drafts: Array(data.cases[caseId].review.length).fill(null) };
@@ -236,10 +241,11 @@
     const stage = state.phase === "ready" || busy() ? "data" : state.phase === "change-alert" ? "change" : state.phase === "reviewing" ? "review" : state.phase === "review-summary" ? "records" : "reference";
     const steps = ["data", "change", "review", "records", "reference"];
     document.querySelectorAll("[data-step]").forEach(e => { if (e.dataset.step === stage) e.setAttribute("aria-current", "step"); else e.removeAttribute("aria-current"); e.classList.toggle("is-done", steps.indexOf(e.dataset.step) < steps.indexOf(stage)); });
-    $("resumeCard").hidden = !s.reviewed;
+    $("resumeCard").hidden = !s.reviewed && !state.pipelineReady;
+    $("resumeRecords").textContent = state.pipelineReady ? "작업 계속하기 →" : "검수 기록 보기 →";
     document.querySelectorAll("[data-receive]").forEach(button => { button.disabled = busy(); });
     if (busy()) renderLoading();
-    if (state.phase === "change-alert") renderChange();
+
     if (state.phase === "reviewing") renderReview();
     if (state.phase === "review-summary") renderSummary();
     if (["reference-review", "completed"].includes(state.phase)) referenceController?.render();
@@ -263,80 +269,27 @@
     $("loadingVisual").dataset.step = String(state.loadingStep);
     document.querySelectorAll("[data-load-step]").forEach(e => { const step = Number(e.dataset.loadStep); e.classList.toggle("is-active", step === state.loadingStep && !state.pipelineReady && !state.loadingError); e.classList.toggle("is-done", step < state.loadingStep || state.pipelineReady); });
     if (state.loadingStep === 2) signalBars("loadingShiftBars", getShift());
+    updatePipelineProgress();
     $("loadingError").hidden = !state.loadingError; $("loadingErrorMessage").textContent = state.loadingError || "";
     $("startReviewFlow").hidden = !state.pipelineReady || !!state.loadingError;
   }
-  function renderChange() {
-    const shift = getShift(); signalBars("shiftBars", shift);
-    $("shiftScore").textContent = shift.points.at(-1).score.toFixed(4);
-    $("shiftLimit").textContent = `경보선 ${shift.threshold.toFixed(4)} · 연속 3개 창에서 초과`;
-    $("shiftSource").textContent = `${shift.run} · 기존 기준 녹화와 새 녹화를 이어 붙인 저장된 전환 실험입니다. ${shift.source}`;
-    $("shiftNote").value = state.shiftDraft.note;
-    $("shiftTimeline").replaceChildren(...shiftPhotos().map(photo => {
-      const button = node("button", `${format(photo.frame)}번째${photo.frame === 96 ? " · 변화 신호" : ""}`);
-      button.type = "button"; button.dataset.shiftFrame = photo.frame; button.setAttribute("aria-pressed", String(photo.frame === state.shiftFrame));
-      button.addEventListener("click", () => { state.shiftFrame = photo.frame; persist(); renderChange(); }); return button;
-    }));
-    renderShiftChoice(); loadShiftPhotos();
-    $("shiftAcknowledgedAt").textContent = state.shiftAcknowledgedAt ? `${time(state.shiftAcknowledgedAt)} 확인 기록됨` : "확인 결과는 검수 이력에 저장됩니다.";
+  function updatePipelineProgress() {
+    const percent = state.pipelineReady ? 100 : Math.min(99, Math.floor((performance.now() - pipelineStarted) / 200));
+    $("loadingPercent").textContent = `${percent}%`;
+    $("loadingProgress").setAttribute("aria-valuenow", percent);
+    $("loadingProgress").firstElementChild.style.width = `${percent}%`;
+  }
+  async function showChangeSignal() {
+    alertController?.abort(); const controller = new AbortController(); alertController = controller;
+    state.shiftDetectedAt ||= new Date().toISOString();
+    historyOnce("shift-detected", "구간 변화가 탐지되었습니다. · 새 녹화 96번째 사진 · MMD 128장 창 / 32장 이동 / 3회 연속 초과");
+    transition("change-alert");
+    try { await wait(1600, controller.signal); if (state.phase === "change-alert") transition("reviewing"); } catch { /* Navigation cancels the passive notification. */ }
   }
   function shiftPhotos() {
     const photos = state.caseId === "normal" ? data.cases.normal.review.map(p => ({ frame: p.frame, image: p.image })) : data.visualShift.photos;
     const analyses = window.SURFACETRACE_SHIFT_ANALYSIS?.assets || [];
     return photos.map(p => ({ ...p, ...analyses.find(a => a.run === getShift().run && a.frame === p.frame) }));
-  }
-  function renderShiftChoice() {
-    document.querySelectorAll("[data-shift-verdict]").forEach(button => button.setAttribute("aria-pressed", String(button.dataset.shiftVerdict === state.shiftDraft.verdict)));
-    $("acknowledgeShift").disabled = !shiftPhotosReady || !state.shiftViewedFrames.length || !Object.hasOwn(shiftVerdicts, state.shiftDraft.verdict);
-    $("acknowledgeShift").textContent = state.afterShiftPhase === "review-summary" ? "판단 저장하고 기록으로 돌아가기 →" : "판단 확정하고 검수 진행 →";
-    $("shiftDecisionHint").textContent = !shiftPhotosReady ? "비교 사진을 불러온 뒤 판단을 확정할 수 있습니다." : !state.shiftDraft.verdict ? "사진을 비교한 뒤 외관 변화 여부를 선택해 주세요." : `${shiftVerdicts[state.shiftDraft.verdict]}으로 기록합니다. 사진별 결함 검수는 별도로 진행합니다.`;
-    renderPages();
-  }
-  async function loadShiftPhotos(retry = false) {
-    shiftController?.abort(); shiftController = new AbortController(); const token = ++shiftJob;
-    const reference = data.visualShift.referencePhoto, photos = shiftPhotos();
-    const current = photos.find(p => p.frame === state.shiftFrame) || photos[0]; state.shiftFrame = current.frame;
-    shiftAiController?.abort(); shiftAiJob++; shiftAiReady = false;
-    $("shiftAiBase").hidden = true; $("shiftAiHeat").hidden = true; $("shiftAiUnavailable").hidden = true;
-    document.querySelectorAll("[data-shift-ai-zoom]").forEach(b => { b.disabled = true; });
-    shiftPhotosReady = false; $("shiftPhotoLoading").hidden = false; $("shiftPhotoError").hidden = true;
-    $("shiftReferencePhoto").hidden = true; $("shiftCurrentPhoto").hidden = true; renderShiftChoice();
-    $("shiftReferenceCaption").textContent = `${reference.run} · ${format(reference.frame)}번째 사진`;
-    $("shiftCurrentCaption").textContent = `${getShift().run} · ${format(current.frame)}번째 사진`;
-    try {
-      const [left, right] = await Promise.all([adapter.asset(reference.image, shiftController.signal, retry), adapter.asset(current.image, shiftController.signal, retry)]);
-      if (token !== shiftJob || state.phase !== "change-alert") return;
-      $("shiftReferencePhoto").src = left; $("shiftCurrentPhoto").src = right;
-      await Promise.all([$("shiftReferencePhoto").decode(), $("shiftCurrentPhoto").decode()]);
-      if (token !== shiftJob || state.phase !== "change-alert") return;
-      $("shiftReferencePhoto").hidden = false; $("shiftCurrentPhoto").hidden = false;
-      shiftPhotosReady = true; $("shiftPhotoLoading").hidden = true;
-      $("shiftAiBase").src = right; $("shiftAiBase").hidden = false;
-      persist(); renderShiftChoice(); loadShiftAi();
-    } catch {
-      if (token !== shiftJob || state.phase !== "change-alert") return;
-      $("shiftPhotoLoading").hidden = true; $("shiftPhotoError").hidden = false; renderShiftChoice();
-    }
-  }
-  async function loadShiftAi(retry = false) {
-    shiftAiController?.abort(); shiftAiController = new AbortController(); const token = ++shiftAiJob;
-    const photo = shiftPhotos().find(p => p.frame === state.shiftFrame); shiftAiReady = false;
-    $("shiftAiHeat").hidden = true; $("shiftAiError").hidden = true; $("shiftAiUnavailable").hidden = true;
-    document.querySelectorAll("[data-shift-ai-zoom]").forEach(b => { b.disabled = true; });
-    $("shiftAiScore").textContent = Number.isFinite(photo?.score) ? `${format(photo.frame)}번째 · 이상 점수 ${photo.score.toFixed(4)}` : `${format(state.shiftFrame)}번째 사진`;
-    $("shiftAiLoading").hidden = !photo?.heatmap;
-    if (!photo?.heatmap) { $("shiftAiUnavailable").hidden = false; return; }
-    try {
-      const heat = await adapter.asset(photo.heatmap, shiftAiController.signal, retry);
-      if (token !== shiftAiJob || state.phase !== "change-alert" || state.shiftFrame !== photo.frame) return;
-      $("shiftAiHeat").src = heat; await $("shiftAiHeat").decode();
-      if (token !== shiftAiJob || state.phase !== "change-alert" || state.shiftFrame !== photo.frame) return;
-      $("shiftAiHeat").hidden = false; $("shiftAiLoading").hidden = true; shiftAiReady = true;
-      document.querySelectorAll("[data-shift-ai-zoom]").forEach(b => { b.disabled = false; }); renderPages();
-    } catch {
-      if (token !== shiftAiJob || state.phase !== "change-alert") return;
-      $("shiftAiLoading").hidden = true; $("shiftAiError").hidden = false;
-    }
   }
   function draft(index = state.active) { return state.drafts[index] || (state.records[index] ? { verdict: state.records[index].verdict, note: state.records[index].note } : { verdict: null, note: "" }); }
   function batchPageSize() { return matchMedia("(max-width: 850px)").matches ? 4 : 8; }
@@ -433,7 +386,7 @@
   }
   function invalidateReference() {
     if (state.candidateRequested) history("candidate-review-invalidated", "검수 결과 수정으로 이전 기준 후보 검토 요청과 담당자 결정을 해제했습니다.");
-    state.candidateRequested = false; state.candidateRequest = null; state.exampleViewedAt = null; state.referenceDecision = null; state.candidatePreparation = null; state.truthRevealed = false;
+    state.candidateRequested = false; state.candidateRequest = null; state.exampleViewedAt = null; state.referenceDecision = null; state.candidatePreparation = null; state.referenceOperation = null; state.truthRevealed = false;
   }
   function saveDecision(){
     const s=status();if(state.phase!=="reviewing"||state.reviewGate||s.c.review.slice(0,s.available).some((_,i)=>!batchAssets.get(i)?.ready||!Object.hasOwn(verdicts,draft(i).verdict)))return;
@@ -476,7 +429,7 @@
     $("continueReview").hidden = s.complete && state.reviewGate !== "expand";
     $("summaryDescription").textContent = !s.complete && !s.pending ? `확인한 ${s.reviewed}장의 기록을 저장했습니다. 남은 사진의 검수를 이어갈 수 있습니다.` : s.pending ? "추가 6장의 사진 수신 전까지 확인한 두 장의 기록을 보관합니다." : state.expanded ? "요청한 사진의 확인이 끝났습니다. 결과를 확인하고 정상 데이터를 다음 기준 검토에 활용하세요." : "두 장 모두 정상으로 확인되어 추가 요청을 종료했습니다. 구간 전체를 정상으로 확정한 것은 아닙니다.";
     $("summarySegment").textContent = `시나리오 ${state.caseId === "defect" ? "A" : "B"} · ${format(s.c.frameCount)}장`;
-    $("shiftHistoryStatus").textContent = state.shiftReview ? `${shiftVerdicts[state.shiftReview.verdict]} · ${time(state.shiftReview.at)}` : state.shiftAcknowledgedAt ? `${time(state.shiftAcknowledgedAt)} 알림 확인` : "확인 기록 없음";
+    $("shiftHistoryStatus").textContent = `구간 변화가 탐지되었습니다. · 96번째 사진${state.shiftDetectedAt ? " · " + time(state.shiftDetectedAt) : ""}`;
     $("summaryRequested").textContent = `${s.budget}장 요청 / ${s.reviewed}장 확인`;
     $("additionalRequestStatus").textContent = s.pending ? "추가 6장 수신 대기" : state.reviewGate === "expand" ? "추가 6장 확인 대기" : !s.complete ? "검수 진행 중" : state.expanded ? "추가 6장 요청·확인 완료" : "추가 6장 요청 종료";
     for (const kind of Object.keys(counts)) $(kind + "Count").textContent = `${counts[kind]}장`;
@@ -516,7 +469,7 @@
       if (!state.candidateRequested) {
         const request = await adapter.requestReference(s.normals.map(({ photo }) => photo.frame));
         if (token !== job || state.phase !== "review-summary") return;
-        state.candidateRequest = { ...request, appearanceChange: { ...getShift(), acknowledgedAt: state.shiftAcknowledgedAt, userReview: state.shiftReview } }; state.candidateRequested = true;
+        state.candidateRequest = { ...request, appearanceChange: { ...getShift(), detected: true, detectedAt: state.shiftDetectedAt, acknowledgedAt: state.shiftAcknowledgedAt, userReview: state.shiftReview } }; state.candidateRequested = true;
         history("candidate-review-requested", `정상 확인 ${s.normals.length}장 · 기준 후보 검증 검토 요청 · 기존 기준 보존`, state.candidateRequest.requestedAt);
       }
       transition("reference-review");
@@ -532,10 +485,10 @@
     const payload = { schemaVersion: 3, demo: true, phase: state.phase, analysisMode: "recorded-dinov2-and-mmd", run: s.c.run,
       receivedAt: state.receivedAt, exportedAt: new Date().toISOString(), sourceFrameCount: s.c.frameCount, requested: s.budget, reviewed: s.reviewed,
       awaitingAdditionalPhotos: s.pending, activeReference: "frozen-source", selectedReference: state.referenceDecision?.kind === "change" ? "candidate" : "frozen-source", referenceChangeApplied: false, modelWeightsUpdated: false,
-      appearanceChange: { ...getShift(), acknowledgedAt: state.shiftAcknowledgedAt, userReview: state.shiftReview, scope: "recorded joined-run experiment" },
+      appearanceChange: { ...getShift(), detected: true, detectedAt: state.shiftDetectedAt, acknowledgedAt: state.shiftAcknowledgedAt, userReview: state.shiftReview, scope: "recorded joined-run experiment" },
       candidateReviewRequest: state.candidateRequested ? state.candidateRequest : null,
       validationExample: state.exampleViewedAt ? { viewedAt: state.exampleViewedAt, source: data.updateEvaluation.source, scope: "separate saved experiment, not a live evaluation of this review selection" } : null,
-      candidatePreparation: state.candidatePreparation || null,
+      candidatePreparation: state.candidatePreparation || null, referenceOperation: state.referenceOperation || null,
       referenceDecision: state.referenceDecision, history: state.history,
       records: s.c.review.flatMap((photo, i) => i < s.available && state.records[i] ? [{ frame: photo.frame, rank: photo.rank, image: photo.image, recordedAiScore: photo.score, userReview: state.records[i], ...(state.truthRevealed ? { publishedDatasetLabel: photo.recordedLabel } : {}) }] : []) };
     const url = URL.createObjectURL(new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" }));
@@ -548,39 +501,10 @@
   $("cancelReset").addEventListener("click", () => $("resetDialog").close());
   $("confirmReset").addEventListener("click", () => { $("resetDialog").close(); const next = resetCase; resetCase = null; reset(next); });
   $("dashboardNav").addEventListener("click", () => { if (!busy()) transition("ready"); });
-  ["recordsNav", "resumeRecords"].forEach(id => $(id).addEventListener("click", goRecords));
+  $("recordsNav").addEventListener("click", goRecords);
+  $("resumeRecords").addEventListener("click", () => { if (state.pipelineReady && !status().reviewed) transition("analyzing"); else goRecords(); });
   $("retryLoading").addEventListener("click", () => { if (state.loadingError && busy()) pipeline(); });
-  $("startReviewFlow").addEventListener("click", () => { if (state.pipelineReady && busy()) transition("change-alert"); });
-  $("acknowledgeShift").addEventListener("click", () => {
-    if (state.phase !== "change-alert" || !shiftPhotosReady || !state.shiftViewedFrames.length || !Object.hasOwn(shiftVerdicts, state.shiftDraft.verdict)) return;
-    const at = new Date().toISOString(); state.shiftAcknowledgedAt = at;
-    state.shiftReview = { verdict: state.shiftDraft.verdict, note: state.shiftDraft.note.trim(), at, referenceRun: data.visualShift.sourceRun, referenceFrame: data.visualShift.referencePhoto.frame, targetRun: getShift().run, currentFrame: state.shiftFrame, comparedFrames: [...state.shiftViewedFrames], aiComparedFrames: [...state.shiftAiViewedFrames] };
-    history("shift-reviewed", `외관 변화 담당자 판단 · ${shiftVerdicts[state.shiftReview.verdict]}${state.shiftReview.note ? " · " + state.shiftReview.note : ""} · 사진별 이상 경보와 기존 기준 유지`, at);
-    const next = state.afterShiftPhase || (status().complete ? "review-summary" : "reviewing"); state.afterShiftPhase = null;
-    transition(next); toast("사진 비교와 외관 변화 판단을 저장했습니다.");
-  });
-  document.querySelectorAll("[data-shift-verdict]").forEach(button => button.addEventListener("click", () => {
-    if (state.phase !== "change-alert") return;
-    state.shiftDraft.verdict = button.dataset.shiftVerdict; persist(); renderShiftChoice();
-  }));
-  $("shiftNote").addEventListener("input", () => { if (state.phase !== "change-alert") return; state.shiftDraft.note = $("shiftNote").value.slice(0, 240); persist(); });
-  $("retryShiftPhotos").addEventListener("click", () => loadShiftPhotos(true));
-  $("editShiftReview").addEventListener("click", () => { if (state.phase !== "review-summary") return; state.afterShiftPhase = "review-summary"; transition("change-alert"); });
-  document.querySelectorAll("[data-shift-zoom]").forEach(button => button.addEventListener("click", () => {
-    if (!shiftPhotosReady || state.phase !== "change-alert") return;
-    const baseline = button.dataset.shiftZoom === "reference";
-    $("photoDialogTitle").textContent = baseline ? $("shiftReferenceCaption").textContent : $("shiftCurrentCaption").textContent;
-    $("zoomOriginal").src = $(baseline ? "shiftReferencePhoto" : "shiftCurrentPhoto").src; $("zoomHeat").hidden = true; $("photoDialog").showModal();
-  }));
-  $("retryShiftAi").addEventListener("click", () => loadShiftAi(true));
-  document.querySelectorAll("[data-shift-ai-zoom]").forEach(button => button.addEventListener("click", () => {
-    if (!shiftAiReady || state.phase !== "change-alert") return;
-    const heat = button.dataset.shiftAiZoom === "heat";
-    $("photoDialogTitle").textContent = `${format(state.shiftFrame)}번째 사진 · ${heat ? "AI 제시 영역" : "원본"}`;
-    $("zoomOriginal").src = $("shiftCurrentPhoto").src; $("zoomHeat").hidden = !heat;
-    if (heat) $("zoomHeat").src = $("shiftAiHeat").src;
-    $("photoDialog").showModal();
-  }));
+  $("startReviewFlow").addEventListener("click", () => { if (state.pipelineReady && busy()) showChangeSignal(); });
   $("gateAction").addEventListener("click", gateAction);
   $("reviewNote").addEventListener("input",()=>{if(state.phase!=="reviewing"||state.reviewGate)return;state.drafts[state.active]={...draft(),note:$("reviewNote").value.slice(0,240)};persist();renderBatchChoice();});
   $("saveDecision").addEventListener("click",saveDecision);
@@ -611,15 +535,11 @@
     paginateNormalPreviews();
     $("workspacePageTitle").textContent = pages[index].dataset.page;
     $("workspacePagePosition").textContent = `${index+1} / ${pages.length}`;
-    const preparing = state.phase === "reference-review" && state.candidatePreparation?.running;
-    $("pagePrevious").disabled = index === 0 || preparing;
-    $("pageNext").disabled = index === pages.length-1 || preparing || state.phase === "reference-review" && index === 1 && !state.candidatePreparation?.completedAt || state.phase === "change-alert" && index === 1 && !shiftPhotosReady;
-    if (state.phase === "change-alert" && index === 1 && shiftPhotosReady) {
-      let changed = false;
-      if (!state.shiftViewedFrames.includes(state.shiftFrame)) { state.shiftViewedFrames.push(state.shiftFrame); changed = true; }
-      if (shiftAiReady && !state.shiftAiViewedFrames.includes(state.shiftFrame)) { state.shiftAiViewedFrames.push(state.shiftFrame); changed = true; }
-      if (changed) persist();
-    }
+    const preparing = state.phase === "reference-review" && (state.candidatePreparation?.running || state.referenceOperation?.running);
+    $("pagePrevious").disabled = index === 0 && state.phase === "ready";
+    $("pagePrevious").textContent = index === 0 ? "← 이전 단계" : "← 이전";
+    $("pageNext").disabled = index === pages.length-1 || preparing || state.phase === "reference-review" && index === 1 && !state.candidatePreparation?.completedAt;
+
   }
   const normalPreviewPages = {};
   function paginateNormalPreviews() {
@@ -635,8 +555,21 @@
       nav.hidden = count===1; nav.firstElementChild.disabled=normalPreviewPages[id]===0;nav.lastElementChild.disabled=normalPreviewPages[id]===count-1;
     }
   }
+  function previousStage() {
+    if (state.phase === "completed") transition("reference-review");
+    else if (state.phase === "reference-review") transition("review-summary");
+    else if (state.phase === "review-summary") { state.reviewGate = null; state.editing = true; transition("reviewing"); }
+    else if (state.phase === "reviewing" && state.reviewGate) { state.reviewGate = null; state.editing = true; persist(); render(); }
+    else if (state.phase === "reviewing") { state.pipelineReady = true; state.loadingStep = 3; transition("analyzing"); }
+    else if (state.phase === "change-alert") { alertController?.abort(); state.phase = "analyzing"; state.pipelineReady = true; persist(); render(); }
+    else if (busy()) transition("ready");
+  }
   function movePage(delta) {
     if ($(delta > 0 ? "pageNext" : "pagePrevious").disabled) return;
+    if (delta < 0 && (state.candidatePreparation?.running || state.referenceOperation?.running)) { referenceController.cancel(); persist(); referenceController.render(); return; }
+    if (delta < 0 && state.referenceOperation?.error) { state.referenceOperation.error = null; referenceController.render(); }
+    if (delta > 0 && state.phase === "reference-review" && !(state.pages[state.phase] || 0)) { referenceController.stageNormals(); return; }
+    if (delta < 0 && !(state.pages[state.phase] || 0)) { previousStage(); return; }
     state.pages[state.phase] = (state.pages[state.phase] || 0) + delta; persist(); renderPages();
     const heading = visiblePages()[state.pages[state.phase]]?.querySelector("h2,h3");
     if (heading) { heading.tabIndex = -1; heading.focus({preventScroll:true}); }
@@ -664,11 +597,12 @@
   $("pagePrevious").addEventListener("click",()=>movePage(-1)); $("pageNext").addEventListener("click",()=>movePage(1));
   for (const [prefix,key] of [["record","recordPage"],["history","historyPage"]]) for (const [suffix,delta] of [["Previous",-1],["Next",1]]) $(prefix+suffix).addEventListener("click",()=>{state[key]+=delta;renderListPages();persist();});
   $("fieldFullscreen").addEventListener("click",async()=>{try { if(document.fullscreenElement) await document.exitFullscreen(); else await document.documentElement.requestFullscreen(); } catch { toast("브라우저의 전체 화면 기능을 이용해 주세요."); }});
-  document.querySelectorAll("[data-detail]").forEach((button,i)=>button.addEventListener("click",()=>document.querySelectorAll(".detail-dialog")[i].showModal()));
+  document.querySelectorAll("[data-detail]").forEach(button=>button.addEventListener("click",()=>document.querySelectorAll(".detail-dialog")[Number(button.dataset.detail)].showModal()));
   document.querySelectorAll("[data-close-detail]").forEach(button=>button.addEventListener("click",()=>button.closest("dialog").close()));
   window.addEventListener("resize",()=>{renderPages();renderListPages();renderBatchPages();});
   document.addEventListener("keydown",e=>{if(e.ctrlKey||e.metaKey||e.altKey||e.target.closest("textarea,input,select")||document.querySelector("dialog[open]"))return;if(["ArrowLeft","ArrowRight"].includes(e.key)){e.preventDefault();movePage(e.key==="ArrowRight"?1:-1);}});
   restore();
+  if (state.referenceOperation?.running) { state.referenceOperation.running = false; state.referenceOperation.error = "새로고침으로 작업이 중단되었습니다. 다시 시도해 주세요."; }
   if (state.candidatePreparation?.running) {
     state.candidatePreparation.running = false;
     state.candidatePreparation.error = "새로고침으로 중단된 준비 작업을 다시 시작해 주세요.";
@@ -685,5 +619,6 @@
     persist(); render();
   } });
   if (busy() && !state.pipelineReady && !state.loadingError) pipeline();
+  if (state.phase === "change-alert") showChangeSignal();
   window.surfaceTraceFieldDemo = Object.freeze({ getState: () => JSON.parse(JSON.stringify(state)), getStatus: () => { const { budget, available, reviewed, pending, complete } = status(); return { budget, available, reviewed, pending, complete }; } });
 })();
