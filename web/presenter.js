@@ -19,7 +19,8 @@
     compareRaw: false,
     shift: 0,
     resultsStep: 0,
-    resultsClosing: false
+    resultsClosing: false,
+    referenceChoice: "keep"
   };
   let toastTimer;
   let tourTimer;
@@ -244,7 +245,7 @@
     setText("sceneScope", chapters[state.scene].scope);
     setText("playTour", state.playing ? "Ⅱ 일시정지" : "▶ 자동 시연");
     if ($("playTour")) $("playTour").setAttribute("aria-pressed", String(state.playing));
-    if ($("previousStep")) $("previousStep").disabled = state.scene === 0;
+    if ($("previousStep")) $("previousStep").disabled = state.view === "overview";
     if ($("nextStep")) $("nextStep").disabled = state.scene === chapters.length - 1;
     setText("tourStatus", message || (state.playing ? "저장된 사진·결과를 순서대로 재생 중" : "← → 단계 이동 · Space 재생/정지"));
     document.body.classList.toggle("is-playing", state.playing);
@@ -272,6 +273,8 @@
     if (view === "interval") renderInterval();
     if (view === "shift") renderShift();
     if (view === "compare") renderComparison();
+    if (view === "handoff") renderHandoff();
+    if (view === "candidate") renderReferenceChoice();
     updateTourControls();
     if (state.playing) narrateChapter();
     const nav = document.querySelector(".demo-steps"), active = nav?.querySelector('[aria-current="step"]');
@@ -303,11 +306,11 @@
   function autoNextScene() {
     const next = state.scene + 1;
     if (next >= chapters.length) { stopTour("시연 완료 · 처음부터 다시 볼 수 있습니다."); return; }
-    if (next === 1) state.method = "features";
-    if (next === 2) { state.photo = 0; state.compareRaw = false; }
-    if (next === 3) state.shift = 0;
+    if (chapters[next].view === "data") state.method = "features";
+    if (chapters[next].view === "compare") { state.photo = 0; state.compareRaw = false; }
+    if (chapters[next].view === "shift") state.shift = 0;
     if (next === chapters.length - 1) { state.resultsStep = 0; state.resultsClosing = false; }
-    if (next === 5) {
+    if (chapters[next].view === "inspect") {
       // Entering this chapter during a new tour replays both recorded review routes from their first photo.
       // Pausing and resuming inside this chapter does not reset the current review.
       state.reviews = { defect: freshReview(), normal: freshReview() };
@@ -319,19 +322,19 @@
 
   function advanceTour() {
     if (!state.playing) return;
-    if (state.scene === 0 && state.overview === "flow") {
+    if (state.view === "overview" && state.overview === "flow") {
       state.overview = "animation";
       renderOverview();
-    } else if (state.scene === 1 && state.method === "features") {
+    } else if (state.view === "data" && state.method === "features") {
       state.method = "reference";
       renderMethod();
-    } else if (state.scene === 2 && state.photo + 1 < comparisonPhotos.length) {
+    } else if (state.view === "compare" && state.photo + 1 < comparisonPhotos.length) {
       state.photo++;
       renderComparison();
-    } else if (state.scene === 3 && state.shift + 1 < data.visualShift.photos.length) {
+    } else if (state.view === "shift" && state.shift + 1 < data.visualShift.photos.length) {
       state.shift++;
       renderShift();
-    } else if (state.scene === 5) {
+    } else if (state.view === "inspect") {
       const s = reviewStatus();
       if (!s.complete && !s.revealed) {
         revealReview();
@@ -388,6 +391,7 @@
     state.shift = 0;
     state.resultsStep = 0;
     state.resultsClosing = false;
+    state.referenceChoice = "keep";
     if ($("caseSelect")) $("caseSelect").value = state.caseId;
     renderOverview();
     renderMethod();
@@ -760,6 +764,18 @@
     document.querySelectorAll("[data-photo]").forEach(button => button.setAttribute("aria-pressed", String(Number(button.dataset.photo) === state.photo)));
   }
 
+  function renderHandoff() {
+    const s = reviewStatus();
+    setText("handoffReviewed", s.count ? `현장팀 확인 기록 ${s.count}장 / 요청 ${s.budget}장` : "검수 기록 확인 전");
+    setText("handoffRun", s.c.run);
+    setText("handoffStatus", s.complete ? "검수 기록 확인 완료 · AI 솔루션팀의 기준 검토로 이어집니다." : "사진별 검수를 완료한 뒤 보고서로 전달하는 흐름입니다.");
+  }
+  function renderReferenceChoice() {
+    const keep = state.referenceChoice === "keep";
+    $("presenterKeepReference")?.setAttribute("aria-pressed", String(keep));
+    $("presenterApplyCandidate")?.setAttribute("aria-pressed", String(!keep));
+    setText("referenceChoiceMessage", keep ? "이번 실험의 판단: 기존 기준 유지. 결함 탐지도 감소해 후보 적용을 보류했습니다." : "새로운 기준은 후속 검증 후 적용 여부를 판단합니다. 이번 후보는 결함 탐지가 감소해 적용 보류입니다.");
+  }
   function validateData() {
     if (!data || data.metadata.recordedReplay !== true) throw new Error("저장된 실험 자료가 없습니다.");
     if (data.cases.normal.review.length !== 2 || data.cases.defect.review.length !== 8) throw new Error("검수 사진 수가 기록과 다릅니다.");
@@ -810,6 +826,8 @@
       state.photo = index;
       renderComparison();
     })));
+    bindManual("presenterApplyCandidate", "click", () => { state.referenceChoice = "apply"; renderReferenceChoice(); });
+    bindManual("presenterKeepReference", "click", () => { state.referenceChoice = "keep"; renderReferenceChoice(); });
     bindManual("previousStep", "click", () => showScene(state.scene - 1));
     bindManual("nextStep", "click", () => showScene(state.scene + 1));
     bind("playTour", "click", toggleTour);
