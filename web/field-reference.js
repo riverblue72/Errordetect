@@ -78,28 +78,26 @@ window.createSurfaceTraceReference = ({ getState, persist, navigate, notify, onD
       $("completedAt").textContent = time(getState().referenceDecision.at); onRender(); return;
     }
     const selected = normals(), prep = getState().candidatePreparation, done = !!prep?.completedAt;
-    $("candidateStatus").textContent = `정상 확인 ${selected.length}장을 검증 요청에 포함합니다. 적용 중인 검사 기준은 유지됩니다.`;
+    $("candidateStatus").textContent = `정상으로 확인된 사진 ${selected.length}장을 새 검사 기준 후보에 포함합니다.`;
     $("normalPhotos").replaceChildren(...selected.map(({ photo }) => { const f = node("figure"), img = node("img"); img.src = photo.image; img.alt = "담당자가 정상으로 확인한 사진"; f.append(img, node("figcaption", `${format(photo.frame)}번째 사진`)); return f; }));
-    $("referenceState").textContent = done ? "후속 검증 실행 대기" : prep?.running ? "후보 요청 준비 중" : "후보 검증 요청 준비";
-    $("referencePreparation").hidden = false;
+    $("referenceState").textContent = done ? "검증 요청 등록됨" : prep?.running ? "검증 요청 중" : "기준 데이터 확인";
+    $("referencePreparation").hidden = !prep?.running && !prep?.error;
+    $("referenceConfirmation").hidden = !!prep?.running || !!prep?.error;
+    $("referenceConfirmCount").textContent = `정상 확인 사진 ${selected.length}장`;
+    $("referenceConfirmDescription").textContent = `확인한 사진 ${selected.length}장을 포함한 새 기준 후보의 검증을 요청합니다. 오경보와 실제 결함 탐지를 함께 확인합니다.`;
     $("repeatPreparation").hidden = !done;
     $("preparedRequest").hidden = !done || !!getState().exampleViewedAt;
     $("validationHistory").hidden = !done || !getState().exampleViewedAt;
     const stage = prep?.stage || 0;
-    document.querySelectorAll("[data-reference-step]").forEach(e => {
-      const step = Number(e.dataset.referenceStep);
-      e.classList.toggle("is-active", done ? step === 3 && !getState().referenceDecision : !!prep?.running && step === stage);
-      e.classList.toggle("is-done", done ? step < 3 || !!getState().referenceDecision : step < stage);
-    });
-    const titles = ["기존 검사 기준을 보존하고 있습니다.", "정상 데이터를 반영할 기준 후보를 준비합니다.", "새 검사 기준의 적용 가능성을 검토하고 있습니다.", "검증 요청 준비 완료"];
-    const descriptions = ["적용 중인 기준과 경보선을 보존합니다.", "확인된 정상 사진을 불러와 후보 검증 요청 목록에 포함합니다.", "정상 확인 사진의 입력 목록을 반영해 오경보·결함 탐지 후속 검증 요청을 구성합니다."];
+    const titles = ["기존 검사 기준을 보존하고 있습니다.", "정상으로 확인된 사진을 검증 요청에 포함합니다.", "새로운 기준 후보의 검증을 요청하고 있습니다.", "검증 요청 준비 완료"];
+    const descriptions = ["검토가 끝날 때까지 현재 검사 기준을 유지합니다.", "선택한 정상 사진을 검증 요청에 첨부합니다.", "오경보와 결함 탐지를 확인할 검증 요청을 등록합니다."];
     $("preparationTitle").textContent = done ? "검증 요청 준비가 완료되었습니다." : prep?.error ? "요청 준비를 완료하지 못했습니다." : prep?.running ? titles[stage] : "새 검사 기준의 적용 가능성을 검토합니다.";
     $("preparationDescription").textContent = prep?.error || (prep?.running ? descriptions[stage] : "정상 확인 사진을 포함해 후보 검증에 필요한 입력 목록을 구성합니다.");
     $("preparationIcon").classList.toggle("is-processing", !!prep?.running);
     $("prepareCandidate").hidden = !!prep; $("retryPreparation").hidden = !prep?.error;
     const progress = prep ? [20, 48, 76, 100][stage] : 0;
     $("referenceProgress").setAttribute("aria-valuenow", progress); $("referenceProgress").firstElementChild.style.width = `${progress}%`;
-    $("preparedRequestDescription").textContent = done ? `정상 입력 ${prep.validationRequest.normalInputs.length}장 · 기존 기준 보존 완료 · 오경보·결함 탐지 후속 검증 요청` : "";
+    $("preparedRequestDescription").textContent = done ? `정상 사진 ${prep.validationRequest.normalInputs.length}장이 포함되었습니다. 현재 검사 기준을 유지하며 검증 요청을 보관합니다.` : "";
     if (done && getState().exampleViewedAt) {
       const labels = ["정상 사진 오경보", "결함 사진 경보", "신규 결함 사건 경보"];
       $("validationMetrics").replaceChildren(...data.updateEvaluation.metrics.map((m, i) => { const row = node("tr"); row.append(node("td", labels[i]), node("td", format(m.before)), node("td", format(m.after))); return row; }));
@@ -118,6 +116,14 @@ window.createSurfaceTraceReference = ({ getState, persist, navigate, notify, onD
     history("reference-decision", `${kind === "hold" ? "적용 보류" : "추가 검증 요청"} · 기존 기준 유지`, getState().referenceDecision.at);
     try { navigate("completed"); notify("담당자의 결정을 기록했습니다."); } catch (error) { notify(error.message); }
   }
+  function showPage(index) {
+    if (getState().phase !== "reference-review" || getState().candidatePreparation?.running) return;
+    getState().pages["reference-review"] = index; persist(); onRender();
+    const heading = $("referenceWorkspace").querySelectorAll("[data-page]")[index]?.querySelector("h2,h3");
+    if (heading) { heading.tabIndex = -1; heading.focus({ preventScroll: true }); }
+  }
+  $("referenceEntryContinue").addEventListener("click", () => showPage(1));
+  $("referenceConfirmBack").addEventListener("click", () => showPage(0));
   $("prepareCandidate").addEventListener("click", prepare); $("repeatPreparation").addEventListener("click", prepare); $("retryPreparation").addEventListener("click", prepare);
   $("showValidation").addEventListener("click", showHistory);
   $("finishCandidate").addEventListener("click", () => decide("hold")); $("requestMoreValidation").addEventListener("click", () => decide("additional-validation"));

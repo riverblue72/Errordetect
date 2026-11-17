@@ -624,9 +624,9 @@
   const normalPreviewPages = {};
   function paginateNormalPreviews() {
     for (const id of ["normalSummaryPhotos", "normalPhotos"]) {
-      const parent = $(id), photos = [...parent.querySelectorAll("figure")], count = Math.max(1,Math.ceil(photos.length/4));
+      const parent = $(id), photos = [...parent.querySelectorAll("figure")], size = id === "normalPhotos" && !matchMedia("(max-width: 650px)").matches ? 8 : 4, count = Math.max(1,Math.ceil(photos.length/size));
       normalPreviewPages[id] = Math.min(normalPreviewPages[id] || 0,count-1);
-      photos.forEach((photo,i)=>{photo.hidden=Math.floor(i/4)!==normalPreviewPages[id];});
+      photos.forEach((photo,i)=>{photo.hidden=Math.floor(i/size)!==normalPreviewPages[id];});
       let nav = $(id+"Paging");
       if(!nav){ nav=node("nav",undefined,"list-pagination normal-pagination");nav.id=id+"Paging";
         for(const delta of [-1,1]) {const b=node("button",delta<0?"← 이전 정상 사진":"다음 정상 사진 →","text-button");b.type="button";b.dataset.delta=delta;b.addEventListener("click",()=>{normalPreviewPages[id]+=delta;paginateNormalPreviews();});nav.append(b);}
