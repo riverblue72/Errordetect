@@ -30,7 +30,7 @@ function fakeVoice() {
       assert.equal(await page.locator(".summary-card .flow-number").innerText(),"REVIEW SELECTION");
       assert.equal(await page.locator(".reviewer-card .flow-number").innerText(),"HUMAN REVIEW");
       assert(await page.locator(".parallel-analyses article").first().evaluate(e=>e.classList.contains("shift-analysis")));
-      if(language==="ko"){assert.equal(await page.locator(".summary-card h3").innerText(),"8장 선정");assert.equal(await page.locator(".input-card h3").innerText(),"데이터 업로드하기");assert.equal(await page.locator("#aiAnalysisTitle").innerText(),"AI가 이상 탐지하기");}
+      if(language==="ko"){assert.equal(await page.locator(".summary-card h3").innerText(),"8장 선정");assert.equal(await page.locator(".input-card h3").innerText(),"데이터 업로드하기");assert.equal(await page.locator("#aiAnalysisTitle").innerText(),"AI 모델이 탐지하는 구간");}
       assert.equal(await page.locator(".ai-analysis-group .analysis-card").count(),2);assert.equal(await page.locator(".ai-analysis-group .summary-card").count(),1);assert.equal(await page.locator(".ai-analysis-group .reviewer-card,.ai-analysis-group .reference-candidate-card,.ai-analysis-group .input-card").count(),0);
       const originalData=await page.evaluate(()=>JSON.stringify(window.SURFACETRACE_PRESENTER_DATA));
       for(const size of [{width:2560,height:1440},{width:1440,height:900},{width:1280,height:720}]){
