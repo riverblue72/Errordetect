@@ -30,7 +30,8 @@ function fakeVoice() {
       assert.equal(await page.locator(".summary-card .flow-number").innerText(),"REVIEW SELECTION");
       assert.equal(await page.locator(".reviewer-card .flow-number").innerText(),"HUMAN REVIEW");
       assert(await page.locator(".parallel-analyses article").first().evaluate(e=>e.classList.contains("shift-analysis")));
-      if(language==="ko")assert.equal(await page.locator(".summary-card h3").innerText(),"8장 선정");
+      if(language==="ko"){assert.equal(await page.locator(".summary-card h3").innerText(),"8장 선정");assert.equal(await page.locator(".input-card h3").innerText(),"데이터 업로드하기");assert.equal(await page.locator("#aiAnalysisTitle").innerText(),"AI가 이상 탐지하기");}
+      assert.equal(await page.locator(".ai-analysis-group .analysis-card").count(),2);assert.equal(await page.locator(".ai-analysis-group .summary-card").count(),1);assert.equal(await page.locator(".ai-analysis-group .reviewer-card,.ai-analysis-group .reference-candidate-card,.ai-analysis-group .input-card").count(),0);
       const originalData=await page.evaluate(()=>JSON.stringify(window.SURFACETRACE_PRESENTER_DATA));
       for(const size of [{width:2560,height:1440},{width:1440,height:900},{width:1280,height:720}]){
         await page.setViewportSize(size);
@@ -40,8 +41,10 @@ function fakeVoice() {
           assert(bounds.scrollWidth<=bounds.width+1,`${language} ${views[index]} width: ${JSON.stringify(bounds)}`);
           if(language==="ko")assert(bounds.scrollHeight<=bounds.height+2&&bounds.controlsBottom<=bounds.height+2,`${language} ${views[index]} viewport: ${JSON.stringify(bounds)}`);
           if(index===0){
-            const geometry=await page.evaluate(()=>({cards:[...document.querySelectorAll(".parallel-flow>.pipeline-card")].map(e=>e.getBoundingClientRect().height),overlap:["summary-card","reviewer-card","reference-candidate-card"].some(cls=>{const card=document.querySelector("."+cls);return card.querySelector("h3").getBoundingClientRect().top < Math.max(...[...card.querySelectorAll("img")].map(i=>i.getBoundingClientRect().bottom))-1;})}));
+            const geometry=await page.evaluate(()=>({cards:[...document.querySelectorAll(":is(.parallel-flow,.ai-analysis-group)>.pipeline-card")].map(e=>e.getBoundingClientRect().height),overlap:["summary-card","reviewer-card","reference-candidate-card"].some(cls=>{const card=document.querySelector("."+cls);return card.querySelector("h3").getBoundingClientRect().top < Math.max(...[...card.querySelectorAll("img")].map(i=>i.getBoundingClientRect().bottom))-1;})}));
             assert(geometry.cards.every(h=>h<=622),"Overview cards should not stretch into empty towers");assert(!geometry.overlap,"Overview image/title overlap");
+            assert(await page.locator(".ai-group-heading").evaluate(e=>{const h=e.getBoundingClientRect(),a=document.querySelector(".ai-analysis-group").getBoundingClientRect(),title=document.querySelector(".overview-heading").getBoundingClientRect();return h.top>=title.bottom&&h.bottom<=a.top;}),"AI heading must sit above its group without covering the overview heading");
+            for(const badge of await page.locator(".pipeline-owner").all())assert(await badge.evaluate(e=>parseFloat(getComputedStyle(e).fontSize)>=15),"Team names should be readable");
           }
           if(index>=9) { await page.locator(`[data-scene="${index}"]>img`).evaluate(e=>e.decode()); assert(await page.locator("#playTour").isDisabled()); const image=await page.locator(`[data-scene="${index}"]>img`).evaluate(e=>({width:e.naturalWidth,height:e.naturalHeight,fit:getComputedStyle(e).objectFit}));assert.equal(image.width,2560);assert.equal(image.fit,"contain"); }
           if(size.width===1440&&[0,2,6,7,9,10].includes(index))await capture(views[index]);

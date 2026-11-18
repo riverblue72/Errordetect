@@ -21,18 +21,18 @@
 <div data-overview-panel="flow"> <div aria-label="Input, independent interval-change and photo-anomaly analysis, eight-photo selection, field-team review, AI solution-team reference validation" class="parallel-flow">
 <article class="pipeline-card input-card">
 <span class="flow-number">INPUT</span>
-<div aria-label="Real fabric photos in time order" class="input-photo-stack"><img alt="Fabric photo at frame 405" src="./unlabeled-demo/review-07.jpg"/><img alt="Fabric photo at frame 538" src="./unlabeled-demo/review-03.jpg"/><img alt="Fabric photo at frame 1,506" src="./unlabeled-demo/review-01.jpg"/></div>
-<h3>Time-ordered photos</h3>
+<div aria-label="Actual fabric photos to upload" class="input-photo-stack"><img alt="Fabric photo at frame 405" src="./unlabeled-demo/review-07.jpg"/><img alt="Fabric photo at frame 538" src="./unlabeled-demo/review-03.jpg"/><img alt="Fabric photo at frame 1,506" src="./unlabeled-demo/review-01.jpg"/></div>
+<h3>Upload data</h3>
 </article>
 <div aria-hidden="true" class="flow-connector branch-out"><svg preserveaspectratio="none" viewbox="0 0 36 360"><path d="M2 180H15V86H32M15 180V274H32"></path><path d="m27 81 5 5-5 5m0 178 5 5-5 5"></path></svg></div>
-<div aria-label="Two independent analyses" class="parallel-analyses"><article class="pipeline-card analysis-card shift-analysis"><div class="analysis-copy"><span class="flow-number">ANALYSIS A</span><h3>Interval change detection</h3><p>Across many photos,<br/><strong>track overall appearance</strong> as it changes.</p></div><div class="analysis-change"><div><img alt="Real photo from the reference run" src="./scenario/source-3136.jpg"/><span>→</span><img alt="Real photo from a run with different appearance" src="./scenario/demo-096.jpg"/></div><svg aria-hidden="true" viewbox="0 0 220 48"><path d="M5 37H55L83 34L105 36L132 23L163 10L215 6"></path></svg></div></article>
+<section aria-labelledby="aiAnalysisTitle" class="ai-analysis-group"><header class="ai-group-heading"><h3 id="aiAnalysisTitle">AI anomaly analysis</h3></header><div aria-label="Two independent analyses" class="parallel-analyses"><article class="pipeline-card analysis-card shift-analysis"><div class="analysis-copy"><span class="flow-number">ANALYSIS A</span><h3>Interval change detection</h3><p>Across many photos,<br/><strong>track overall appearance</strong> as it changes.</p></div><div class="analysis-change"><div><img alt="Real photo from the reference run" src="./scenario/source-3136.jpg"/><span>→</span><img alt="Real photo from a run with different appearance" src="./scenario/demo-096.jpg"/></div><svg aria-hidden="true" viewbox="0 0 220 48"><path d="M5 37H55L83 34L105 36L132 23L163 10L215 6"></path></svg></div></article>
 <article class="pipeline-card analysis-card photo-analysis"><div class="analysis-copy"><span class="flow-number">ANALYSIS B</span><h3>Photo-level anomaly detection</h3><p>Within one photo,<br/><strong>find unusual regions</strong> against the reference.</p></div><div class="analysis-picture photo-frame"><img alt="Fabric photo at frame 1,509 with a labeled defect" src="./next-samples/sample-07.jpg"/><img alt="DINOv2 anomaly map for the same photo" class="heat-overlay" src="./next-samples/sample-07-current.png"/></div></article>
-</div>
-<div aria-hidden="true" class="flow-connector branch-in"><svg preserveaspectratio="none" viewbox="0 0 36 360"><path d="M2 86H15V274H2M15 180H32"></path><path d="m27 175 5 5-5 5"></path></svg></div>
-<article class="pipeline-card summary-card">
+</div><div aria-hidden="true" class="flow-connector branch-in"><svg preserveaspectratio="none" viewbox="0 0 36 360"><path d="M2 86H15V274H2M15 180H32"></path><path d="m27 175 5 5-5 5"></path></svg></div><article class="pipeline-card summary-card">
 <span class="flow-number">REVIEW SELECTION</span><div aria-hidden="true" class="summary-drawing"><svg viewbox="0 0 220 120"><path class="summary-axis" d="M5 104H215"></path><path class="summary-signal" d="m8 82 15-10 12 6 12-30 12 24 13-8 12 14 14-52 14 46 15-7 12-45 14 52 14-8 12 13 15-15 10 9"></path><circle cx="98" cy="26" r="5"></circle><circle cx="139" cy="20" r="5"></circle></svg><div class="summary-photo-row"><img alt="" src="./unlabeled-demo/review-01.jpg"/><img alt="" src="./unlabeled-demo/review-02.jpg"/><img alt="" src="./unlabeled-demo/review-03.jpg"/></div></div>
 <h3>Select 8 photos</h3>
-</article>
+</article></section>
+
+
 <div aria-hidden="true" class="flow-connector"><svg preserveaspectratio="none" viewbox="0 0 36 360"><path d="M2 180H32m-7-7 7 7-7 7"></path></svg></div>
 <article class="pipeline-card reviewer-card">
 <span class="flow-number">HUMAN REVIEW</span><div class="review-drawing"><div class="review-photo-row"><img alt="Real photo of the first review candidate" src="./unlabeled-demo/review-01.jpg"/><img alt="Real photo of the second review candidate" src="./unlabeled-demo/review-02.jpg"/></div><strong>2 <span>→</span> 8</strong></div>

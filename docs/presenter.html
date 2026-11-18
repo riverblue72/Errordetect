@@ -4,8 +4,8 @@
 <meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/>
 <meta content="SurfaceTrace 원본 시연의 흐름으로 실제 사진, 이상 위치, 외관 변화, 검수와 기준 후보 검증을 차례로 살펴봅니다." name="description"/>
 <title>프로젝트 시연 | SurfaceTrace</title><link href="./favicon.svg" rel="icon" type="image/svg+xml"/>
-<link href="./site.css?v=7961f4262136" rel="stylesheet"/><link href="./demo.css?v=d243b9b89f2f" rel="stylesheet"/><link href="./improvements.css?v=422df57bb09e" rel="stylesheet"/><link href="./theme.css?v=cffc97de4b89" rel="stylesheet"/><link href="./presenter.css?v=a09eba8d6cc0" rel="stylesheet"/>
-<script defer="" src="./presenter-data.js?v=bb469f121335"></script><script defer="" src="./presenter-copy.js?v=2fd8ac8a7c0c"></script><script defer="" src="./presenter.js?v=92df08791bf1"></script>
+<link href="./site.css?v=7961f4262136" rel="stylesheet"/><link href="./demo.css?v=d243b9b89f2f" rel="stylesheet"/><link href="./improvements.css?v=422df57bb09e" rel="stylesheet"/><link href="./theme.css?v=cffc97de4b89" rel="stylesheet"/><link href="./presenter.css?v=46bb6f461ffc" rel="stylesheet"/>
+<script defer="" src="./presenter-data.js?v=bb469f121335"></script><script defer="" src="./presenter-copy.js?v=b809561ead1a"></script><script defer="" src="./presenter.js?v=92df08791bf1"></script>
 </head>
 <body class="demo-page presenter-page present-compact">
 <a class="skip-link" href="#main">시연으로 이동</a>
@@ -20,18 +20,18 @@
 <div data-overview-panel="flow"> <div aria-label="입력, 독립적인 구간 변화 탐지와 사진별 이상 탐지, 8장 선정, 현장팀 단계적 검수, AI 솔루션팀 기준 검증" class="parallel-flow">
 <article class="pipeline-card input-card">
 <span class="flow-number">INPUT</span>
-<div aria-label="시간 순서의 실제 직물 사진" class="input-photo-stack"><img alt="405번째 직물 사진" src="./unlabeled-demo/review-07.jpg"/><img alt="538번째 직물 사진" src="./unlabeled-demo/review-03.jpg"/><img alt="1,506번째 직물 사진" src="./unlabeled-demo/review-01.jpg"/></div>
-<h3>시간 순서의 이미지</h3>
+<div aria-label="업로드할 실제 직물 사진" class="input-photo-stack"><img alt="405번째 직물 사진" src="./unlabeled-demo/review-07.jpg"/><img alt="538번째 직물 사진" src="./unlabeled-demo/review-03.jpg"/><img alt="1,506번째 직물 사진" src="./unlabeled-demo/review-01.jpg"/></div>
+<h3>데이터 업로드하기</h3>
 </article>
 <div aria-hidden="true" class="flow-connector branch-out"><svg preserveaspectratio="none" viewbox="0 0 36 360"><path d="M2 180H15V86H32M15 180V274H32"></path><path d="m27 81 5 5-5 5m0 178 5 5-5 5"></path></svg></div>
-<div aria-label="독립적인 두 분석" class="parallel-analyses"><article class="pipeline-card analysis-card shift-analysis"><div class="analysis-copy"><span class="flow-number">ANALYSIS A</span><h3>구간 변화 탐지</h3></div><div class="analysis-change"><div><img alt="기준 녹화의 실제 사진" src="./scenario/source-3136.jpg"/><span>→</span><img alt="외관이 달라진 녹화의 실제 사진" src="./scenario/demo-096.jpg"/></div><svg aria-hidden="true" viewbox="0 0 220 48"><path d="M5 37H55L83 34L105 36L132 23L163 10L215 6"></path></svg></div></article>
+<section aria-labelledby="aiAnalysisTitle" class="ai-analysis-group"><header class="ai-group-heading"><h3 id="aiAnalysisTitle">AI가 이상 탐지하기</h3></header><div aria-label="독립적인 두 분석" class="parallel-analyses"><article class="pipeline-card analysis-card shift-analysis"><div class="analysis-copy"><span class="flow-number">ANALYSIS A</span><h3>구간 변화 탐지</h3></div><div class="analysis-change"><div><img alt="기준 녹화의 실제 사진" src="./scenario/source-3136.jpg"/><span>→</span><img alt="외관이 달라진 녹화의 실제 사진" src="./scenario/demo-096.jpg"/></div><svg aria-hidden="true" viewbox="0 0 220 48"><path d="M5 37H55L83 34L105 36L132 23L163 10L215 6"></path></svg></div></article>
 <article class="pipeline-card analysis-card photo-analysis"><div class="analysis-copy"><span class="flow-number">ANALYSIS B</span><h3>사진별 이상 탐지</h3></div><div class="analysis-picture photo-frame"><img alt="실제 결함이 포함된 1,509번째 직물 사진" src="./next-samples/sample-07.jpg"/><img alt="같은 사진의 DINOv2 이상 위치" class="heat-overlay" src="./next-samples/sample-07-current.png"/></div></article>
-</div>
-<div aria-hidden="true" class="flow-connector branch-in"><svg preserveaspectratio="none" viewbox="0 0 36 360"><path d="M2 86H15V274H2M15 180H32"></path><path d="m27 175 5 5-5 5"></path></svg></div>
-<article class="pipeline-card summary-card">
+</div><div aria-hidden="true" class="flow-connector branch-in"><svg preserveaspectratio="none" viewbox="0 0 36 360"><path d="M2 86H15V274H2M15 180H32"></path><path d="m27 175 5 5-5 5"></path></svg></div><article class="pipeline-card summary-card">
 <span class="flow-number">REVIEW SELECTION</span><div aria-hidden="true" class="summary-drawing"><svg viewbox="0 0 220 120"><path class="summary-axis" d="M5 104H215"></path><path class="summary-signal" d="m8 82 15-10 12 6 12-30 12 24 13-8 12 14 14-52 14 46 15-7 12-45 14 52 14-8 12 13 15-15 10 9"></path><circle cx="98" cy="26" r="5"></circle><circle cx="139" cy="20" r="5"></circle></svg><div class="summary-photo-row"><img alt="" src="./unlabeled-demo/review-01.jpg"/><img alt="" src="./unlabeled-demo/review-02.jpg"/><img alt="" src="./unlabeled-demo/review-03.jpg"/></div></div>
 <h3>8장 선정</h3>
-</article>
+</article></section>
+
+
 <div aria-hidden="true" class="flow-connector"><svg preserveaspectratio="none" viewbox="0 0 36 360"><path d="M2 180H32m-7-7 7 7-7 7"></path></svg></div>
 <article class="pipeline-card reviewer-card">
 <span class="flow-number">HUMAN REVIEW</span><div class="review-drawing"><div class="review-photo-row"><img alt="첫 번째 검수 후보의 실제 사진" src="./unlabeled-demo/review-01.jpg"/><img alt="두 번째 검수 후보의 실제 사진" src="./unlabeled-demo/review-02.jpg"/></div><strong>2 <span>→</span> 8</strong></div>

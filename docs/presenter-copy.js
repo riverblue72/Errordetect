@@ -7,7 +7,7 @@
       "view": "overview",
       "label": "전체 흐름",
       "scope": "HUMAN-IN-THE-LOOP · AI 분석 → 검수 → 기준 후보 검증",
-      "narration": "현장 검수를 지원하는 AI 품질 관리 파이프라인입니다. 구간 변화 탐지와 사진별 이상 탐지는 독립적으로 진행됩니다. AI가 검수할 여덟 장을 선정하면 현장팀이 두 장부터 단계적으로 확인합니다. 검수 보고서는 AI 솔루션팀으로 전달됩니다. AI 솔루션팀은 검수된 정상 특징으로 기준 후보를 만들고 후속 데이터에서 검증해 적용 여부를 판단합니다.",
+      "narration": "데이터를 업로드하면 AI가 구간 변화 탐지와 사진별 이상 탐지를 독립적으로 진행하고 검수할 여덟 장을 선정합니다. 여기까지가 AI 분석 영역입니다. 현장팀은 두 장부터 단계적으로 확인하고 검수 보고서를 AI 솔루션팀에 전달합니다. AI 솔루션팀은 검수된 정상 특징으로 기준 후보를 만들고 후속 데이터에서 검증해 적용 여부를 판단합니다.",
       "durationMs": 22000,
       "ticks": 2,
       "delay": 11000
@@ -110,7 +110,7 @@
       "view": "overview",
       "label": "Overview",
       "scope": "HUMAN-IN-THE-LOOP · AI analysis → review → reference validation",
-      "narration": "An industrial AI quality pipeline connects independent interval-change and photo-anomaly analysis to eight-photo selection. The field team starts with two checks and expands when needed. Its inspection report goes to the AI solution team, which builds reference candidates, validates them on later data, and decides whether to adopt them.",
+      "narration": "Upload production photos. AI independently analyzes interval changes and photo-level anomalies, then selects eight review candidates. These steps form the AI analysis area. The field team checks two photos first and expands review when needed. Its report goes to the AI solution team, which builds reference candidates, validates them on later data, and decides whether to adopt them.",
       "durationMs": 22000,
       "ticks": 2,
       "delay": 11000
