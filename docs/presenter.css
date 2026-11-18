@@ -451,3 +451,8 @@
  .present-compact .overview-stage .summary-drawing>svg{height:80px}
 }
 @media(max-width:999px){.ai-analysis-group>.summary-card{min-height:330px}.ai-group-heading h3{font-size:17px}.present-compact .overview-stage .pipeline-owner{font-size:15px}}
+
+/* Put all three responsibility labels on the same line above their scopes. */
+.present-compact .overview-stage :is(.reviewer-card,.reference-candidate-card){position:relative}
+.present-compact .overview-stage .team-group-heading h3{margin:0;padding:6px 13px;font-size:clamp(16px,1.2vw,23px);font-weight:600;line-height:1.35;letter-spacing:-.025em;white-space:nowrap}
+@media(max-width:999px){.present-compact .overview-stage .team-group-heading h3{font-size:17px}}
