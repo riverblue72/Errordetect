@@ -542,7 +542,7 @@
       awaitingAdditionalPhotos: s.pending, activeReference: "frozen-source", selectedReference: state.referenceDecision?.kind === "change" ? "candidate" : "frozen-source", referenceChangeApplied: false, modelWeightsUpdated: false,
       appearanceChange: { ...getShift(), notificationConfirmedAt: state.changeNoticeConfirmedAt, detected: true, detectedAt: state.shiftDetectedAt, acknowledgedAt: state.shiftAcknowledgedAt, userReview: state.shiftReview, scope: "recorded joined-run experiment" },
       candidateReviewRequest: state.candidateRequested ? state.candidateRequest : null,
-      validationExample: state.exampleViewedAt ? { viewedAt: state.exampleViewedAt, source: data.updateEvaluation.source, scope: "separate saved experiment, not a live evaluation of this review selection" } : null,
+      validationExample: state.exampleViewedAt ? { ...referenceController.getValidationResult(), viewedAt: state.exampleViewedAt } : null,
       candidatePreparation: state.candidatePreparation || null, referenceOperation: state.referenceOperation || null,
       referenceDecision: state.referenceDecision, teamHandoff: state.teamHandoff, referenceReviewTeam: "AI 솔루션팀", history: state.history,
       records: s.c.review.flatMap((photo, i) => i < s.available && state.records[i] ? [{ frame: photo.frame, rank: photo.rank, image: photo.image, recordedAiScore: photo.score, userReview: state.records[i], ...(state.truthRevealed ? { publishedDatasetLabel: photo.recordedLabel } : {}) }] : []) };

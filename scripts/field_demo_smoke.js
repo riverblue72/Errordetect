@@ -7,6 +7,7 @@ const output = process.env.QA_OUTPUT || "/private/tmp/surfacetrace-paged-field-q
   await fs.mkdir(output, { recursive: true });
   const browser = await chromium.launch({ headless: true, executablePath: process.env.CHROME_PATH || "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" });
   const context = await browser.newContext({ viewport: { width: 1440, height: 900 }, acceptDownloads: true });
+  context.setDefaultTimeout(30000);
   const page = await context.newPage(), errors = [];
   page.on("pageerror", e => errors.push(e.message));
   const state = () => page.evaluate(() => window.surfaceTraceFieldDemo.getState());
@@ -30,7 +31,7 @@ const output = process.env.QA_OUTPUT || "/private/tmp/surfacetrace-paged-field-q
     for (const p of result.panels) assert(p.content <= p.height + 2 && p.contentWidth <= p.width + 2, label + JSON.stringify(result));
     await page.mouse.wheel(0, 700); assert.equal(await page.evaluate(() => scrollY), 0, label + " must not scroll");
   };
-  const capture = async name => { await page.locator("#toast").evaluate(e => { e.hidden = true; }); await page.screenshot({ path: path.join(output, name + ".png") }); };
+  const capture = async name => { console.log("CHECK", name); await page.locator("#toast").evaluate(e => { e.hidden = true; }); await page.screenshot({ path: path.join(output, name + ".png") }); };
   const receive = async () => {
     const start = Date.now(); await page.locator("[data-receive=defect]").click(); await phase("receiving"); await fits("receiving");
     await page.waitForFunction(() => window.surfaceTraceFieldDemo.getState().pipelineReady, null, { timeout: 28000 });
@@ -55,7 +56,7 @@ const output = process.env.QA_OUTPUT || "/private/tmp/surfacetrace-paged-field-q
   const allPages = async (label, count) => { for (const size of [sizes[3],sizes[0],sizes[1],sizes[2]]) { await page.setViewportSize(size); for (let n = 0; n < count; n++) { await go(n); await fits(label + " " + size.width + "x" + size.height + " page " + n); } } await page.setViewportSize(sizes[0]);if((await state()).phase==="reviewing"&&!(await state()).reviewGate)await page.waitForFunction(()=>document.querySelectorAll(".batch-card:not([hidden])").length===Math.min(8,window.surfaceTraceFieldDemo.getStatus().available)); };
   const reset = async () => { await page.locator("#restart").click(); await page.locator("#confirmReset").click(); await phase("ready"); };
   try {
-    await page.goto(new URL("field-demo.html", base).href); await phase("ready");
+    await page.goto(new URL("field-demo.html", base).href); console.log("CHECK field loaded"); await phase("ready");
     for (const size of sizes) { await page.setViewportSize(size); await fits("ready"); assert(await page.locator("#serviceOverviewLink").isVisible());assert(await page.locator("#mainSiteLink").isVisible()); } await page.setViewportSize(sizes[0]);
     assert.equal(await page.locator("#serviceOverviewLink").getAttribute("href"),"./presenter.html");assert.equal(await page.locator("#mainSiteLink").getAttribute("href"),"./index.html");
     await capture("01-ready");
@@ -84,7 +85,7 @@ const output = process.env.QA_OUTPUT || "/private/tmp/surfacetrace-paged-field-q
     await page.locator("#referenceConfirmBack").click();assert.equal(await index(),0);await page.locator("#referenceEntryContinue").click();await page.waitForFunction(()=>window.surfaceTraceFieldDemo.getState().referenceOperation?.completedAt);await capture("06-reference-confirm");await page.locator("#prepareCandidate").click();
     await page.waitForFunction(() => window.surfaceTraceFieldDemo.getState().candidatePreparation?.stage === 1); await page.reload(); await phase("reference-review"); await page.locator("#retryPreparation").click();
     await page.waitForFunction(() => !!window.surfaceTraceFieldDemo.getState().candidatePreparation?.completedAt, null, { timeout: 18000 }); assert.equal(await index(), 2);
-    assert.equal((await state()).candidatePreparation.validationRequest.metrics, null); await page.locator("#showValidation").click(); assert.equal(await page.locator("#validationMetrics tr").count(), 3);
+    assert.equal((await state()).candidatePreparation.validationRequest.metrics, null); await page.locator("#showValidation").click(); assert.equal(await page.locator("#validationMetrics tr").count(), 3);assert.deepEqual(await page.locator("#validationMetrics tr td:last-child").allTextContents(),["0","153","40"]);
     await allPages("reference", 3); await go(2); await capture("05-reference-decision"); await page.locator("#finishCandidate").click(); await phase("completed");
     for (const size of sizes) { await page.setViewportSize(size); await fits("completed"); } await page.setViewportSize(sizes[0]);
     await page.reload(); await phase("completed"); const completed = await download("#completedDownload"); assert.equal(completed.candidatePreparation.validationRequest.status, "on-hold"); assert.equal(completed.modelWeightsUpdated, false);
@@ -97,6 +98,7 @@ const output = process.env.QA_OUTPUT || "/private/tmp/surfacetrace-paged-field-q
     assert.equal((await state()).reviewGate, "stop"); await page.locator("#gateAction").click(); await phase("review-summary"); assert.equal((await status()).budget, 2); await go(1); await page.locator("#compareTruth").click(); assert.match(await page.locator("#truthResult").innerText(), /2장 중 0장/); assert((await state()).records.slice(0, 2).every(r => r.verdict === "normal"));
     await page.locator("#fieldFullscreen").click(); await page.waitForFunction(() => !!document.fullscreenElement); await page.locator("#fieldFullscreen").click(); await page.waitForFunction(() => !document.fullscreenElement);
     await go(2);await page.locator("#sendTeamNotification").click();await page.waitForFunction(()=>window.surfaceTraceFieldDemo.getState().teamHandoff?.status==="delivered");assert.equal((await state()).teamHandoff.payload.records.length,2);await page.locator("#openSolutionReview").click();assert.equal(await page.locator("#teamRole").innerText(),"AI 솔루션팀");
+    await page.locator("#openCandidate").click();await phase("reference-review");await page.locator("#referenceEntryContinue").click();await page.waitForFunction(()=>window.surfaceTraceFieldDemo.getState().referenceOperation?.completedAt);await page.locator("#prepareCandidate").click();await page.waitForFunction(()=>window.surfaceTraceFieldDemo.getState().candidatePreparation?.completedAt);await page.locator("#showValidation").click();assert.deepEqual(await page.locator("#validationMetrics tr td:last-child").allTextContents(),["1,060","202","47"]);assert.match(await page.locator("#validationWarningTitle").innerText(),/유지/);await page.reload();await phase("reference-review");assert.deepEqual(await page.locator("#validationMetrics tr td:last-child").allTextContents(),["1,060","202","47"]);for(const size of sizes){await page.setViewportSize(size);await fits("two-normal reference result");}await page.setViewportSize(sizes[0]);await go(0);await page.locator("#backToRecords").click();await phase("review-summary");const pilotExport=await download("#downloadRecord");assert.equal(pilotExport.validationExample.reviewRoute,"two-normal-stop");assert.equal(pilotExport.validationExample.source,"user-provided-validation-results");assert.deepEqual(pilotExport.validationExample.metrics.map(m=>m.after),[1060,202,47]);
     await go(0); const beforeBack = (await state()).records; await page.locator("#pagePrevious").click();await phase("reviewing");await readyBatch();assert.deepEqual((await state()).records,beforeBack);
     await page.locator("#pagePrevious").click();await phase("analyzing");assert((await state()).pipelineReady);await page.locator("#startReviewFlow").click();await phase("change-alert");await page.locator("#confirmChangeNotice").click();await phase("reviewing");await readyBatch();assert.deepEqual((await state()).records,beforeBack);
     await page.goto(new URL("presenter.html",base).href);assert.equal(await page.locator("#fieldDemoLink").getAttribute("href"),"./field-demo.html?rev=6caac3c");await page.locator("#fieldDemoLink").click();await phase("reviewing");

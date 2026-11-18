@@ -11,6 +11,11 @@ window.createSurfaceTraceReference = ({ getState, persist, navigate, notify, onD
     const c = data.cases[getState().caseId];
     return c.review.flatMap((photo, index) => getState().records[index]?.verdict === "normal" ? [{ photo, index }] : []);
   }
+  function getValidationResult() {
+    const state = getState(), records = state.records.filter(Boolean);
+    const stoppedAfterTwo = !state.expanded && records.length === 2 && state.records.slice(0, 2).every(record => record?.verdict === "normal");
+    return window.SURFACETRACE_REFERENCE_RESULTS.select({ stoppedAfterTwo, reviewedCount: records.length });
+  }
   function history(type, description, at = new Date().toISOString()) {
     getState().history ||= []; getState().history.push({ type, description, at }); getState().history = getState().history.slice(-500);
   }
@@ -134,13 +139,19 @@ window.createSurfaceTraceReference = ({ getState, persist, navigate, notify, onD
     $("preparedRequestDescription").textContent = done ? `정상 사진 ${prep.validationRequest.normalInputs.length}장이 포함되었습니다. 현재 검사 기준을 유지하며 검증 요청을 보관합니다.` : "";
     if (done && getState().exampleViewedAt) {
       const labels = ["정상 사진 오경보", "결함 사진 경보", "신규 결함 사건 경보"];
-      $("validationMetrics").replaceChildren(...data.updateEvaluation.metrics.map((m, i) => { const row = node("tr"); row.append(node("td", labels[i]), node("td", format(m.before)), node("td", format(m.after))); return row; }));
+      const result = getValidationResult(), pilot = result.id === "two-normal-stop";
+      $("validationResultTitle").textContent = pilot ? "정상 2장 종료 · 기준 검증 결과" : "8장 고정 검수 · 기준 검증 이력";
+      $("validationRouteBadge").textContent = result.label;
+      $("validationWarningTitle").textContent = pilot ? "정상 오경보는 증가했고, 결함 사진 경보는 유지됐습니다." : "이전 후보에서는 오경보와 함께 결함 탐지도 감소했습니다.";
+      $("validationWarningDescription").textContent = pilot ? "신규 결함 사건 경보는 48건에서 47건으로 감소했습니다. 결과를 확인하고 기준 적용 여부를 검토하세요." : "검증 기록을 확인하고 기존 기준을 유지할지, 새 기준으로 변경을 요청할지 선택하세요.";
+      $("validationSourceDescription").textContent = pilot ? "정상 2장 확인 후 종료한 경로에 대해 사용자가 제공한 검증 결과입니다. 저장된 결과를 표시하며, 이번 선택 사진으로 브라우저에서 실시간 재계산한 값은 아닙니다." : "표는 저장된 별도 후속 평가의 기록입니다. 이번에 선택한 사진을 포함한 새 요청의 결과는 아직 계산되지 않았습니다.";
+      $("validationMetrics").replaceChildren(...result.metrics.map((m, i) => { const row = node("tr"); row.append(node("td", labels[i]), node("td", format(m.before)), node("td", format(m.after))); return row; }));
     }
     onRender();
   }
   function showHistory() {
     if (getState().phase !== "reference-review" || !getState().candidatePreparation?.completedAt) return;
-    getState().exampleViewedAt ||= new Date().toISOString(); history("validation-history-viewed", "이전 기준 후보의 검증 기록 열람");
+    getState().exampleViewedAt ||= new Date().toISOString(); history("validation-history-viewed", `${getValidationResult().label} · 기준 검증 결과 열람`);
     try { persist(); render(); } catch (error) { notify(error.message); }
   }
   function commitDecision(kind) {
@@ -169,5 +180,5 @@ window.createSurfaceTraceReference = ({ getState, persist, navigate, notify, onD
   ["backToRecords", "completedRecords"].forEach(id => $(id).addEventListener("click", backToRecords));
   $("completedDownload").addEventListener("click", onDownload);
   $("reopenReference").addEventListener("click", () => navigate("reference-review"));
-  return Object.freeze({ render, cancel, stageNormals: () => operate("intake") });
+  return Object.freeze({ render, cancel, getValidationResult, stageNormals: () => operate("intake") });
 };

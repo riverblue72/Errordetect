@@ -9,7 +9,7 @@ import shutil
 ROOT = Path(__file__).resolve().parents[1]
 ASSETS = (
     "presenter.html", "presenter-en.html", "presenter.css", "presenter-en.css",
-    "presenter.js", "presenter-en.js", "presenter-copy.js",
+    "presenter.js", "presenter-en.js", "presenter-copy.js", "reference-validation-results.js",
     "media/presenter-closing-22.png", "media/presenter-closing-23.png",
 )
 REFERENCES = re.compile(r'(\b(?:href|src)="\./)([a-zA-Z0-9-]+\.(?:css|js))(?:\?v=[a-f0-9]+)?(")')

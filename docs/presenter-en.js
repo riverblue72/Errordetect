@@ -37,7 +37,9 @@
     cancelNarration();
     if (!state.playing || !narrationEnabled || chapters[state.scene].manual) return;
     try {
-      const utterance = new SpeechSynthesisUtterance(chapters[state.scene].narration);
+      const chapter = chapters[state.scene];
+      const narration = state.view === "candidate" && referenceEvaluation().id === "two-normal-stop" ? chapter.narrationTwoNormal : chapter.narration;
+      const utterance = new SpeechSynthesisUtterance(narration);
       utterance.lang = "en-US";
       utterance.rate = 1.15;
       const voices = window.speechSynthesis.getVoices();
@@ -775,11 +777,30 @@
     setText("handoffRun", s.c.run);
     setText("handoffStatus", s.complete ? "Review records complete · next, AI solution-team reference review." : "Complete photo-level checks before the inspection-report handoff.");
   }
+  function referenceEvaluation() {
+    const review = reviewStatus();
+    return window.SURFACETRACE_REFERENCE_RESULTS.select({ stoppedAfterTwo: review.stopped && !review.expanded, reviewedCount: review.count });
+  }
+  function renderReferenceMetrics() {
+    const result = referenceEvaluation(), pilot = result.id === "two-normal-stop";
+    for (const metric of result.metrics) {
+      const row = document.querySelector(`[data-reference-metric="${metric.id}"]`); if (!row) continue;
+      const improved = metric.id === "normal-alerts" ? metric.after <= metric.before : metric.after >= metric.before;
+      const strong = row.querySelector("strong"), before = document.createElement("span"), arrow = document.createElement("em"), after = document.createElement("b"), unit = document.createElement("small");
+      before.textContent = num(metric.before); arrow.textContent = "→"; after.textContent = num(metric.after); after.className = improved ? "good" : "bad"; unit.textContent = metric.id === "defect-episodes" ? "episodes" : "photos";
+      strong.replaceChildren(before, arrow, after, unit); row.dataset.outcome = improved ? "maintained" : "loss";
+      const max = Math.max(metric.before, metric.after, 1); row.querySelector(".decision-track i").style.width = `${metric.before / max * 100}%`; row.querySelector(".decision-track b").style.width = `${metric.after / max * 100}%`;
+    }
+    setText("referenceEvaluationScope", pilot ? "Two normal checks · review stopped" : "Follow-up validation · 15 recordings");
+    setText("referenceResultTitle", pilot ? "Two-normal-stop validation results" : "Candidate held / current reference retained");
+    setText("referenceResultSummary", pilot ? "False alarms increased · defect-photo alerts unchanged" : "Fewer false alarms · fewer actual defect alerts");
+    return pilot;
+  }
   function renderReferenceChoice() {
-    const keep = state.referenceChoice === "keep";
+    const pilot = renderReferenceMetrics(), keep = state.referenceChoice === "keep";
     $("presenterKeepReference")?.setAttribute("aria-pressed", String(keep));
     $("presenterApplyCandidate")?.setAttribute("aria-pressed", String(!keep));
-    setText("referenceChoiceMessage", keep ? "Experiment decision: keep the current reference. The candidate was held because defect detection also fell." : "Adoption requires follow-up validation. This candidate was held because defect detection decreased.");
+    setText("referenceChoiceMessage", pilot ? (keep ? "Keep-current choice: false alarms increased and new-episode alerts decreased." : "Before considering adoption, review the increase in false alarms and loss of one new-episode alert.") : (keep ? "Experiment decision: keep the current reference. The candidate was held because defect detection also fell." : "Adoption requires follow-up validation. This candidate was held because defect detection decreased."));
   }
   function validateData() {
     if (!data || data.metadata.recordedReplay !== true) throw new Error("Recorded experiment data is missing.");

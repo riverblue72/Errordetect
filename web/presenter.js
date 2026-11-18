@@ -37,7 +37,9 @@
     cancelNarration();
     if (!state.playing || !narrationEnabled || chapters[state.scene].manual) return;
     try {
-      const utterance = new SpeechSynthesisUtterance(chapters[state.scene].narration);
+      const chapter = chapters[state.scene];
+      const narration = state.view === "candidate" && referenceEvaluation().id === "two-normal-stop" ? chapter.narrationTwoNormal : chapter.narration;
+      const utterance = new SpeechSynthesisUtterance(narration);
       utterance.lang = "ko-KR";
       utterance.rate = 1.15;
       const voices = window.speechSynthesis.getVoices();
@@ -775,11 +777,30 @@
     setText("handoffRun", s.c.run);
     setText("handoffStatus", s.complete ? "검수 기록 확인 완료 · AI 솔루션팀의 기준 검토로 이어집니다." : "사진별 검수를 완료한 뒤 보고서로 전달하는 흐름입니다.");
   }
+  function referenceEvaluation() {
+    const review = reviewStatus();
+    return window.SURFACETRACE_REFERENCE_RESULTS.select({ stoppedAfterTwo: review.stopped && !review.expanded, reviewedCount: review.count });
+  }
+  function renderReferenceMetrics() {
+    const result = referenceEvaluation(), pilot = result.id === "two-normal-stop";
+    for (const metric of result.metrics) {
+      const row = document.querySelector(`[data-reference-metric="${metric.id}"]`); if (!row) continue;
+      const improved = metric.id === "normal-alerts" ? metric.after <= metric.before : metric.after >= metric.before;
+      const strong = row.querySelector("strong"), before = document.createElement("span"), arrow = document.createElement("em"), after = document.createElement("b"), unit = document.createElement("small");
+      before.textContent = num(metric.before); arrow.textContent = "→"; after.textContent = num(metric.after); after.className = improved ? "good" : "bad"; unit.textContent = metric.unit;
+      strong.replaceChildren(before, arrow, after, unit); row.dataset.outcome = improved ? "maintained" : "loss";
+      const max = Math.max(metric.before, metric.after, 1); row.querySelector(".decision-track i").style.width = `${metric.before / max * 100}%`; row.querySelector(".decision-track b").style.width = `${metric.after / max * 100}%`;
+    }
+    setText("referenceEvaluationScope", pilot ? "정상 2장 확인 후 종료 경로" : "후속 검증 · 15개 녹화");
+    setText("referenceResultTitle", pilot ? "정상 2장 종료 · 기준 검증 결과" : "후보 적용 보류 / 기존 기준 유지");
+    setText("referenceResultSummary", pilot ? "정상 오경보 증가 · 결함 사진 경보 유지" : "정상 오경보 감소 · 실제 결함 탐지도 감소");
+    return pilot;
+  }
   function renderReferenceChoice() {
-    const keep = state.referenceChoice === "keep";
+    const pilot = renderReferenceMetrics(), keep = state.referenceChoice === "keep";
     $("presenterKeepReference")?.setAttribute("aria-pressed", String(keep));
     $("presenterApplyCandidate")?.setAttribute("aria-pressed", String(!keep));
-    setText("referenceChoiceMessage", keep ? "이번 실험의 판단: 기존 기준 유지. 결함 탐지도 감소해 후보 적용을 보류했습니다." : "새로운 기준은 후속 검증 후 적용 여부를 판단합니다. 이번 후보는 결함 탐지가 감소해 적용 보류입니다.");
+    setText("referenceChoiceMessage", pilot ? (keep ? "기존 기준 유지 선택 · 정상 오경보 증가와 신규 결함 사건 경보 감소를 확인했습니다." : "새로운 기준 적용 검토 · 정상 오경보 증가와 신규 결함 사건 경보 감소를 함께 확인하세요.") : (keep ? "이번 실험의 판단: 기존 기준 유지. 결함 탐지도 감소해 후보 적용을 보류했습니다." : "새로운 기준은 후속 검증 후 적용 여부를 판단합니다. 이번 후보는 결함 탐지가 감소해 적용 보류입니다."));
   }
   function validateData() {
     if (!data || data.metadata.recordedReplay !== true) throw new Error("저장된 실험 자료가 없습니다.");

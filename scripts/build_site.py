@@ -59,6 +59,7 @@ def build(out: Path) -> tuple[int, int]:
         ("presenter.js", "presenter.js"),
         ("presenter-data.js", "presenter-data.js"),
         ("presenter-copy.js", "presenter-copy.js"),
+        ("reference-validation-results.js", "reference-validation-results.js"),
         ("field-demo.html", "field-demo.html"),
         ("field-demo.css", "field-demo.css"),
         ("field-demo.js", "field-demo.js"),

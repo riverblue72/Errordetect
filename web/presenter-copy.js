@@ -73,7 +73,8 @@
       "narration": "보고서를 받은 AI 솔루션팀은 기존 기준을 보존하고, 검수된 정상 특징을 복사본에 추가해 후보를 만듭니다. 별도 열다섯 Run의 후속 검증에서 정상 사진 오경보는 천오십 장에서 영 장으로 줄었습니다. 하지만 실제 결함 사진 경보는 이백이 장에서 백쉰세 장으로, 서로 다른 신규 결함 사건 경보는 마흔여덟 건에서 마흔 건으로 줄었습니다. 후보 적용을 보류하고 기존 기준을 유지합니다. 데이터 축적이 성능 향상을 보장하지 않으므로 검증 후 판단합니다.",
       "durationMs": 36000,
       "ticks": 1,
-      "delay": 36000
+      "delay": 36000,
+      "narrationTwoNormal": "정상 두 장을 확인하고 종료한 경로의 기준 후보 검증 결과입니다. 정상 사진 오경보는 천오십 장에서 천육십 장으로 증가했습니다. 실제 결함 사진 경보는 이백이 장으로 유지됐고, 서로 다른 신규 결함 사건 경보는 마흔여덟 건에서 마흔일곱 건으로 감소했습니다. AI 솔루션팀은 이 결과를 함께 살펴 새로운 기준의 적용 여부를 판단합니다."
     },
     {
       "view": "results",
@@ -176,7 +177,8 @@
       "narration": "After receiving the field report, the AI solution team validates the candidate. Preserve the current reference and add reviewed normal features to a copy. In a separate 15-run follow-up validation, false alarms on normal photos fall from 1,050 to zero. However, alerts on actual defect photos fall from 202 to 153, and alerts on distinct new defect episodes from 48 to 40. Hold the candidate and retain the current reference. More data do not guarantee improvement: validate before deciding whether to adopt.",
       "durationMs": 36000,
       "ticks": 1,
-      "delay": 36000
+      "delay": 36000,
+      "narrationTwoNormal": "These are the validation results reported for stopping after two normal checks. False alarms on normal photos increase from 1,050 to 1,060. Alerts on actual defect photos remain at 202, while alerts on distinct new defect episodes decrease from 48 to 47. The AI solution team considers these results together before deciding whether to use the new reference."
     },
     {
       "view": "results",
